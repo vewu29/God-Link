@@ -271,3 +271,32 @@ module.exports.unreal = {
     return errs;
   },
 };
+
+// ---------- Java ----------
+// Programs and examples run with the single-file source launcher
+// (java Main.java), printing UTF-8; lines are parsed by tree-sitter.
+const JAVA_RUN = ["-Dstdout.encoding=UTF-8", "-Dfile.encoding=UTF-8", "-Xshare:auto", "Main.java"];
+function javaShapes(c) {
+  return [c, `class __C {\n${c}\n}`, `class __C { void __m() throws Exception {\n${c}\n} }`, `class __C { void __m() {\n${c}\n{ }\n} }`, `class __C {\n${c}\n{ }\n}`, `${c}\n{ }`,
+    `class __C { void __m() { switch (x) {\n${c}\n} } }`, `class __C { void __m() { try { }\n${c}\n} }`];
+}
+function javaRun(dir, code) {
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, "Main.java"), code + "\n");
+  const r = sh("java", JAVA_RUN, { cwd: dir, timeout: 60000 });
+  return r.status === 0 ? { ok: true, stdout: r.stdout } : { ok: false, error: r.stderr.replace(/^Picked up JAVA_TOOL_OPTIONS.*\n/m, "") };
+}
+module.exports.java = {
+  needs: ["java"],
+  build: (dir, code) => javaRun(path.join(dir, "run"), code),
+  checkLines: (dir, lines) => tsErrors("java", lines, javaShapes),
+  checkExamples: async (dir, examples) => {
+    const errs = await tsErrors("java", examples.map((e) => e.code), javaShapes);
+    examples.forEach((ex, i) => {
+      if (!ex.run || errs.some((e) => e.i === i)) return;
+      const r = javaRun(path.join(dir, "ex" + i), ex.code);
+      if (!r.ok) errs.push({ i, err: r.error });
+    });
+    return errs;
+  },
+};

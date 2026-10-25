@@ -54,6 +54,10 @@
     blurb: "The language of the web: interactive pages, apps, servers with Node.js.",
     keywords: "web browser website frontend node react js",
     file: "main.js", run: "node main.js", comment: "//", vaultFile: "vault.js", varPrefix: "" });
+  addTrack({ id: "java", name: "Java", badge: "Java", group: "lang", color: "#8a5a12", blocks: 30,
+    blurb: "Android apps, big business systems and Minecraft mods — typed, fast and everywhere.",
+    keywords: "android minecraft enterprise jvm oop backend",
+    file: "Main.java", run: "java Main.java", comment: "//", vaultFile: "Vault.java", varPrefix: "int " });
   addTrack({ id: "unity", name: "Unity", badge: "Unity", group: "engine", color: "#1f2937", blocks: 30,
     blurb: "Make 2D and 3D games with Unity and C#: scripts, physics, input, UI and more.",
     keywords: "game engine games 3d 2d c# csharp unity3d gamedev",

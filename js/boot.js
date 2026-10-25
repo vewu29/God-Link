@@ -59,7 +59,7 @@
   var chips = ['<span class="boot-stat"><strong>' + done + " / " + total + "</strong>&nbsp;blocks mastered</span>"];
   chips.push(profile
     ? '<span class="boot-stat"><strong>' + banked.toLocaleString() + "</strong>&nbsp;Vault drills banked</span>"
-    : '<span class="boot-stat"><strong>3</strong>&nbsp;tracks — C++ · C# · Drive</span>');
+    : '<span class="boot-stat"><strong>' + CB_TRACK_LIST.length + "</strong>&nbsp;tracks to choose from</span>");
   chips.push('<span class="boot-stat"><strong>' + goal + "</strong>&nbsp;perfect reps master a block</span>");
   stats.innerHTML = chips.join("");
 
@@ -91,6 +91,22 @@
       var m = document.getElementById("menuSandbox");
       if (m && document.activeElement && overlay.contains(document.activeElement)) m.focus();
     }
+  }
+  /* The note names every track the registry offers, and its button
+     opens the track picker for anyone who came for something else. */
+  var note = document.getElementById("bootNote");
+  if (note) {
+    var names = [];
+    CB_TRACK_GROUPS.forEach(function (g) { CB_TRACK_LIST.forEach(function (m) { if (m.group === g.id) names.push(m.name); }); });
+    note.textContent = CB_TRACK_LIST.length + " tracks live here: " + names.slice(0, -1).join(", ") + " and " + names[names.length - 1] + ". ";
+    var pick = document.createElement("button");
+    pick.type = "button"; pick.className = "boot-link"; pick.textContent = "See every track";
+    pick.addEventListener("click", function () {
+      dismiss(false);
+      var t = document.getElementById("trackCurrent");
+      if (t) t.click();
+    });
+    note.appendChild(pick);
   }
   go.addEventListener("click", function () { dismiss(true); });
   skip.addEventListener("click", function () { dismiss(false); });
