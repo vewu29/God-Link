@@ -109,7 +109,7 @@ cbRegisterTrack("unity", function () {
     { title: "What Is Unity?", chapter: "Start here · the editor, scenes, GameObjects", line: "gameObject.AddComponent<Rigidbody>();",
       content: {
         story: ["Unity is a game engine: a big toolbox and editor for building games and interactive 3D or 2D worlds. It handles drawing, physics, sound and input for you, and you add the rules of your game with C# scripts. Many famous games and countless indie games are made with it.",
-          "Everything in a Unity scene is a GameObject — the player, a coin, a light, the camera. A GameObject on its own is an empty container; what makes it something is its components. A Transform gives it a place in the world, a Mesh Renderer makes it visible, a Rigidbody makes physics push it around, and your scripts give it behaviour.",
+          "Everything in a Unity scene is a GameObject — the player, a coin, a light, the camera. A GameObject on its own is an empty container; what makes it something is its components. A Transform gives it a place in the world, a Mesh Renderer makes it visible, a Rigidbody makes physics push it around, and your scripts give it behavior.",
           "The editor has a few main windows: the Scene view where you arrange things, the Game view that shows what the player sees, the Hierarchy listing every GameObject, the Project window with your files, and the Inspector showing the selected object's components. Press Play to try your game right inside the editor."],
         big: "In Unity, everything is a GameObject, and GameObjects become things by having components — including your own scripts.",
         caption: "An empty GameObject collects components one by one until it becomes a player. Tap Play.",
@@ -164,10 +164,10 @@ cbRegisterTrack("unity", function () {
         demo: ["position (0, 0, 0)", "+= Vector3.right → (1, 0, 0)", "+= Vector3.up → (1, 1, 0)", "Rotate(0, 90, 0) → faces right"]
       },
       deep: {
-        more: ["Unity stores rotations as Quaternions, a maths trick that avoids getting stuck. You rarely touch them directly: use transform.Rotate, Quaternion.Euler(x, y, z) to build one from degrees, and transform.eulerAngles to read degrees back.",
+        more: ["Unity stores rotations as Quaternions, a math trick that avoids getting stuck. You rarely touch them directly: use transform.Rotate, Quaternion.Euler(x, y, z) to build one from degrees, and transform.eulerAngles to read degrees back.",
           "position is in world space; localPosition is relative to the parent object. Children move with their parents — a sword parented to a hand follows the hand."],
         ex: { code: "using UnityEngine;\n\npublic class Stepper : MonoBehaviour\n{\n    void Start()\n    {\n        transform.position = Vector3.zero;\n        transform.position += Vector3.right * 3f;\n        transform.position += Vector3.up;\n        transform.Rotate(0f, 90f, 0f);\n        transform.localScale = new Vector3(2f, 2f, 2f);\n        Debug.Log($\"Now at {transform.position}, facing {transform.eulerAngles.y} degrees\");\n    }\n}",
-          walk: ["Line 7: start at the world's centre.", "Line 8: three units along x.", "Line 9: one unit up.", "Line 10: turn a quarter circle around y.", "Line 11: twice as big in every direction.", "Line 12: (3.00, 1.00, 0.00), facing 90 degrees."] },
+          walk: ["Line 7: start at the world's center.", "Line 8: three units along x.", "Line 9: one unit up.", "Line 10: turn a quarter circle around y.", "Line 11: twice as big in every direction.", "Line 12: (3.00, 1.00, 0.00), facing 90 degrees."] },
         mistake: "Trying to change one part of position directly: transform.position.x = 5; is an error, because position hands you a copy. Copy, change, put back: var p = transform.position; p.x = 5; transform.position = p;."
       } },
     { title: "Time and Frames", chapter: "Update, Time.deltaTime, FixedUpdate", line: "transform.Translate(Vector3.forward * speed * Time.deltaTime);",
@@ -268,16 +268,16 @@ cbRegisterTrack("unity", function () {
       } },
     { title: "Vectors and Game Math", chapter: "Direction, distance, normalized, Lerp, Mathf", line: "Vector3 dir = (target.position - transform.position).normalized;",
       content: {
-        story: ["Game maths is mostly arrows. Subtract two positions and you get the arrow from one to the other: target.position - transform.position. Its length (magnitude) is the distance, and normalized keeps just the direction with length 1.",
+        story: ["Game math is mostly arrows. Subtract two positions and you get the arrow from one to the other: target.position - transform.position. Its length (magnitude) is the distance, and normalized keeps just the direction with length 1.",
           "Vector3.Distance(a, b) measures distance directly. Vector3.MoveTowards(current, target, step) steps toward a target without overshooting, and Vector3.Lerp(a, b, t) finds the point a fraction t of the way between two points — 0.5 is halfway.",
           "Mathf is the toolbox for single numbers: Clamp keeps a value in a range, Abs removes the minus sign, RoundToInt rounds, Lerp blends numbers, and PingPong bounces a value back and forth."],
-        big: "Subtract positions for a direction, normalize it to aim, and use Distance, MoveTowards, Lerp and Mathf.Clamp for everyday game maths.",
+        big: "Subtract positions for a direction, normalize it to aim, and use Distance, MoveTowards, Lerp and Mathf.Clamp for everyday game math.",
         caption: "An arrow stretches from the hunter to the target; normalized shrinks it to a pointer. Tap Play.",
         demo: ["target - me → (6, 0, 8)", "magnitude → 10 (the distance)", "normalized → (0.6, 0, 0.8)", "MoveTowards: one safe step closer"]
       },
       deep: {
         more: ["Vector3.Dot tells you whether two directions agree: positive means roughly the same way, negative means opposite — a quick “is the player in front of me?” test.",
-          "Lerp with a fixed t each frame (like 0.1) gives a smooth ease-out: it always moves a tenth of the remaining way, slowing as it arrives. It's a favourite trick for cameras."],
+          "Lerp with a fixed t each frame (like 0.1) gives a smooth ease-out: it always moves a tenth of the remaining way, slowing as it arrives. It's a favorite trick for cameras."],
         ex: { code: "using UnityEngine;\n\npublic class Chaser : MonoBehaviour\n{\n    [SerializeField] Transform target;\n    [SerializeField] float speed = 3f;\n    [SerializeField] float stopDistance = 1.5f;\n\n    void Update()\n    {\n        if (target == null) return;\n        float dist = Vector3.Distance(transform.position, target.position);\n        if (dist > stopDistance)\n        {\n            Vector3 dir = (target.position - transform.position).normalized;\n            transform.position += dir * speed * Time.deltaTime;\n        }\n    }\n}",
           walk: ["Line 5: who to chase, set in the Inspector.", "Line 11: do nothing if no target was assigned.", "Line 12: how far away it is.", "Lines 13–17: if not close enough, step toward it at speed units per second."] },
         mistake: "Moving by the un-normalized difference: position += (target - position) * speed * deltaTime moves FASTER when the target is far away, because the arrow is longer. Normalize first for a steady speed."
@@ -401,7 +401,7 @@ cbRegisterTrack("unity", function () {
       content: {
         story: ["Unity's Console lists errors in red with the script and line number — double-click one to jump to the code. Read the first error first: later ones are often side effects.",
           "The famous NullReferenceException means a variable points at nothing: an Inspector slot left empty, a GetComponent that found nothing, or an object that was destroyed. Check the Inspector for “None” in your script's fields.",
-          "Other regulars: “The referenced script on this Behaviour is missing” (a script file was renamed or deleted), “Can't add script… class cannot be found” (file name ≠ class name), and nothing happening at all (a misspelled Update, or the script was never attached)."],
+          "Other regulars: “The referenced script on this Behavior is missing” (a script file was renamed or deleted), “Can't add script… class cannot be found” (file name ≠ class name), and nothing happening at all (a misspelled Update, or the script was never attached)."],
         big: "Read the first red error, double-click it, and check the usual suspects: empty Inspector slots, renamed scripts and misspelled methods.",
         caption: "A detective follows the Console's red trail back to an empty Inspector slot. Tap Play.",
         demo: ["NullReferenceException", "  at Player.Update () Player.cs:14", "line 14: health.TakeDamage(1)", "→ the Health slot says None"]
@@ -416,7 +416,7 @@ cbRegisterTrack("unity", function () {
     { title: "Game Feel Recipes", chapter: "Beyond the basics · Unity shelf", line: ["Vector3.Lerp(cam, target, 0.1f)", "Mathf.PingPong(Time.time, 1f)"],
       content: {
         story: ["“Game feel” is why one jump feels great and another feels floaty. Small touches add up: a camera that follows smoothly, a squash when landing, a flash when hit, a tiny screen shake on an explosion.",
-          "A smooth follow camera moves part of the way toward its target every frame in LateUpdate. A bobbing pickup uses Mathf.Sin or Mathf.PingPong on its height. A hit flash is a coroutine that changes colour for a tenth of a second.",
+          "A smooth follow camera moves part of the way toward its target every frame in LateUpdate. A bobbing pickup uses Mathf.Sin or Mathf.PingPong on its height. A hit flash is a coroutine that changes color for a tenth of a second.",
           "Tweak by feel: change one number, press Play, try it, repeat. Expose the numbers with [SerializeField] so you can tune them live in the Inspector."],
         big: "Smooth follows, bobs, flashes and shakes make a game feel alive — tune them in Play mode with exposed fields.",
         caption: "A coin bobs, the camera glides after the player, and a hit flashes red. Tap Play.",
@@ -443,7 +443,7 @@ cbRegisterTrack("unity", function () {
           "Physics settings matter too: fewer, simpler colliders (spheres and boxes over mesh colliders) and sensible Fixed Timestep values keep physics cheap."],
         ex: { code: "using UnityEngine;\n\npublic class CachedMover : MonoBehaviour\n{\n    [SerializeField] float speed = 2f;\n    Rigidbody rb;\n    Transform player;\n\n    void Awake()\n    {\n        rb = GetComponent<Rigidbody>();\n    }\n\n    void Start()\n    {\n        GameObject p = GameObject.FindWithTag(\"Player\");\n        if (p != null) player = p.transform;\n    }\n\n    void FixedUpdate()\n    {\n        if (player == null || rb == null) return;\n        Vector3 dir = (player.position - transform.position).normalized;\n        rb.MovePosition(transform.position + dir * speed * Time.fixedDeltaTime);\n    }\n}",
           walk: ["Line 11: find our own Rigidbody once.", "Lines 16–17: find the player once, not every frame.", "Line 22: guard against missing references.", "Lines 23–24: move toward the player using the cached references."] },
-        mistake: "Optimising without measuring. Hours spent speeding up code that wasn't slow help no one; the Profiler shows where time really goes."
+        mistake: "Optimizing without measuring. Hours spent speeding up code that wasn't slow help no one; the Profiler shows where time really goes."
       } },
     { title: "2D Games", chapter: "Beyond the basics · Unity shelf", line: ["Rigidbody2D rb2d;", "void OnTriggerEnter2D(Collider2D other) { }"],
       content: {
@@ -476,7 +476,7 @@ cbRegisterTrack("unity", function () {
     ["Canvas", "The GameObject that holds and draws UI elements."],
     ["Collider", "A component giving an object a physical shape for collisions."],
     ["Collision", "Information about a solid contact, passed to OnCollisionEnter."],
-    ["Component", "A piece of behaviour or data attached to a GameObject."],
+    ["Component", "A piece of behavior or data attached to a GameObject."],
     ["Console", "The window showing Debug.Log messages, warnings and errors."],
     ["Coroutine", "A method that can pause with yield and continue later."],
     ["CreateAssetMenu", "An attribute that adds a ScriptableObject to the Create menu."],
@@ -502,8 +502,8 @@ cbRegisterTrack("unity", function () {
     ["LateUpdate", "Called after every Update each frame — good for cameras."],
     ["Layer", "A category for GameObjects used by cameras and physics to include or ignore them."],
     ["Lerp", "Linear interpolation: the value a fraction of the way between two others."],
-    ["Material", "Describes how a surface looks: colour, texture, shininess."],
-    ["Mathf", "Unity's maths toolbox for single numbers: Clamp, Lerp, Abs, Sin…"],
+    ["Material", "Describes how a surface looks: color, texture, shininess."],
+    ["Mathf", "Unity's math toolbox for single numbers: Clamp, Lerp, Abs, Sin…"],
     ["Mesh", "The 3D shape of a model, made of triangles."],
     ["MonoBehaviour", "The base class for scripts attached to GameObjects."],
     ["normalized", "A vector with the same direction but length 1."],
@@ -574,7 +574,7 @@ cbRegisterTrack("unity", function () {
   ];
 
   /* Rounding the way Unity's Mathf.RoundToInt does: halves go to the
-     even neighbour (2.5 → 2, 3.5 → 4). */
+     even neighbor (2.5 → 2, 3.5 → 4). */
   function roundEven(x) { var f = Math.floor(x), d = x - f; return d > 0.5 ? f + 1 : d < 0.5 ? f : (f % 2 === 0 ? f : f + 1); }
   function f1(x) { return Math.fround(x).toFixed(1); }
   var projects = [
@@ -722,7 +722,7 @@ cbRegisterTrack("unity", function () {
     { name: "Physics Pushes", t: [21, 22, 23, 24, 3] },
     { name: "Collisions", t: [25, 26, 27, 28, 29] },
     { name: "Spawning", t: [30, 31, 29, 28, 39] },
-    { name: "Game Maths", t: [32, 33, 34, 35, 36] },
+    { name: "Game Math", t: [32, 33, 34, 35, 36] },
     { name: "Dice & Ranges", t: [37, 35, 36, 6, 11] },
     { name: "Coroutines", t: [38, 39, 40, 41, 42] },
     { name: "Timers", t: [43, 41, 42, 39, 10] },

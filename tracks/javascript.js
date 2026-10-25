@@ -54,7 +54,7 @@ cbRegisterTrack("javascript", function () {
       explain: "for…of walks through an array one item at a time, with no counter to manage. Each round, s holds the next score." },
     { name: "Object Block", short: "Object", chapter: "JS Ch. 8 · Objects", icon: "i-list", verb: "label",
       line: 'const hero = { name: "Ana", hp: 100 };',
-      explain: "An object groups labelled values called properties. Each property is a name, a colon and a value. Objects are how JavaScript describes things: a player, a product, a settings menu." },
+      explain: "An object groups labeled values called properties. Each property is a name, a colon and a value. Objects are how JavaScript describes things: a player, a product, a settings menu." },
     { name: "Property Block", short: "Property", chapter: "JS Ch. 8 · Objects", icon: "i-tag", verb: "reach",
       line: "hero.hp -= 10;",
       explain: "A dot reaches a property: hero.hp. You can read it, change it, or add brand-new properties the same way. hero[\"hp\"] does the same with the name in quotes." },
@@ -122,7 +122,7 @@ cbRegisterTrack("javascript", function () {
           "JavaScript has a handful of basic types: number (both 7 and 2.5), string (text in quotes), boolean (true or false), undefined (a variable that has no value yet) and null (a deliberate “nothing”). typeof tells you the type: typeof 42 is \"number\".",
           "Names can contain letters, digits, _ and $, but can't start with a digit, and capitals matter. JavaScript programmers write camelCase: highScore, playerName."],
         big: "let for values that change, const for values that don't, and every value has a type: number, string, boolean, undefined or null.",
-        caption: "Boxes labelled with let can be refilled; const boxes are sealed. Tap Play.",
+        caption: "Boxes labeled with let can be refilled; const boxes are sealed. Tap Play.",
         demo: ["let score = 0  → can change", "const LIVES = 3  → fixed", "typeof \"hi\" → \"string\"", "typeof true → \"boolean\""]
       },
       deep: {
@@ -212,13 +212,13 @@ cbRegisterTrack("javascript", function () {
           walk: ["Line 1: three scores.", "Line 2: push adds 20.", "Line 3: sort numerically, smallest first.", "Line 4: 10, 20, 30, 40.", "Line 5: the last item, 40.", "Line 6: 4 items.", "Line 7: true."] },
         mistake: "Sorting numbers without a compare function. [100, 25, 3].sort() gives [100, 25, 3] because \"100\" comes before \"25\" alphabetically. Always pass (a, b) => a - b for numbers."
       } },
-    { title: "Objects", chapter: "Labelled data · properties, methods, this", line: 'const hero = { name: "Ana", hp: 100 };',
+    { title: "Objects", chapter: "Labeled data · properties, methods, this", line: 'const hero = { name: "Ana", hp: 100 };',
       content: {
-        story: ["An object groups labelled values. Each property has a name (the key) and a value: { name: \"Ana\", hp: 100 }. Reach properties with a dot, hero.name, or with brackets and a string, hero[\"name\"] — brackets let you use a name stored in a variable.",
+        story: ["An object groups labeled values. Each property has a name (the key) and a value: { name: \"Ana\", hp: 100 }. Reach properties with a dot, hero.name, or with brackets and a string, hero[\"name\"] — brackets let you use a name stored in a variable.",
           "Properties can be added, changed and deleted at any time. A property whose value is a function is called a method, and inside a method, this means the object the method was called on.",
           "Object.keys(obj) gives the property names as an array, Object.values the values, and Object.entries both, as [name, value] pairs — perfect for looping."],
         big: "Objects are bags of named properties; methods are properties that are functions, and this is the object they belong to.",
-        caption: "A character card with labelled slots — name, hp, level — filled in one by one. Tap Play.",
+        caption: "A character card with labeled slots — name, hp, level — filled in one by one. Tap Play.",
         demo: ["hero.name → \"Ana\"", "hero.hp -= 10 → 90", "hero.level = 2 adds a slot", "Object.keys(hero) → name, hp, level"]
       },
       deep: {
@@ -266,7 +266,7 @@ cbRegisterTrack("javascript", function () {
           "The spread operator, three dots, copies items out: [...a, ...b] joins two arrays, and { ...settings, sound: false } copies an object while changing one property. Used in a parameter list, the same dots collect leftovers: function sum(...nums).",
           "Optional chaining (?.) reads deep properties safely: user?.address?.city gives undefined instead of crashing when something is missing. Nullish coalescing (??) supplies a default only for null or undefined."],
         big: "Destructuring unpacks, spread copies and joins, ?. reads safely and ?? fills in defaults.",
-        caption: "A gift box unpacked into labelled cups, and two trains joined into one. Tap Play.",
+        caption: "A gift box unpacked into labeled cups, and two trains joined into one. Tap Play.",
         demo: ["const { name, hp } = hero", "[...a, ...b] → one array", "user?.pet?.name → undefined", "count ?? 0 → 0 when count is null"]
       },
       deep: {
@@ -278,7 +278,7 @@ cbRegisterTrack("javascript", function () {
       } },
     { title: "Classes", chapter: "Blueprints · constructor, this, extends, super", line: "class Player { constructor(name) { this.name = name; } }",
       content: {
-        story: ["A class is a blueprint for objects that share the same shape and behaviour. constructor runs when you build one with new: const hero = new Player(\"Ana\"). Inside, this is the object being built.",
+        story: ["A class is a blueprint for objects that share the same shape and behavior. constructor runs when you build one with new: const hero = new Player(\"Ana\"). Inside, this is the object being built.",
           "Methods are written inside the class without the word function, and every object built from the class can use them. A static method belongs to the class itself, like Player.create().",
           "extends builds a child class on a parent: class Wizard extends Player. In the child's constructor, super(name) must run first to let the parent set up. A child can override a parent's method and still call it with super.method()."],
         big: "class describes a blueprint, new builds an object from it, and extends + super build families of classes.",
@@ -303,12 +303,12 @@ cbRegisterTrack("javascript", function () {
       },
       deep: {
         more: ["The browser's developer tools are the best debugger: set a breakpoint by clicking a line number, or write debugger; in your code, and the program pauses there so you can inspect every variable.",
-          "console has more than log: console.error and console.warn colour their messages, console.table prints arrays of objects as tables, and console.time / console.timeEnd measure how long something takes."],
+          "console has more than log: console.error and console.warn color their messages, console.table prints arrays of objects as tables, and console.time / console.timeEnd measure how long something takes."],
         ex: { code: "function parseAge(text) {\n  const age = Number(text);\n  if (Number.isNaN(age)) throw new Error(`\"${text}\" is not a number`);\n  return age;\n}\nfor (const answer of [\"12\", \"ten\"]) {\n  try {\n    console.log(\"Age:\", parseAge(answer));\n  } catch (err) {\n    console.log(\"Problem:\", err.message);\n  } finally {\n    console.log(\"checked\", answer);\n  }\n}",
           walk: ["Lines 1–5: a function that throws on bad input.", "Line 6: try two answers.", "Line 8: \"12\" works: Age: 12.", "Lines 9–10: \"ten\" throws, and catch prints the message.", "Lines 11–12: finally runs both times."] },
         mistake: "An empty catch block: catch (err) { }. The error disappears silently and the bug hides. At the very least, log it."
       } },
-    { title: "Modules and npm", chapter: "Organising code · import, export, packages", line: 'import { readFile } from "node:fs/promises";',
+    { title: "Modules and npm", chapter: "Organizing code · import, export, packages", line: 'import { readFile } from "node:fs/promises";',
       content: {
         story: ["As programs grow, they're split into modules — separate files that share only what they choose to. export marks what a file offers (export function damage() {…}), and import brings it into another file (import { damage } from \"./combat.js\").",
           "A file can also have one default export: export default class Game {…}, imported with any name you like: import Game from \"./game.js\".",
@@ -365,7 +365,7 @@ cbRegisterTrack("javascript", function () {
           "Map and Set are smarter collections. A Map stores key-value pairs where keys can be anything (not just strings) and remembers insertion order; a Set stores unique values and answers has() instantly.",
           "Intl formats things the way people expect in their language: new Intl.NumberFormat(\"en-US\", { style: \"currency\", currency: \"USD\" }).format(5) gives \"$5.00\"."],
         big: "Math, Date, JSON, Map, Set and Intl are built in — reach for them before writing your own or installing a package.",
-        caption: "A workshop wall of labelled toolboxes, each ready to use with no import at all. Tap Play.",
+        caption: "A workshop wall of labeled toolboxes, each ready to use with no import at all. Tap Play.",
         demo: ["Math.max(3, 9, 4) → 9", "new Set([1, 1, 2]).size → 2", "new Map([[\"a\", 1]]).get(\"a\") → 1", "JSON.stringify({ a: 1 }) → '{\"a\":1}'"]
       },
       deep: {
@@ -450,7 +450,7 @@ cbRegisterTrack("javascript", function () {
     ["boolean", "The type with two values: true and false."],
     ["callback", "A function passed to another function to be called later."],
     ["camelCase", "Naming style with capitals inside: highScore, playerName."],
-    ["class", "A blueprint for creating objects that share shape and behaviour."],
+    ["class", "A blueprint for creating objects that share shape and behavior."],
     ["closure", "A function that remembers the variables around where it was created."],
     ["console", "The developer's output window; console.log writes to it."],
     ["const", "Declares a name that can't be reassigned."],

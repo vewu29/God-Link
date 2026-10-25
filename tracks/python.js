@@ -161,7 +161,7 @@ cbRegisterTrack("python", function () {
         more: ["f-strings can do more than drop values in. {price:.2f} shows a float with exactly two decimals, {n:>5} pads a number to five characters wide, and {name!r} shows the value with its quotes — handy when debugging.",
           "Because strings never change in place, name.upper() on its own line does nothing you can see; you must keep the result: name = name.upper(). This is one of the most common surprises for new Python programmers."],
         ex: { code: "name = \"  ada lovelace  \"\nclean = name.strip().title()\nprint(clean)\nprint(len(clean))\nprint(clean[0:3])\nprint(f\"{clean} wrote the first program.\")\nprice = 4.5\nprint(f\"Price: ${price:.2f}\")",
-          walk: ["Line 1: a messy name with spaces at both ends.", "Line 2: strip() trims the spaces, then title() capitalises each word — methods can be chained.", "Line 3: prints Ada Lovelace.", "Line 4: 12 characters, including the space in the middle.", "Line 5: a slice of positions 0 to 2: Ada.", "Line 6: an f-string sentence with the name inside.", "Lines 7–8: :.2f formats 4.5 as 4.50."] },
+          walk: ["Line 1: a messy name with spaces at both ends.", "Line 2: strip() trims the spaces, then title() capitalizes each word — methods can be chained.", "Line 3: prints Ada Lovelace.", "Line 4: 12 characters, including the space in the middle.", "Line 5: a slice of positions 0 to 2: Ada.", "Line 6: an f-string sentence with the name inside.", "Lines 7–8: :.2f formats 4.5 as 4.50."] },
         mistake: "Mixing quote types: \"It's fine\" works, but 'It's fine' ends the string at the apostrophe and Python reports a SyntaxError. Use the other kind of quote on the outside, or escape the inner one: 'It\\'s fine'."
       } },
     { title: "Decisions", chapter: "Choosing · if, elif, else and comparisons", line: "if hp <= 0:",
@@ -200,7 +200,7 @@ cbRegisterTrack("python", function () {
       content: {
         story: ["A list holds many values in order: scores = [10, 20, 30]. Reach an item by position with square brackets, starting at 0: scores[0] is 10, and scores[-1] is the last item. len(scores) tells you how many there are.",
           "Lists change. append adds to the end, insert adds at a position, remove deletes a value, pop takes the last item out and hands it to you, and sort puts everything in order. scores[1] = 25 replaces an item.",
-          "A tuple is like a list that can't change, written with round brackets: point = (3, 4). Use tuples for small fixed groups — a coordinate, a date, an RGB colour — where changing one part by accident would be a bug."],
+          "A tuple is like a list that can't change, written with round brackets: point = (3, 4). Use tuples for small fixed groups — a coordinate, a date, an RGB color — where changing one part by accident would be a bug."],
         big: "Lists are ordered and changeable; tuples are ordered and fixed. Both count positions from 0.",
         caption: "A train of numbered carriages: append hooks a new one on the end. Tap Play to watch it grow.",
         demo: ["scores = [10, 20, 30]", "scores.append(40)", "scores → [10, 20, 30, 40]", "scores[0] → 10, scores[-1] → 40"]
@@ -214,23 +214,23 @@ cbRegisterTrack("python", function () {
       } },
     { title: "Dictionaries and Sets", chapter: "Looking things up · keys, values, items, sets", line: 'ages = {"Ana": 12, "Leo": 14}',
       content: {
-        story: ["A dictionary (dict) stores labelled values: each key points at a value. ages = {\"Ana\": 12, \"Leo\": 14}. You look up by key, not by position: ages[\"Leo\"] is 14. Adding is just as easy: ages[\"Mia\"] = 11.",
+        story: ["A dictionary (dict) stores labeled values: each key points at a value. ages = {\"Ana\": 12, \"Leo\": 14}. You look up by key, not by position: ages[\"Leo\"] is 14. Adding is just as easy: ages[\"Mia\"] = 11.",
           "Dictionaries are the Swiss Army knife of Python: a phone book, a game's inventory, a word counter, the settings of an app. Loop through them with for name, age in ages.items():, or check a key with if \"Ana\" in ages:.",
           "A set is a bag of unique values with no order: {\"red\", \"blue\"}. Adding something already inside does nothing. Sets are perfect for removing duplicates and for fast “have I seen this?” questions."],
         big: "A dictionary finds values by key; a set keeps each value once. Both answer “is this in here?” very fast.",
-        caption: "A wall of labelled drawers: open the one marked Leo and find 14 inside. Tap Play to look things up.",
+        caption: "A wall of labeled drawers: open the one marked Leo and find 14 inside. Tap Play to look things up.",
         demo: ["ages = {\"Ana\": 12, \"Leo\": 14}", "ages[\"Leo\"] → 14", "ages[\"Mia\"] = 11 adds a drawer", "\"Ana\" in ages → True"]
       },
       deep: {
         more: ["Looking up a key that isn't there stops with KeyError. ages.get(\"Zed\") returns None instead, and ages.get(\"Zed\", 0) returns 0 — a safe default. Counting things is a classic use: counts[word] = counts.get(word, 0) + 1.",
           "Since Python 3.7, dictionaries remember the order keys were added in, so looping over one gives keys in insertion order. Sets still have no order you can rely on."],
-        ex: { code: "inventory = {\"apples\": 3, \"pears\": 0}\ninventory[\"plums\"] = 5\ninventory[\"apples\"] += 2\nfor fruit, count in inventory.items():\n    print(f\"{fruit}: {count}\")\ncolours = {\"red\", \"blue\", \"red\"}\nprint(len(colours))",
+        ex: { code: "inventory = {\"apples\": 3, \"pears\": 0}\ninventory[\"plums\"] = 5\ninventory[\"apples\"] += 2\nfor fruit, count in inventory.items():\n    print(f\"{fruit}: {count}\")\ncolors = {\"red\", \"blue\", \"red\"}\nprint(len(colors))",
           walk: ["Line 1: a dictionary of fruit counts.", "Line 2: a new key, plums, with 5.", "Line 3: the apples count goes from 3 to 5.", "Lines 4–5: items() hands back each key and value together; three lines print.", "Line 6: the duplicate red is dropped.", "Line 7: so the set holds 2 values."] },
         mistake: "Using a list where a dictionary belongs: searching a list of [name, score] pairs by hand. If you keep asking “what is the X for this Y?”, Y should be a dictionary key."
       } },
     { title: "Functions", chapter: "Building machines · def, parameters, return, scope", line: "def damage(atk, guard):",
       content: {
-        story: ["A function is a named, reusable machine. You build it once with def, then call it whenever you need it by writing its name with brackets. Functions keep programs short and organised: each one does one job, with a clear name.",
+        story: ["A function is a named, reusable machine. You build it once with def, then call it whenever you need it by writing its name with brackets. Functions keep programs short and organized: each one does one job, with a clear name.",
           "Values go in through parameters — the names in the brackets. When you call damage(10, 3), atk becomes 10 and guard becomes 3 inside the function. return sends the answer back out, and the call is replaced by that answer.",
           "Variables made inside a function live only inside it; this is called scope. Two functions can each have a variable called total and never collide. To share results, return them rather than reaching outside."],
         big: "def builds a reusable machine: parameters carry values in, return carries the answer out.",
@@ -365,7 +365,7 @@ cbRegisterTrack("python", function () {
           "math does math beyond + and *, random picks and shuffles, datetime handles dates and times, pathlib works with files and folders, json and csv read and write data, and collections adds smarter containers like Counter and defaultdict.",
           "The official documentation at docs.python.org lists every module with examples. Learning a handful of them well is worth more than knowing hundreds of names."],
         big: "Check the standard library first: math, random, datetime, pathlib, json, csv and collections cover most daily jobs.",
-        caption: "A workshop wall of labelled toolboxes, each one ready to borrow with import. Tap Play.",
+        caption: "A workshop wall of labeled toolboxes, each one ready to borrow with import. Tap Play.",
         demo: ["math.sqrt(49) → 7.0", "random.choice([\"a\", \"b\"])", "date.today()", "Path(\"notes.txt\").exists()"]
       },
       deep: {
@@ -394,7 +394,7 @@ cbRegisterTrack("python", function () {
     { title: "Pythonic Patterns", chapter: "Beyond the basics · Python shelf", line: ["for i, item in enumerate(items):", "a, b = b, a"],
       content: {
         story: ["“Pythonic” code uses the language the way it was designed to be used: clear, short and readable. Python even has a poem about it — type import this to read The Zen of Python. “Readability counts” is one of its lines.",
-          "Some favourite patterns: swap two variables with a, b = b, a. Loop with enumerate instead of counting by hand. Use in to check membership. Use with for files. Use f-strings for text. Use comprehensions for simple transformations.",
+          "Some favorite patterns: swap two variables with a, b = b, a. Loop with enumerate instead of counting by hand. Use in to check membership. Use with for files. Use f-strings for text. Use comprehensions for simple transformations.",
           "Python style is written down in PEP 8: four spaces per indent, snake_case for names, CapWords for classes, spaces around operators, lines that aren't too long. Tools like black and ruff can tidy code automatically."],
         big: "Pythonic code is readable code: enumerate, unpacking, in, with, f-strings and comprehensions, written PEP 8 style.",
         caption: "Two versions of the same program side by side: the long way, and the Pythonic way. Tap Play.",
@@ -413,7 +413,7 @@ cbRegisterTrack("python", function () {
           "pathlib walks folders: Path(\".\").glob(\"*.txt\") finds every text file. shutil copies and moves files. datetime stamps things with dates, and time.sleep pauses between steps.",
           "Always test automation on a copy first, and print what the program WOULD do before letting it actually rename or delete anything. A loop that makes the same mistake 500 times is still a mistake."],
         big: "A few lines of Python can do hours of repetitive work — but test on copies and print before you change files.",
-        caption: "A little robot sorts a messy pile of files into neat labelled folders. Tap Play.",
+        caption: "A little robot sorts a messy pile of files into neat labeled folders. Tap Play.",
         demo: ["for path in Path(\".\").glob(\"*.txt\"):", "    print(\"would move\", path.name)", "…check the list first…", "then move them for real"]
       },
       deep: {
@@ -458,7 +458,7 @@ cbRegisterTrack("python", function () {
     ["CSV", "Comma-separated values: a plain-text spreadsheet format read by the csv module."],
     ["dataclass", "A class whose __init__ and other basics are written for you by @dataclass."],
     ["debugger", "A tool that pauses a program so you can inspect it; breakpoint() opens one."],
-    ["decorator", "A line starting with @ above a function or class that wraps it with extra behaviour."],
+    ["decorator", "A line starting with @ above a function or class that wraps it with extra behavior."],
     ["def", "The keyword that defines a new function."],
     ["dict", "A dictionary: a collection of key-value pairs, looked up by key."],
     ["docstring", "A string on the first line of a function or class that explains it."],
@@ -737,7 +737,7 @@ cbRegisterTrack("python", function () {
     { name: "Counting Loops", t: [22, 23, 24, 8, 9] },
     { name: "Walking Lists", t: [25, 26, 27, 28, 63] },
     { name: "List Detective", t: [29, 30, 31, 32, 33] },
-    { name: "Labelled Drawers", t: [34, 35, 36, 37, 6] },
+    { name: "Labeled Drawers", t: [34, 35, 36, 37, 6] },
     { name: "Machine Builders", t: [38, 39, 40, 41, 42] },
     { name: "Calling Machines", t: [42, 43, 41, 39, 62] },
     { name: "Blueprints", t: [44, 46, 47, 48, 49] },

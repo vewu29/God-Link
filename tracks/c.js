@@ -127,7 +127,7 @@ cbRegisterTrack("c", function () {
           "Give every variable a value when you make it: int score = 0;. A variable that's never set holds whatever leftover bits were in that memory — reading it is a classic C bug.",
           "const makes a value read-only: const int MAX_LIVES = 3;. Each type has a size in bytes; sizeof(int) is usually 4, which holds numbers up to about 2.1 billion."],
         big: "Every C variable has a type stated up front; set it when you make it, and use const for values that must not change.",
-        caption: "Four labelled boxes in a row of memory, each a different size. Tap Play.",
+        caption: "Four labeled boxes in a row of memory, each a different size. Tap Play.",
         demo: ["int score = 0", "double price = 4.99", "char grade = 'A'", "bool alive = true"]
       },
       deep: {
@@ -139,15 +139,15 @@ cbRegisterTrack("c", function () {
       } },
     { title: "Operators and Math", chapter: "Calculating · + - * / %, casts, math.h", line: "double avg = (double)total / count;",
       content: {
-        story: ["C does maths with + - * / and % (the remainder). Dividing two ints gives an int, rounded toward zero: 7 / 2 is 3, and 7 % 2 is 1. If either side is a double, the answer is a double: 7.0 / 2 is 3.5.",
+        story: ["C does math with + - * / and % (the remainder). Dividing two ints gives an int, rounded toward zero: 7 / 2 is 3, and 7 % 2 is 1. If either side is a double, the answer is a double: 7.0 / 2 is 3.5.",
           "A cast converts a value: (double)total turns an int into a double for one calculation. Shortcuts change variables in place: hp -= 30, score *= 2, lives++ and lives--.",
-          "math.h has sqrt, pow, floor, ceil and fabs. On Linux, link the maths library by adding -lm when compiling."],
+          "math.h has sqrt, pow, floor, ceil and fabs. On Linux, link the math library by adding -lm when compiling."],
         big: "int division drops the fraction, % gives the remainder, and a cast like (double) keeps the decimals.",
         caption: "Two ints divide with a remainder left over, then again with a cast. Tap Play.",
         demo: ["7 / 2 → 3", "7 % 2 → 1", "(double)7 / 2 → 3.5", "sqrt(16.0) → 4"]
       },
       deep: {
-        more: ["Signed integer overflow is undefined behaviour in C: if an int goes past its maximum, the program is no longer guaranteed to do anything sensible. Use a bigger type, or check before you add.",
+        more: ["Signed integer overflow is undefined behavior in C: if an int goes past its maximum, the program is no longer guaranteed to do anything sensible. Use a bigger type, or check before you add.",
           "x++ and ++x both add one; they differ only when used inside a bigger expression. Keep them on their own line and the difference never matters."],
         ex: { code: src(["#include <math.h>", "#include <stdio.h>", "", "int main(void) {", "    printf(\"%d\\n\", 7 / 2);", "    printf(\"%d\\n\", 7 % 2);", "    printf(\"%.1f\\n\", 7.0 / 2);", "    int coins = 10;", "    int players = 4;", "    printf(\"%.2f\\n\", (double)coins / players);", "    printf(\"%.0f %.0f\\n\", sqrt(16.0), pow(2, 10));", "    int hp = 100;", "    hp -= 30;", "    hp++;", "    printf(\"%d\\n\", hp);", "    return 0;", "}"]),
           walk: ["Line 5: int division: 3.", "Line 6: the remainder: 1.", "Line 7: a double on one side: 3.5.", "Lines 8–10: cast first for 2.50.", "Line 11: 4 1024 — %.0f shows no decimals.", "Lines 12–15: 100 − 30 + 1 = 71."] },
@@ -255,7 +255,7 @@ cbRegisterTrack("c", function () {
           "* follows a pointer to the value it points at. *ptr = 42; changes score itself. That's how a function can change its caller's variables: pass &score, and the function writes through *.",
           "NULL is the pointer that points nowhere. Following a NULL pointer crashes the program (a segmentation fault), so check before using any pointer that might be NULL."],
         big: "& takes an address, * follows it, and passing addresses lets functions change their caller's variables.",
-        caption: "A signpost labelled ptr points at the box score; change through the sign and the box changes. Tap Play.",
+        caption: "A signpost labeled ptr points at the box score; change through the sign and the box changes. Tap Play.",
         demo: ["int score = 10;", "int *ptr = &score;", "*ptr = 42;", "score → 42"]
       },
       deep: {
@@ -284,10 +284,10 @@ cbRegisterTrack("c", function () {
     { title: "Structs", chapter: "Bundles · struct, typedef, ., ->", line: "struct point { int x; int y; };",
       content: {
         story: ["A struct groups related values: struct hero { char name[16]; int hp; int level; };. Make one with values in braces, and reach a field with a dot: ana.hp.",
-          "Designated initialisers name the fields: struct hero ana = {.name = \"Ana\", .hp = 100};. Any field left out becomes 0.",
+          "Designated initializers name the fields: struct hero ana = {.name = \"Ana\", .hp = 100};. Any field left out becomes 0.",
           "Functions usually take a pointer to a struct, so they can change it without copying it. With a pointer, use the arrow: h->hp -= 10; means (*h).hp -= 10. typedef gives a type a shorter name."],
         big: "Structs bundle fields; . reaches a field, -> reaches it through a pointer, and typedef shortens the type's name.",
-        caption: "A blueprint labelled hero fills in Ana's name, health and level. Tap Play.",
+        caption: "A blueprint labeled hero fills in Ana's name, health and level. Tap Play.",
         demo: ["struct hero ana = { … }", "ana.hp → 100", "hurt(&ana, 30)", "h->hp → 70"]
       },
       deep: {
@@ -319,7 +319,7 @@ cbRegisterTrack("c", function () {
           "Lines starting with # are handled by the preprocessor before compiling. #include pastes in a file, and #define MAX_PLAYERS 4 replaces the word MAX_PLAYERS with 4 everywhere after it.",
           "#define is simple text replacement, so it has no type and ignores scope. Modern C prefers enum or const variables where they work, and keeps #define for things they can't do."],
         big: "enum names a set of numbers, #define replaces text before compiling, and typedef names a type.",
-        caption: "Traffic-light colours get names; the preprocessor swaps names for numbers before the compiler sees them. Tap Play.",
+        caption: "Traffic-light colors get names; the preprocessor swaps names for numbers before the compiler sees them. Tap Play.",
         demo: ["enum light { RED, AMBER, GREEN }", "RED → 0, GREEN → 2", "#define MAX_PLAYERS 4", "MAX_PLAYERS → 4"]
       },
       deep: {
@@ -366,11 +366,11 @@ cbRegisterTrack("c", function () {
   var shelves = [
     { title: "Standard Library Field Guide", chapter: "Beyond the basics · C shelf", line: ["#include <stdlib.h>", "#include <string.h>"],
       content: {
-        story: ["C's standard library is small but everywhere. stdio.h handles input, output and files; stdlib.h has memory (malloc, free), number conversion (strtol, atoi), random numbers (rand) and sorting (qsort); string.h has string and memory tools; ctype.h classifies characters; math.h does maths; time.h tells the time.",
+        story: ["C's standard library is small but everywhere. stdio.h handles input, output and files; stdlib.h has memory (malloc, free), number conversion (strtol, atoi), random numbers (rand) and sorting (qsort); string.h has string and memory tools; ctype.h classifies characters; math.h does math; time.h tells the time.",
           "qsort sorts any array: you give it the array, the count, the item size and a comparison function. strtol converts text to a number and tells you where it stopped, so you can spot bad input.",
           "Read the manual pages: man 3 printf in a terminal, or cppreference.com in a browser."],
         big: "stdio, stdlib, string, ctype, math and time cover most needs — qsort sorts and strtol converts safely.",
-        caption: "A workshop wall of labelled toolboxes, each one #include away. Tap Play.",
+        caption: "A workshop wall of labeled toolboxes, each one #include away. Tap Play.",
         demo: ["qsort(a, n, sizeof a[0], cmp)", "strtol(\"42abc\", &end, 10)", "isdigit('7')", "time(NULL)"]
       },
       deep: {
@@ -390,7 +390,7 @@ cbRegisterTrack("c", function () {
         demo: ["Segmentation fault", "$ gcc -g -fsanitize=address …", "heap-buffer-overflow", "at main.c:12"]
       },
       deep: {
-        more: ["Undefined behaviour — reading uninitialised memory, signed overflow, going out of bounds — means the C standard promises nothing. The program might work today and fail tomorrow with a different compiler.",
+        more: ["Undefined behavior — reading uninitialised memory, signed overflow, going out of bounds — means the C standard promises nothing. The program might work today and fail tomorrow with a different compiler.",
           "assert(condition) from assert.h stops the program with the file and line when a condition you believe is always true turns out false."],
         ex: { code: src(["#include <assert.h>", "#include <stdio.h>", "", "int safe_get(const int *items, int n, int i, int fallback) {", "    if (i < 0 || i >= n) {", "        return fallback;", "    }", "    return items[i];", "}", "", "int main(void) {", "    int items[3] = {10, 20, 30};", "    printf(\"%d %d\\n\", safe_get(items, 3, 1, -1), safe_get(items, 3, 5, -1));", "    int total = 0;", "    for (int i = 0; i < 3; i++) {", "        total += items[i];", "    }", "    assert(total == 60);", "    printf(\"total checks out: %d\\n\", total);", "    return 0;", "}"]),
           walk: ["Lines 4–9: check the index before reading.", "Line 13: 20 -1 — the bad index gets the fallback.", "Lines 14–18: assert would stop the program if total weren't 60.", "Line 19: total checks out: 60."] },
@@ -423,7 +423,7 @@ cbRegisterTrack("c", function () {
       },
       deep: {
         more: ["Hexadecimal is a compact way to write bits: each hex digit is exactly 4 bits, so 0xFF is 11111111. printf's %x prints hex.",
-          "Use unsigned types for bit work: shifting signed numbers into the sign bit is undefined behaviour."],
+          "Use unsigned types for bit work: shifting signed numbers into the sign bit is undefined behavior."],
         ex: { code: src(H.concat(["enum { FLAG_SHIELD = 1u << 0, FLAG_SPEED = 1u << 1, FLAG_MAGIC = 1u << 2 };", "", "void print_bits(unsigned value) {", "    for (int bit = 7; bit >= 0; bit--) {", "        putchar((value >> bit) & 1u ? '1' : '0');", "    }", "    putchar('\\n');", "}", "", "int main(void) {", "    print_bits(42);", "    unsigned flags = 0;", "    flags |= FLAG_SHIELD | FLAG_MAGIC;", "    printf(\"shield %d, speed %d\\n\", (flags & FLAG_SHIELD) != 0, (flags & FLAG_SPEED) != 0);", "    flags &= ~FLAG_SHIELD;", "    print_bits(flags);", "    printf(\"%x %u %u\\n\", 255u, 5u << 2, 0xF0u >> 4);", "    return 0;", "}"])),
           walk: ["Line 3: each flag is one bit.", "Lines 5–10: print 8 bits, highest first.", "Line 13: 00101010.", "Lines 14–16: turn on two flags: shield 1, speed 0.", "Lines 17–18: turn shield off: 00000100.", "Line 19: ff 20 15."] },
         mistake: "Mixing up & with && (and | with ||). flags && FLAG_SPEED is true whenever both are non-zero; flags & FLAG_SPEED tests the actual bit."
@@ -503,7 +503,7 @@ cbRegisterTrack("c", function () {
     ["qsort", "The standard library's general sorting function."],
     ["realloc", "Grows or shrinks a malloc'd block."],
     ["return", "Ends a function and hands back a value."],
-    ["sanitizer", "A compiler option that catches memory and undefined-behaviour bugs while running."],
+    ["sanitizer", "A compiler option that catches memory and undefined-behavior bugs while running."],
     ["scanf", "Reads formatted input; needs addresses with &."],
     ["scope", "Where a name is visible, usually between braces."],
     ["segmentation fault", "A crash from touching memory the program doesn't own."],
@@ -521,7 +521,7 @@ cbRegisterTrack("c", function () {
     ["struct", "A type that groups named fields."],
     ["switch", "Jumps to the case matching an integer value."],
     ["typedef", "Gives a type a new name."],
-    ["undefined behaviour", "Code the C standard makes no promises about, like reading out of bounds."],
+    ["undefined behavior", "Code the C standard makes no promises about, like reading out of bounds."],
     ["unsigned", "A whole-number type that can't be negative."],
     ["variable", "A named piece of memory with a type."],
     ["void", "“Nothing”: no return value, or no parameters."],
@@ -541,7 +541,7 @@ cbRegisterTrack("c", function () {
     { name: "strlen / strcmp", head: "string.h", what: "Measure and compare strings.", ex: "strcmp(a, b) == 0" },
     { name: "memcpy / memset", head: "string.h", what: "Copy or fill blocks of memory.", ex: "memset(grid, 0, sizeof grid);" },
     { name: "toupper / isdigit", head: "ctype.h", what: "Change or test single characters.", ex: "toupper((unsigned char)c)" },
-    { name: "sqrt / pow / fabs", head: "math.h", what: "Maths functions on doubles (link with -lm).", ex: "sqrt(2.0)" },
+    { name: "sqrt / pow / fabs", head: "math.h", what: "Math functions on doubles (link with -lm).", ex: "sqrt(2.0)" },
     { name: "time", head: "time.h", what: "The current time, in seconds since 1970.", ex: "srand((unsigned)time(NULL));" },
     { name: "bool", head: "stdbool.h", what: "true and false.", ex: "bool alive = true;" },
     { name: "assert", head: "assert.h", what: "Stop with file and line if a condition is false.", ex: "assert(count >= 0);" }
@@ -724,7 +724,7 @@ cbRegisterTrack("c", function () {
     { line: "int *p = {arr};", why: "An array's name is a pointer to its first item." },
     { line: "int {v} = *(p + {d});", why: "Pointer arithmetic moves by whole items." },
     { line: "struct {c} { int {v}; char {sv}[{n}]; };", why: "A struct groups fields; mind the final semicolon." },
-    { line: "struct {c} {o} = {.{v} = {n}};", why: "A designated initialiser names the field." },
+    { line: "struct {c} {o} = {.{v} = {n}};", why: "A designated initializer names the field." },
     { line: "{o}.{v} = {n};", why: "The dot reaches a field." },
     { line: "{o}->{v} += {d};", why: "The arrow reaches a field through a pointer." },
     { line: "typedef struct {c} {c};", why: "typedef gives the type a short name." },
@@ -760,7 +760,7 @@ cbRegisterTrack("c", function () {
     { name: "Memory", t: [52, 53, 54, 55, 30] },
     { name: "Files", t: [56, 57, 58, 2, 32] },
     { name: "Enums & Bits", t: [59, 60, 61, 62, 9] },
-    { name: "Random & Maths", t: [63, 64, 16, 17, 21] },
+    { name: "Random & Math", t: [63, 64, 16, 17, 21] },
     { name: "Mixed Practice", t: [22, 31, 43, 48, 52] },
     { name: "C Masters", t: [43, 50, 55, 61, 35] }
   ];

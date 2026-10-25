@@ -57,7 +57,7 @@ cbRegisterTrack("unreal", function () {
     { name: "Rotation Block", short: "Rotate", chapter: "Unreal Ch. 5 · Moving Actors", icon: "i-rotate", verb: "spin",
       line: "AddActorLocalRotation(FRotator(0, 90 * DeltaTime, 0));",
       explain: "FRotator is Pitch, Yaw, Roll in degrees. Yaw turns left and right, so 90 × DeltaTime degrees each frame spins the Actor a quarter turn every second." },
-    { name: "Direction Block", short: "Direction", chapter: "Unreal Ch. 13 · Containers and Maths", icon: "i-point", verb: "aim",
+    { name: "Direction Block", short: "Direction", chapter: "Unreal Ch. 13 · Containers and Math", icon: "i-point", verb: "aim",
       line: "FVector Dir = (Target - GetActorLocation()).GetSafeNormal();",
       explain: "Target minus where I am is the arrow toward the target. GetSafeNormal shrinks it to length 1 — and, unlike a plain normalize, safely handles a zero-length arrow." },
     { name: "Component Block", short: "Subobject", chapter: "Unreal Ch. 6 · Components", icon: "i-plus-square", verb: "build",
@@ -84,16 +84,16 @@ cbRegisterTrack("unreal", function () {
     { name: "Overlap Block", short: "Overlap", chapter: "Unreal Ch. 9 · Collisions", icon: "i-eye", verb: "listen",
       line: "Box->OnComponentBeginOverlap.AddDynamic(this, &ADoor::OnOverlap);",
       explain: "AddDynamic connects a component's overlap event to your function, so OnOverlap runs when something walks into the box. The function must be marked UFUNCTION()." },
-    { name: "Clamp Block", short: "Clamp", chapter: "Unreal Ch. 13 · Containers and Maths", icon: "i-gauge", verb: "limit",
+    { name: "Clamp Block", short: "Clamp", chapter: "Unreal Ch. 13 · Containers and Math", icon: "i-gauge", verb: "limit",
       line: "Health = FMath::Clamp(Health - Damage, 0.f, 100.f);",
-      explain: "FMath is Unreal's maths toolbox. Clamp keeps Health between 0 and 100, however big the hit." },
-    { name: "TArray Block", short: "TArray", chapter: "Unreal Ch. 13 · Containers and Maths", icon: "i-boxes", verb: "list",
+      explain: "FMath is Unreal's math toolbox. Clamp keeps Health between 0 and 100, however big the hit." },
+    { name: "TArray Block", short: "TArray", chapter: "Unreal Ch. 13 · Containers and Math", icon: "i-boxes", verb: "list",
       line: "TArray<int32> Scores;",
       explain: "TArray is Unreal's growable list — like std::vector, but understood by the editor, Blueprints and saving. The type in angle brackets says what it holds." },
-    { name: "Add Block", short: "Add", chapter: "Unreal Ch. 13 · Containers and Maths", icon: "i-plus-square", verb: "add",
+    { name: "Add Block", short: "Add", chapter: "Unreal Ch. 13 · Containers and Math", icon: "i-plus-square", verb: "add",
       line: "Scores.Add(10);",
       explain: "Add puts an item on the end of a TArray. Num() tells you how many items there are, and Scores[0] reaches the first one." },
-    { name: "Loop Block", short: "Loop", chapter: "Unreal Ch. 13 · Containers and Maths", icon: "i-rows", verb: "walk",
+    { name: "Loop Block", short: "Loop", chapter: "Unreal Ch. 13 · Containers and Math", icon: "i-rows", verb: "walk",
       line: "for (int32 i = 0; i < Scores.Num(); ++i) { }",
       explain: "A counting loop over a TArray uses Num() for the size. When you don't need the position, the shorter for (int32 S : Scores) walks the items directly." },
     { name: "Bind Input Block", short: "BindAction", chapter: "Unreal Ch. 7 · Player Input", icon: "i-keyboard", verb: "bind",
@@ -113,7 +113,7 @@ cbRegisterTrack("unreal", function () {
       content: {
         story: ["Unreal Engine is a game engine from Epic Games, famous for realistic graphics and used for games, films and virtual sets. It's free to download through the Epic Games Launcher, with royalties only owed on very successful commercial games.",
           "A game world in Unreal is a level (also called a map). Everything placed in a level is an Actor — the player, lights, a door, a pickup. Actors are built from components: a mesh to see, a collision shape to touch, a sound to hear.",
-          "You can program Unreal two ways. Blueprints are visual scripts: boxes joined by wires, made right in the editor. C++ is typed code, faster and more powerful for big systems. Most teams use both: C++ builds the core pieces, and Blueprints customise and connect them."],
+          "You can program Unreal two ways. Blueprints are visual scripts: boxes joined by wires, made right in the editor. C++ is typed code, faster and more powerful for big systems. Most teams use both: C++ builds the core pieces, and Blueprints customize and connect them."],
         big: "Levels hold Actors, Actors are built from components, and gameplay is written in Blueprints, C++, or — usually — both together.",
         caption: "An empty level fills up with Actors: a floor, a light, a player and a glowing coin. Tap Play.",
         demo: ["New level (map)", "+ Floor Actor (a mesh)", "+ Light Actor", "+ ACoin, written in C++"]
@@ -136,7 +136,7 @@ cbRegisterTrack("unreal", function () {
         demo: ["ACoin.h: class ACoin : public AActor", "ACoin.cpp: void ACoin::BeginPlay()", "Compile (Live Coding)", "Output Log: LogTemp: Warning: Hello"]
       },
       deep: {
-        more: ["UE_LOG's verbosity changes the colour and filtering: Log is plain, Display always shows, Warning is yellow, Error is red. Make your own category with DEFINE_LOG_CATEGORY_STATIC(LogCoins, Log, All); to filter your messages.",
+        more: ["UE_LOG's verbosity changes the color and filtering: Log is plain, Display always shows, Warning is yellow, Error is red. Make your own category with DEFINE_LOG_CATEGORY_STATIC(LogCoins, Log, All); to filter your messages.",
           "Live Coding can't handle every change — adding new UPROPERTYs or classes sometimes needs a full rebuild with the editor closed. If things act strangely after a change, close the editor and build from your IDE."],
         ex: { code: ue("FrameCounter", "#pragma once\n\n#include \"CoreMinimal.h\"\n#include \"GameFramework/Actor.h\"\n#include \"FrameCounter.generated.h\"\n\nUCLASS()\nclass AFrameCounter : public AActor\n{\n    GENERATED_BODY()\n\npublic:\n    AFrameCounter();\n    virtual void Tick(float DeltaTime) override;\n\nprotected:\n    virtual void BeginPlay() override;\n\nprivate:\n    int32 Frames = 0;\n};",
           "#include \"FrameCounter.h\"\n\nAFrameCounter::AFrameCounter()\n{\n    PrimaryActorTick.bCanEverTick = true;\n}\n\nvoid AFrameCounter::BeginPlay()\n{\n    Super::BeginPlay();\n    UE_LOG(LogTemp, Display, TEXT(\"Counting frames...\"));\n}\n\nvoid AFrameCounter::Tick(float DeltaTime)\n{\n    Super::Tick(DeltaTime);\n    Frames++;\n    if (Frames % 60 == 0)\n    {\n        UE_LOG(LogTemp, Display, TEXT(\"%d frames so far\"), Frames);\n    }\n}"),
@@ -198,7 +198,7 @@ cbRegisterTrack("unreal", function () {
       content: {
         story: ["An Actor is a container; components are its parts. A Static Mesh Component draws a 3D model, a Box Component is an invisible collision shape, a Point Light glows, an Audio Component plays sound, a Camera Component sees.",
           "Components are created in the constructor with CreateDefaultSubobject<Type>(TEXT(\"Name\")) and stored in UPROPERTY pointers. One of them becomes the RootComponent — the Actor's anchor in the world — and others attach to it with SetupAttachment(RootComponent).",
-          "You can also write your own components by inheriting from UActorComponent (behaviour, like a Health component) or USceneComponent (behaviour with a position). Reusable components keep Actors small and tidy."],
+          "You can also write your own components by inheriting from UActorComponent (behavior, like a Health component) or USceneComponent (behavior with a position). Reusable components keep Actors small and tidy."],
         big: "Build an Actor from components in its constructor: create them, pick a root, attach the rest.",
         caption: "A pickup is assembled: a box to touch, a mesh to see, a light to glow. Tap Play.",
         demo: ["Box = CreateDefaultSubobject<UBoxComponent>", "RootComponent = Box", "Mesh->SetupAttachment(Box)", "Light->SetupAttachment(Box)"]
@@ -301,7 +301,7 @@ cbRegisterTrack("unreal", function () {
         story: ["The usual Unreal workflow: write the core of a class in C++, then make a Blueprint class that inherits from it. The Blueprint adds the mesh, sounds, effects and tuning — designers work there without touching code.",
           "UFUNCTION(BlueprintCallable) lets Blueprints call your C++ function. UFUNCTION(BlueprintImplementableEvent) declares an event that C++ triggers and the Blueprint implements — perfect for “play the hit effect” moments.",
           "Properties marked BlueprintReadWrite or BlueprintReadOnly appear in Blueprint graphs. Keep heavy logic in C++, and let Blueprints handle the visuals and wiring."],
-        big: "C++ builds the parts, Blueprint children customise them; BlueprintCallable and BlueprintImplementableEvent are the bridges.",
+        big: "C++ builds the parts, Blueprint children customize them; BlueprintCallable and BlueprintImplementableEvent are the bridges.",
         caption: "A C++ class on the left, its Blueprint child on the right, wires running between them. Tap Play.",
         demo: ["C++: AEnemy with TakeHit()", "UFUNCTION(BlueprintCallable) TakeHit", "Blueprint BP_Goblin : AEnemy", "BP adds mesh, sounds, OnHit effect"]
       },
@@ -313,11 +313,11 @@ cbRegisterTrack("unreal", function () {
           walk: ["Blueprintable lets designers make Blueprint children.", "Health is readable in Blueprints, editable in the Details panel.", "TakeHit can be called from Blueprint graphs.", "OnHitEffect has no C++ body — each Blueprint child draws its own effect."] },
         mistake: "Writing a body for a BlueprintImplementableEvent in the .cpp. It's implemented in Blueprints only; a C++ body causes a duplicate-definition error."
       } },
-    { title: "Containers and Maths", chapter: "TArray, TMap, TSet, FMath", line: "TArray<int32> Scores;",
+    { title: "Containers and Math", chapter: "TArray, TMap, TSet, FMath", line: "TArray<int32> Scores;",
       content: {
         story: ["Unreal has its own containers that the editor, Blueprints and saving understand. TArray<T> is an ordered, growable list: Add, Num, Remove, Contains, and [i] to reach an item.",
           "TMap<Key, Value> stores pairs looked up by key — scores by player name, prices by item. Find returns a pointer to the value, or nullptr if the key isn't there. TSet<T> keeps unique values for fast “is it in here?” checks.",
-          "FMath holds the maths: Clamp, Max, Min, Abs, RandRange (whole numbers, both ends included), FRandRange (decimals), Lerp, FInterpTo, RoundToInt and Sqrt."],
+          "FMath holds the math: Clamp, Max, Min, Abs, RandRange (whole numbers, both ends included), FRandRange (decimals), Lerp, FInterpTo, RoundToInt and Sqrt."],
         big: "TArray lists, TMap looks up by key, TSet keeps unique values, and FMath does the sums.",
         caption: "A row of score boxes (TArray), a wall of named drawers (TMap) and a dice cup (FMath). Tap Play.",
         demo: ["TArray<int32> Scores; Scores.Add(10)", "Scores.Num() → 1", "TMap<FString, int32> Ages; Ages.Add(\"Ana\", 12)", "FMath::RandRange(1, 6) → a die roll"]
@@ -471,7 +471,7 @@ cbRegisterTrack("unreal", function () {
       } },
     { title: "Performance Habits", chapter: "Beyond the basics · Unreal shelf", line: ["stat unit", "PrimaryActorTick.TickInterval = 0.2f;"],
       content: {
-        story: ["Measure before you optimise. stat fps and stat unit (typed in the console with the ~ key) show frame rate and whether the game thread, drawing or GPU is the slow part. Unreal Insights records detailed timelines.",
+        story: ["Measure before you optimize. stat fps and stat unit (typed in the console with the ~ key) show frame rate and whether the game thread, drawing or GPU is the slow part. Unreal Insights records detailed timelines.",
           "Common game-thread fixes: switch off Tick where it isn't needed, tick less often with PrimaryActorTick.TickInterval, replace polling with timers and events, and avoid searching for Actors every frame.",
           "Common rendering fixes: fewer, simpler materials, Level of Detail meshes, sensible shadow settings, and Nanite and virtual textures where they fit your platform."],
         big: "Measure with stat unit and Insights, then cut wasted Ticks, searches and heavy assets.",
@@ -483,14 +483,14 @@ cbRegisterTrack("unreal", function () {
           "Significance and LOD systems let far-away Actors do less work, so crowds and big worlds stay fast."],
         ex: { code: ue("LazyThinker", "#pragma once\n\n#include \"CoreMinimal.h\"\n#include \"GameFramework/Actor.h\"\n#include \"LazyThinker.generated.h\"\n\nUCLASS()\nclass ALazyThinker : public AActor\n{\n    GENERATED_BODY()\n\npublic:\n    ALazyThinker();\n    virtual void Tick(float DeltaTime) override;\n\nprivate:\n    int32 Thoughts = 0;\n};",
           "#include \"LazyThinker.h\"\n\nALazyThinker::ALazyThinker()\n{\n    PrimaryActorTick.bCanEverTick = true;\n    PrimaryActorTick.TickInterval = 0.2f;\n}\n\nvoid ALazyThinker::Tick(float DeltaTime)\n{\n    Super::Tick(DeltaTime);\n    Thoughts++;\n}"),
-          walk: ["Tick is on, but only five times a second.", "DeltaTime is then about 0.2 seconds, so per-second maths still works."] },
+          walk: ["Tick is on, but only five times a second.", "DeltaTime is then about 0.2 seconds, so per-second math still works."] },
         mistake: "Guessing where the slowness is. Hours spent speeding up code that wasn't slow help no one; stat unit and Insights show the truth in seconds."
       } }
   ];
 
   var glossary = [
     ["Actor", "Anything placed or spawned in a level; classes start with A."],
-    ["ActorComponent", "A reusable piece of behaviour attached to an Actor."],
+    ["ActorComponent", "A reusable piece of behavior attached to an Actor."],
     ["AddDynamic", "Connects a dynamic delegate (like an overlap event) to a UFUNCTION."],
     ["AI Controller", "A Controller that drives a Pawn with computer logic."],
     ["Asset", "Any file in the Content Browser: meshes, materials, sounds, Blueprints."],
@@ -514,7 +514,7 @@ cbRegisterTrack("unreal", function () {
     ["Enhanced Input", "UE5's input system of Input Actions and Mapping Contexts."],
     ["EndPlay", "Runs when an Actor leaves play: destroyed, level change or quit."],
     ["FName", "A fast, unchangeable name used for tags, sockets and levels."],
-    ["FMath", "Unreal's maths toolbox: Clamp, Lerp, RandRange, InterpTo…"],
+    ["FMath", "Unreal's math toolbox: Clamp, Lerp, RandRange, InterpTo…"],
     ["FRotator", "A rotation as Pitch, Yaw and Roll in degrees."],
     ["FString", "Unreal's everyday changeable text type."],
     ["FText", "Text the player reads, ready for translation."],
@@ -596,7 +596,7 @@ cbRegisterTrack("unreal", function () {
     { title: "Logging Card", body: "Seeing what your code does.", code: "UE_LOG(LogTemp, Log, TEXT(\"plain\"));\nUE_LOG(LogTemp, Warning, TEXT(\"%d coins\"), Coins);\nUE_LOG(LogTemp, Error, TEXT(\"%s\"), *Name);\nGEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT(\"Hi\"));" },
     { title: "Overlap Card", body: "Noticing who walked in.", code: "Box->OnComponentBeginOverlap.AddDynamic(this, &AMyActor::OnOverlap);\n\nUFUNCTION()\nvoid OnOverlap(UPrimitiveComponent* Comp, AActor* Other,\n    UPrimitiveComponent* OtherComp, int32 Index,\n    bool bSweep, const FHitResult& Hit);" },
     { title: "Spawn & Timer Card", body: "Making things and scheduling them.", code: "UPROPERTY(EditAnywhere) TSubclassOf<AActor> ShotClass;\nAActor* Shot = GetWorld()->SpawnActor<AActor>(ShotClass, Loc, Rot);\nShot->SetLifeSpan(3.f);\nGetWorldTimerManager().SetTimer(Handle, this, &AMyActor::Fire, 1.f, true);" },
-    { title: "Containers Card", body: "Lists, maps and maths.", code: "TArray<int32> Scores;\nScores.Add(10);\nScores.Num();\nTMap<FString, int32> Gold;\nGold.Add(TEXT(\"Ana\"), 50);\nint32 Roll = FMath::RandRange(1, 6);" }
+    { title: "Containers Card", body: "Lists, maps and math.", code: "TArray<int32> Scores;\nScores.Add(10);\nScores.Num();\nTMap<FString, int32> Gold;\nGold.Add(TEXT(\"Ana\"), 50);\nint32 Roll = FMath::RandRange(1, 6);" }
   ];
 
   /* printf-style fixed decimals the way C prints them: exact ties go to

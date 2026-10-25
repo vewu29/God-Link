@@ -557,3 +557,25 @@ module.exports.c = {
     return errs;
   },
 };
+
+// ---------- C++ lines and examples ----------
+// Drill and Vault lines are parsed by tree-sitter; library examples
+// that are whole programs (they have a main) must build with g++ and
+// run; the rest — snippets and cheat cards — must parse.
+function cppShapes(c) {
+  const fn = (s) => `void __f() {\n${s}\n}`;
+  return [c, `${c}\n}`, `${c}\n};`, fn(c), fn(`${c}\n}`), fn(`switch (x) {\n${c}\n}`), fn(`if (x) {\n${c}\n}`), fn(`try {\n}\n${c}`),
+    `class __C {\n${c}\n};`, `class __C {\npublic:\n${c}\n};`, `struct __S {\n${c}\n};`, `enum __E {\n${c}\n};`];
+}
+module.exports.cpp.checkLines = (dir, lines) => tsErrors("cpp", lines, cppShapes);
+module.exports.cpp.checkExamples = async (dir, examples) => {
+  const errs = (await tsErrors("cpp", examples.map((e) => e.code), cppShapes)).filter((e) => !/\bint\s+main\s*\(/.test(examples[e.i].code));
+  examples.forEach((ex, i) => {
+    if (!/\bint\s+main\s*\(/.test(ex.code)) return;
+    const run = path.join(dir, "ex" + i);
+    fs.mkdirSync(run, { recursive: true });
+    const r = compileThenRun(run, "main.cpp", ex.code, ["g++", "-std=c++17", "-Wall", "-o", "app", "main.cpp"], ["./app"]);
+    if (!r.ok) errs.push({ i, err: r.error });
+  });
+  return errs;
+};

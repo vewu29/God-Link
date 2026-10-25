@@ -118,7 +118,7 @@ cbRegisterTrack("sql", function () {
         more: ["Lines starting with a dot, like .headers on and .mode column, aren't SQL: they're settings for the sqlite3 program itself. These two print neat columns with headings, and every example in this track uses them.",
           "SQL keywords aren't case-sensitive — select works like SELECT — but writing keywords in capitals is the common style, because it makes them stand out from your table and column names."],
         ex: { code: src(H.concat(["-- My first SQL", "SELECT 'Hello, world!' AS greeting;", "SELECT 2 + 3 AS answer;", "CREATE TABLE players (name TEXT, score INTEGER);", "INSERT INTO players VALUES ('Ana', 120);", "SELECT * FROM players;"])),
-          walk: ["Lines 1–2: sqlite3 settings for neat columns with headings — not SQL.", "Line 3: a comment starts with --.", "Line 4: a heading greeting, then Hello, world!", "Line 5: SQL can do maths: answer 5.", "Lines 6–8: make a table, add one row, and read it back: Ana 120."] },
+          walk: ["Lines 1–2: sqlite3 settings for neat columns with headings — not SQL.", "Line 3: a comment starts with --.", "Line 4: a heading greeting, then Hello, world!", "Line 5: SQL can do math: answer 5.", "Lines 6–8: make a table, add one row, and read it back: Ana 120."] },
         mistake: "Forgetting the semicolon. The sqlite3 prompt changes to ...> and waits, because it thinks the statement isn't finished. Type ; and press Enter."
       } },
     { title: "Tables and Types", chapter: "Building · CREATE TABLE, types, PRIMARY KEY, NOT NULL", line: "CREATE TABLE players (id INTEGER PRIMARY KEY, name TEXT, score INTEGER);",
@@ -180,7 +180,7 @@ cbRegisterTrack("sql", function () {
       },
       deep: {
         more: ["In SQLite, LIKE ignores upper and lower case for English letters: 'a%' also matches Ana. In PostgreSQL LIKE is case-sensitive, and ILIKE ignores case.",
-          "AND is worked out before OR, just as × comes before + in maths. Brackets make your intention unmistakable."],
+          "AND is worked out before OR, just as × comes before + in math. Brackets make your intention unmistakable."],
         ex: { code: src(H.concat(["CREATE TABLE players (name TEXT, team TEXT, level INTEGER, score INTEGER);", "INSERT INTO players VALUES", "    ('Ana', 'red', 4, 120), ('Leo', 'blue', 2, 95), ('Mia', 'red', 5, 80),", "    ('Sam', 'green', 1, 150), ('Zoe', 'blue', 5, 60);", "SELECT name FROM players WHERE score > 100;", "SELECT name FROM players WHERE team = 'red' AND level >= 3;", "SELECT name FROM players WHERE name LIKE 'M%' OR level BETWEEN 1 AND 2;", "SELECT name FROM players WHERE team IN ('blue', 'green') AND NOT level = 5;"])),
           walk: ["Lines 3–6: one INSERT can span several lines.", "Line 7: Ana and Sam.", "Line 8: Ana and Mia.", "Line 9: Leo, Mia and Sam.", "Line 10: Leo and Sam — Zoe is level 5."] },
         mistake: "Writing == or comparing text without quotes: WHERE team = red looks for a column called red. Text values always need single quotes: WHERE team = 'red'."
@@ -201,7 +201,7 @@ cbRegisterTrack("sql", function () {
           walk: ["Line 5: Sam 150, Ana 120, Leo 95, Mia 80.", "Line 6: blue first (Leo, Sam), then red (Ana, Mia).", "Line 7: the top two: Sam and Ana.", "Line 8: skip two, take two: Leo and Mia — page 2."] },
         mistake: "Using LIMIT without ORDER BY for a “top” list. Without sorting, the database returns any rows it likes, so the result can change."
       } },
-    { title: "Calculations and Functions", chapter: "Working it out · maths, ||, UPPER, LENGTH, ROUND, SUBSTR", line: "SELECT name, score * 2 AS doubled FROM players;",
+    { title: "Calculations and Functions", chapter: "Working it out · math, ||, UPPER, LENGTH, ROUND, SUBSTR", line: "SELECT name, score * 2 AS doubled FROM players;",
       content: {
         story: ["SELECT can calculate: price * qty, score + 10, hp / 2. Like many languages, dividing two whole numbers gives a whole number (7 / 2 is 3); use 7.0 / 2 for 3.5. % gives the remainder.",
           "|| glues text together: name || '!' turns Ana into Ana!. Functions transform values: UPPER and LOWER change case, LENGTH counts characters, SUBSTR(name, 1, 3) cuts out the first three, ROUND(x, 2) rounds to two places.",
@@ -239,11 +239,11 @@ cbRegisterTrack("sql", function () {
           "Because NULL is unknown, comparing with it gives unknown too: team = NULL is never true, even when team is NULL. Always test with IS NULL or IS NOT NULL.",
           "COALESCE(team, 'no team') swaps a NULL for a default. Aggregates like SUM, AVG and COUNT(column) skip NULLs, while COUNT(*) counts every row."],
         big: "NULL means unknown: test it with IS NULL, replace it with COALESCE, and remember aggregates skip it.",
-        caption: "One cell is a grey question mark; = NULL walks past it, IS NULL finds it. Tap Play.",
+        caption: "One cell is a gray question mark; = NULL walks past it, IS NULL finds it. Tap Play.",
         demo: ["team = NULL → unknown", "team IS NULL → Leo", "COALESCE(team, 'no team')", "COUNT(score) skips NULL"]
       },
       deep: {
-        more: ["Maths with NULL gives NULL: 5 + NULL is NULL. Wrap values in COALESCE(x, 0) when a missing number should count as zero.",
+        more: ["Math with NULL gives NULL: 5 + NULL is NULL. Wrap values in COALESCE(x, 0) when a missing number should count as zero.",
           "NOT NULL on a column stops NULLs from getting in at all — often the simplest fix."],
         ex: { code: src(H.concat(["CREATE TABLE players (name TEXT, team TEXT, score INTEGER);", "INSERT INTO players VALUES ('Ana', 'red', 120), ('Leo', NULL, 95), ('Mia', 'blue', NULL);", "SELECT name FROM players WHERE team IS NULL;", "SELECT name, COALESCE(team, 'no team') AS team FROM players;", "SELECT COUNT(*) AS all_rows, COUNT(score) AS scored, AVG(score) AS average FROM players;", "SELECT NULL = NULL AS equals, NULL IS NULL AS is_null;"])),
           walk: ["Line 5: Leo.", "Line 6: Leo's team shows as no team.", "Line 7: 3 rows, but only 2 scores; the average of 120 and 95 is 107.5.", "Line 8: equals is blank (NULL — unknown), is_null is 1 (true)."] },
@@ -319,7 +319,7 @@ cbRegisterTrack("sql", function () {
           "DISTINCT removes duplicate rows from an answer: SELECT DISTINCT team lists each team once.",
           "UNION stacks the answers of two queries into one list and removes duplicates; UNION ALL keeps them. Both queries must return the same number of columns."],
         big: "CASE turns values into labels, DISTINCT removes duplicates, and UNION stacks two answers together.",
-        caption: "Scores drop through a sorter labelled pro, player and rookie. Tap Play.",
+        caption: "Scores drop through a sorter labeled pro, player and rookie. Tap Play.",
         demo: ["CASE WHEN score >= 100 THEN 'pro'", "WHEN score >= 50 THEN 'player'", "ELSE 'rookie' END", "DISTINCT team → red, blue"]
       },
       deep: {
@@ -414,7 +414,7 @@ cbRegisterTrack("sql", function () {
       } },
     { title: "Designing a Database", chapter: "Beyond the basics · SQL shelf", line: ["CREATE TABLE memberships (student_id INTEGER, club_id INTEGER);", "PRIMARY KEY (student_id, club_id)"],
       content: {
-        story: ["Good design means storing each fact once. If every order row repeats the customer's address, changing the address means changing hundreds of rows — and missing one leaves the data contradicting itself. Splitting data into tables linked by keys is called normalisation.",
+        story: ["Good design means storing each fact once. If every order row repeats the customer's address, changing the address means changing hundreds of rows — and missing one leaves the data contradicting itself. Splitting data into tables linked by keys is called normalization.",
           "One-to-many: one player has many items, so items carry a player_id. Many-to-many: a student joins many clubs and a club has many students, so a third table, memberships, holds pairs of ids.",
           "Start with the nouns in your app (players, teams, items), give each a table with an id, then draw the links between them."],
         big: "Store each fact once: one-to-many links use a foreign key, many-to-many links use a table of pairs.",
@@ -423,7 +423,7 @@ cbRegisterTrack("sql", function () {
       },
       deep: {
         more: ["A composite primary key, PRIMARY KEY (student_id, club_id), stops the same pair being added twice.",
-          "Sometimes designs repeat data on purpose to make reading faster (denormalising) — but start normalised and change only when you measure a need."],
+          "Sometimes designs repeat data on purpose to make reading faster (denormalizing) — but start normalized and change only when you measure a need."],
         ex: { code: src(H.concat(["CREATE TABLE students (id INTEGER PRIMARY KEY, name TEXT NOT NULL);", "CREATE TABLE clubs (id INTEGER PRIMARY KEY, name TEXT NOT NULL);", "CREATE TABLE memberships (", "    student_id INTEGER REFERENCES students(id),", "    club_id INTEGER REFERENCES clubs(id),", "    PRIMARY KEY (student_id, club_id)", ");", "INSERT INTO students VALUES (1, 'Ana'), (2, 'Leo'), (3, 'Mia');", "INSERT INTO clubs VALUES (1, 'Chess'), (2, 'Robots');", "INSERT INTO memberships VALUES (1, 1), (1, 2), (2, 2);", "SELECT s.name AS student, c.name AS club", "FROM memberships m", "JOIN students s ON s.id = m.student_id", "JOIN clubs c ON c.id = m.club_id", "ORDER BY s.name, c.name;", "SELECT c.name AS club, COUNT(m.student_id) AS members", "FROM clubs c LEFT JOIN memberships m ON m.club_id = c.id", "GROUP BY c.id ORDER BY c.name;"])),
           walk: ["Lines 3–4: two tables of things.", "Lines 5–9: a table of pairs links them; the pair is the key.", "Line 12: Ana is in both clubs, Leo in Robots, Mia in none.", "Lines 13–17: two joins through the middle table: Ana Chess, Ana Robots, Leo Robots.", "Lines 18–20: Chess 1, Robots 2."] },
         mistake: "Storing lists in one cell, like clubs = 'Chess,Robots'. It can't be joined, counted or kept consistent. A list of things is a table of rows."
@@ -439,7 +439,7 @@ cbRegisterTrack("sql", function () {
       },
       deep: {
         more: ["Parameters also make queries faster when run many times, because the database can prepare the statement once and reuse it.",
-          "Libraries called ORMs (like SQLAlchemy, Prisma or Entity Framework) build parameterised SQL for you — but it's still worth knowing the SQL they write."],
+          "Libraries called ORMs (like SQLAlchemy, Prisma or Entity Framework) build parameterized SQL for you — but it's still worth knowing the SQL they write."],
         ex: { code: src(H.concat([".parameter set :name 'Ana'", ".parameter set :sneaky \"x' OR '1'='1\"", "CREATE TABLE players (name TEXT, secret TEXT);", "INSERT INTO players VALUES ('Ana', 'likes cats'), ('Leo', 'afraid of bees');", "SELECT name, secret FROM players WHERE name = :name;", "SELECT COUNT(*) AS leaked FROM players WHERE name = :sneaky;"])),
           walk: ["Lines 3–4: two parameters; the second is a classic injection attempt.", "Line 7: only Ana's row.", "Line 8: the sneaky text is just a strange name, so leaked is 0. Glued into the query, it would have matched every row."] },
         mistake: "Building SQL with + or f-strings, like \"... WHERE name = '\" + name + \"'\". It works in testing and breaks — or gets hacked — the first time someone types an apostrophe."
@@ -467,10 +467,10 @@ cbRegisterTrack("sql", function () {
     ["COUNT", "Counts rows (COUNT(*)) or non-NULL values (COUNT(column))."],
     ["CREATE TABLE", "Makes a new table."],
     ["CTE", "A common table expression: a named temporary result made with WITH."],
-    ["database", "An organised store of data, usually in tables."],
+    ["database", "An organized store of data, usually in tables."],
     ["DEFAULT", "The value a column gets when none is given."],
     ["DELETE", "Removes rows that match WHERE."],
-    ["denormalise", "Repeat some data on purpose, usually for speed."],
+    ["denormalize", "Repeat some data on purpose, usually for speed."],
     ["dialect", "One database's version of SQL."],
     ["DISTINCT", "Removes duplicate rows from an answer."],
     ["DROP TABLE", "Removes a whole table and its data."],
@@ -494,7 +494,7 @@ cbRegisterTrack("sql", function () {
     ["LIMIT", "Keeps only the first few rows."],
     ["many-to-many", "A link where both sides can have many of the other, held in a table of pairs."],
     ["MAX / MIN", "The largest or smallest value in a column."],
-    ["normalisation", "Designing tables so each fact is stored once."],
+    ["normalization", "Designing tables so each fact is stored once."],
     ["NOT NULL", "A constraint that a value is required."],
     ["NULL", "A missing or unknown value."],
     ["OFFSET", "Skips rows before LIMIT takes some."],
@@ -607,7 +607,7 @@ cbRegisterTrack("sql", function () {
       vars: [{ key: "apples", val: 3, min: 0, max: 10 }, { key: "pears", val: 2, min: 0, max: 10 }],
       code: function (v) { return M([["apples", v.apples], ["pears", v.pears]], ["CREATE TABLE cart (item TEXT, price INTEGER, qty INTEGER);", "INSERT INTO cart VALUES ('Apple', 50, :apples), ('Pear', 75, :pears), ('Bread', 250, 1);", "SELECT item, qty, price * qty AS cost FROM cart ORDER BY item;", "SELECT SUM(price * qty) AS total_cents FROM cart;"]); },
       run: function (v) { var a = 50 * v.apples, p = 75 * v.pears; return tbl(["item", "qty", "cost"], [["Apple", v.apples, a], ["Bread", 1, 250], ["Pear", v.pears, p]]).concat(tbl(["total_cents"], [[a + p + 250]])); },
-      explain: "Prices are stored in cents, so the maths stays exact. SUM adds up the calculated cost of every row." },
+      explain: "Prices are stored in cents, so the math stays exact. SUM adds up the calculated cost of every row." },
     { name: "Team Totals", about: "GROUP BY gives one total per team.",
       vars: [{ key: "ana", val: 70, min: 0, max: 100 }, { key: "leo", val: 45, min: 0, max: 100 }],
       code: function (v) { return M([["ana", v.ana], ["leo", v.leo]], ["CREATE TABLE players (name TEXT, team TEXT, score INTEGER);", "INSERT INTO players VALUES", "    ('Ana', 'red', :ana), ('Leo', 'blue', :leo), ('Mia', 'red', 40),", "    ('Sam', 'blue', 25), ('Zoe', 'green', 60);", "SELECT team, COUNT(*) AS players, SUM(score) AS points", "FROM players", "GROUP BY team", "ORDER BY points DESC, team;"]); },
@@ -623,7 +623,7 @@ cbRegisterTrack("sql", function () {
       code: function (v) { return M([["top", v.top]], ["CREATE TABLE players (name TEXT, score INTEGER);", "INSERT INTO players VALUES", "    ('Ana', 120), ('Leo', 95), ('Mia', 80), ('Sam', 150),", "    ('Zoe', 110), ('Kai', 60), ('Ivy', 135), ('Max', 70);", "SELECT name, score FROM players ORDER BY score DESC LIMIT :top;"]); },
       run: function (v) { var all = [["Ana", 120], ["Leo", 95], ["Mia", 80], ["Sam", 150], ["Zoe", 110], ["Kai", 60], ["Ivy", 135], ["Max", 70]].sort(byScoreThenName); return tbl(["name", "score"], all.slice(0, v.top)); },
       explain: "Sort first, then LIMIT keeps the top rows. Without ORDER BY, LIMIT would keep whichever rows came first." },
-    { name: "Class Average", about: "AVG, MIN and MAX summarise three scores.",
+    { name: "Class Average", about: "AVG, MIN and MAX summarize three scores.",
       vars: [{ key: "ana", val: 72, min: 0, max: 100 }, { key: "leo", val: 95, min: 0, max: 100 }, { key: "mia", val: 64, min: 0, max: 100 }],
       code: function (v) { return M([["ana", v.ana], ["leo", v.leo], ["mia", v.mia]], ["CREATE TABLE grades (name TEXT, score INTEGER);", "INSERT INTO grades VALUES ('Ana', :ana), ('Leo', :leo), ('Mia', :mia);", "SELECT ROUND(AVG(score), 1) AS average, MIN(score) AS lowest, MAX(score) AS highest FROM grades;"]); },
       run: function (v) { var a = [v.ana, v.leo, v.mia]; return tbl(["average", "lowest", "highest"], [[R(round1((v.ana + v.leo + v.mia) / 3)), Math.min.apply(null, a), Math.max.apply(null, a)]]); },

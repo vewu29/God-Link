@@ -126,7 +126,7 @@ cbRegisterTrack("go", function () {
           "Inside functions, := is the quick way to make a variable: score := 0 makes an int. var spells it out: var name string = \"Ana\". If you leave the value off, Go fills the box with its zero value — 0, \"\" or false — so a variable is never random garbage.",
           "const makes a value that can never change, like const maxLives = 3. Names use camelCase (highScore). A name starting with a capital letter (Score) is exported: other packages can see it."],
         big: "Every Go variable has a fixed type; := makes one quickly, var spells it out, and unset boxes hold zero values.",
-        caption: "Four labelled boxes, each accepting only its own kind of thing. Tap Play.",
+        caption: "Four labeled boxes, each accepting only its own kind of thing. Tap Play.",
         demo: ["score := 0  → int", "price := 4.99  → float64", "name := \"Ana\"  → string", "alive := true  → bool"]
       },
       deep: {
@@ -138,10 +138,10 @@ cbRegisterTrack("go", function () {
       } },
     { title: "Operators and Math", chapter: "Calculating · + - * / %, conversions, math", line: "avg := float64(total) / float64(count)",
       content: {
-        story: ["Go does maths with + - * / and % (the remainder). Dividing two ints gives an int, rounded toward zero: 7 / 2 is 3, and 7 % 2 is 1. If either side is a decimal, you get a decimal: 7.0 / 2 is 3.5.",
+        story: ["Go does math with + - * / and % (the remainder). Dividing two ints gives an int, rounded toward zero: 7 / 2 is 3, and 7 % 2 is 1. If either side is a decimal, you get a decimal: 7.0 / 2 is 3.5.",
           "Go never mixes types by itself. An int and a float64 can't be added until you convert one: float64(coins) / float64(players). This feels strict at first, but it stops a whole family of rounding bugs.",
           "Shortcuts change a variable in place: hp -= 30, score *= 2, lives++ and lives--. The math package has Sqrt, Pow, Floor, Abs and Pi, and the built-in min and max work on any numbers."],
-        big: "int maths rounds toward zero, % gives the remainder, and you must convert types yourself with float64(x).",
+        big: "int math rounds toward zero, % gives the remainder, and you must convert types yourself with float64(x).",
         caption: "Two whole numbers divide with the remainder left over, then again as decimals. Tap Play.",
         demo: ["7 / 2 → 3", "7 % 2 → 1", "float64(7) / 2 → 3.5", "max(3, 9, 4) → 9"]
       },
@@ -222,7 +222,7 @@ cbRegisterTrack("go", function () {
           "Reading a missing key doesn't crash — it gives the zero value. To know if the key was really there, use the comma-ok form: age, ok := ages[\"Zed\"] sets ok to false.",
           "Make an empty map with make(map[string]int) or map[string]int{}. Counting things is a one-liner: counts[word]++ works even the first time, because a missing count starts at 0."],
         big: "Maps look values up by key; missing keys give zero values, and the comma-ok form tells you if a key exists.",
-        caption: "A cabinet of labelled drawers; open one by its name tag. Tap Play.",
+        caption: "A cabinet of labeled drawers; open one by its name tag. Tap Play.",
         demo: ["ages[\"Ana\"] → 12", "ages[\"Mia\"] = 10", "age, ok := ages[\"Zed\"] → 0 false", "delete(ages, \"Mia\")"]
       },
       deep: {
@@ -253,8 +253,8 @@ cbRegisterTrack("go", function () {
         story: ["A struct bundles related values into one new type. type Player struct { Name string; HP int } says every Player has a name and some health points. Build one with Player{Name: \"Ana\", HP: 100} and read a field with p.Name.",
           "A method is a function attached to a type. func (p Player) Describe() string has a receiver, (p Player), before its name, and you call it with p.Describe().",
           "Go has no classes or constructors. By habit, a function called NewPlayer builds a ready-to-use value. Fields and methods starting with a capital letter are exported; lower-case ones stay private to the package."],
-        big: "Structs group fields into a type, methods attach behaviour with a receiver, and NewX functions build ready values.",
-        caption: "A blueprint labelled Player stamps out two players with their own names and health. Tap Play.",
+        big: "Structs group fields into a type, methods attach behavior with a receiver, and NewX functions build ready values.",
+        caption: "A blueprint labeled Player stamps out two players with their own names and health. Tap Play.",
         demo: ["type Player struct { … }", "ana := NewPlayer(\"Ana\")", "ana.Level = 2", "ana.Describe()"]
       },
       deep: {
@@ -270,7 +270,7 @@ cbRegisterTrack("go", function () {
           "&score gives the address of score; its type is *int, “pointer to int.” *ptr follows the pointer to the value: *ptr += 5 changes score itself.",
           "Methods that change their struct use a pointer receiver: func (p *Player) Heal(n int). Go takes the address for you when you call ana.Heal(25). A pointer that points nowhere is nil."],
         big: "& takes an address, * follows it, and pointer receivers let methods change the real value instead of a copy.",
-        caption: "A signpost labelled ptr points at the box score; change through the sign and the box changes. Tap Play.",
+        caption: "A signpost labeled ptr points at the box score; change through the sign and the box changes. Tap Play.",
         demo: ["score := 10", "ptr := &score", "*ptr += 5", "score → 15"]
       },
       deep: {
@@ -278,7 +278,7 @@ cbRegisterTrack("go", function () {
           "Following a nil pointer crashes the program with “invalid memory address or nil pointer dereference.” Check p != nil when a pointer might be empty."],
         ex: { code: src(["package main", "", "import \"fmt\"", "", "type Player struct {", "    Name string", "    HP   int", "}", "", "func (p *Player) Heal(n int) {", "    p.HP += n", "}", "", "func resetCopy(p Player) {", "    p.HP = 0", "}", "", "func reset(p *Player) {", "    p.HP = 0", "}", "", "func main() {", "    score := 10", "    ptr := &score", "    *ptr += 5", "    fmt.Println(score, *ptr)", "    ana := Player{Name: \"Ana\", HP: 50}", "    ana.Heal(25)", "    resetCopy(ana)", "    fmt.Println(ana.HP)", "    reset(&ana)", "    fmt.Println(ana.HP)", "    var nobody *Player", "    fmt.Println(nobody == nil)", "}"]),
           walk: ["Lines 10–12: a pointer receiver changes the real player.", "Lines 14–16: this gets a copy, so its change is lost.", "Lines 18–20: this gets the address, so it sticks.", "Lines 23–26: through the pointer: 15 15.", "Lines 27–30: healed to 75; resetCopy changes nothing: 75.", "Lines 31–32: reset works: 0.", "Lines 33–34: an empty pointer is nil: true."] },
-        mistake: "Mixing value and pointer receivers on one type. Pick pointer receivers for all of a type's methods if any of them must change it — it keeps behaviour predictable."
+        mistake: "Mixing value and pointer receivers on one type. Pick pointer receivers for all of a type's methods if any of them must change it — it keeps behavior predictable."
       } },
     { title: "Interfaces", chapter: "Contracts · interfaces, any, type switches", line: "type Shape interface{ Area() float64 }",
       content: {
@@ -318,7 +318,7 @@ cbRegisterTrack("go", function () {
           "The constraint after T says what the type must support. any allows every type; cmp.Ordered allows types that can be compared with < and >, like numbers and strings. You can write your own: type Number interface { ~int | ~float64 }.",
           "Go usually works out T from the arguments, so you call Max(3, 7) or Max(\"apple\", \"pear\") without saying the type. Types can be generic too: type Stack[T any] struct { items []T }."],
         big: "Type parameters in [ ] let one function or type work for many types, limited by a constraint like any or cmp.Ordered.",
-        caption: "One mould labelled [T] casts a box of ints, then a box of strings. Tap Play.",
+        caption: "One mould labeled [T] casts a box of ints, then a box of strings. Tap Play.",
         demo: ["func Max[T cmp.Ordered](a, b T) T", "Max(3, 7) → 7", "Max(\"apple\", \"pear\") → \"pear\"", "T worked out for you"]
       },
       deep: {
@@ -369,7 +369,7 @@ cbRegisterTrack("go", function () {
           "Before writing something yourself, check pkg.go.dev/std: strings.Fields splits on spaces, slices.Sort sorts, time.Since measures how long something took, math/rand/v2 rolls dice.",
           "Package documentation is short and full of runnable examples. Reading it is one of the fastest ways to get better at Go."],
         big: "fmt, strings, strconv, slices, maps, time and os cover most daily work — check the standard library before building your own.",
-        caption: "A workshop wall of labelled toolboxes, each one an import away. Tap Play.",
+        caption: "A workshop wall of labeled toolboxes, each one an import away. Tap Play.",
         demo: ["strings.Fields(\"a b c\")", "strconv.Atoi(\"42\")", "slices.Sort(scores)", "time.Since(start)"]
       },
       deep: {
@@ -377,7 +377,7 @@ cbRegisterTrack("go", function () {
           "bufio.Scanner reads input or files line by line; os.ReadFile and os.WriteFile read or write a whole file in one call."],
         ex: { code: src(["package main", "", "import (", "    \"fmt\"", "    \"math\"", "    \"slices\"", "    \"strconv\"", "    \"strings\"", "    \"time\"", ")", "", "func main() {", "    words := strings.Fields(\"  the quick   brown fox \")", "    fmt.Println(len(words), strings.Join(words, \"-\"))", "    n, err := strconv.Atoi(\"42\")", "    fmt.Println(n+1, err)", "    scores := []int{40, 75, 60}", "    slices.Sort(scores)", "    fmt.Println(scores, slices.Contains(scores, 75))", "    fmt.Println(90*time.Second, math.Round(2.5))", "}"]),
           walk: ["Lines 13–14: Fields splits on any run of spaces: 4 the-quick-brown-fox.", "Lines 15–16: text to a number: 43 <nil>.", "Lines 17–19: [40 60 75] true.", "Line 20: 1m30s 3."] },
-        mistake: "Writing your own sorting, splitting or date maths. The library versions are tested on billions of inputs; yours isn't yet."
+        mistake: "Writing your own sorting, splitting or date math. The library versions are tested on billions of inputs; yours isn't yet."
       } },
     { title: "The Bug Hunter's Handbook", chapter: "Beyond the basics · Go shelf", line: ["panic: runtime error: index out of range [5] with length 3", "main.main()"],
       content: {
@@ -399,7 +399,7 @@ cbRegisterTrack("go", function () {
       content: {
         story: ["Go has testing built in. Tests live next to your code in files ending in _test.go, and each test is a function named TestSomething that takes t *testing.T. go test ./... finds and runs them all.",
           "Inside a test, call the code and compare: if got != want, t.Errorf reports what went wrong and the test keeps going; t.Fatalf stops it.",
-          "The Go favourite is the table-driven test: a slice of cases — inputs and the expected output — and one loop that checks them all. Adding a case is one line."],
+          "The Go favorite is the table-driven test: a slice of cases — inputs and the expected output — and one loop that checks them all. Adding a case is one line."],
         big: "Tests are TestX functions in _test.go files; table-driven tests check many cases in one loop; go test runs them.",
         caption: "A checklist of cases gets ticked one by one: 95 → A, 85 → B, 40 → C. Tap Play.",
         demo: ["grade_test.go", "func TestGrade(t *testing.T)", "{95, \"A\"} ✓ {85, \"B\"} ✓", "ok  example.com/app"]

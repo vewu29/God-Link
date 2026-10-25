@@ -383,7 +383,7 @@ var VT = window.CB_T ? CB_T.vt : window.__isDrive ? DRIVE_VT : window.__isCS ? C
   { line: "delete {p};", why: "Give memory built with new back when you are done with it." },
   { line: "auto {p} = std::make_unique<{c}>();", why: "The smart pointer builds the object AND tidies up after itself." },
   { line: "auto {f} = [](int x) { return x * {d}; };", why: "A lambda: a tiny unnamed machine folded into a variable." },
-  { line: "auto {f} = [&] { {v}++; };", why: "[&] lets the lambda borrow the neighbourhood's boxes by nickname." },
+  { line: "auto {f} = [&] { {v}++; };", why: "[&] lets the lambda borrow the neighborhood's boxes by nickname." },
   { line: "template <typename T> T {f}(T x) { return x + x; }", why: "T is the fill-in-the-blank type — one recipe, many stampings." },
   { line: "Box<int> {o};", why: "A class template stamped for int: the mold poured with whole numbers." },
   { line: "std::sort({arr}.begin(), {arr}.end());", why: "sort tidies the whole stretch, from the first bookmark to the last." },

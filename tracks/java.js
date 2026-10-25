@@ -75,7 +75,7 @@ cbRegisterTrack("java", function () {
       explain: "A record is a compact class for plain data. Java writes the constructor, the accessor methods x() and y(), equals and toString for you." },
     { name: "Extends Block", short: "Extends", chapter: "Java Ch. 11 · Inheritance", icon: "i-tree", verb: "inherit",
       line: "class Wizard extends Player { }",
-      explain: "extends makes Wizard a child of Player: it inherits Player's fields and methods, and can add or change behaviour. Java allows one parent class." },
+      explain: "extends makes Wizard a child of Player: it inherits Player's fields and methods, and can add or change behavior. Java allows one parent class." },
     { name: "Interface Block", short: "Interface", chapter: "Java Ch. 11 · Inheritance", icon: "i-layers", verb: "promise",
       line: "interface Drawable { void draw(); }",
       explain: "An interface is a promise: any class that implements Drawable must have a draw() method. A class can implement many interfaces." },
@@ -122,7 +122,7 @@ cbRegisterTrack("java", function () {
           "You declare a variable with its type and name: int score = 0;. Later you can change the value but not the type. var lets Java work out the type from the value — var count = 10; is still an int, forever.",
           "final makes a value permanent: final int MAX_LIVES = 3;. Names use camelCase (highScore), constants use UPPER_CASE, and class names start with a capital (Player)."],
         big: "Every Java variable has a fixed type — int, double, boolean, char, String — and final makes a value permanent.",
-        caption: "Five labelled boxes, each accepting only its own kind of thing. Tap Play.",
+        caption: "Five labeled boxes, each accepting only its own kind of thing. Tap Play.",
         demo: ["int score = 0", "double price = 4.99", "boolean alive = true", "char grade = 'A'", "String hero = \"Ana\""]
       },
       deep: {
@@ -134,7 +134,7 @@ cbRegisterTrack("java", function () {
       } },
     { title: "Operators and Math", chapter: "Calculating · + - * / %, integer division, Math, casting", line: "total += price;",
       content: {
-        story: ["Java does maths with + - * / and %, the remainder. Watch out: dividing two ints gives an int, and the fraction is thrown away. 7 / 2 is 3, not 3.5. If either side is a double, you get the decimal answer: 7 / 2.0 is 3.5.",
+        story: ["Java does math with + - * / and %, the remainder. Watch out: dividing two ints gives an int, and the fraction is thrown away. 7 / 2 is 3, not 3.5. If either side is a double, you get the decimal answer: 7 / 2.0 is 3.5.",
           "Shortcuts change a variable using its own value: += -= *= /= %=, and ++ and -- to add or take away one. The Math class holds the rest: Math.max, Math.min, Math.abs, Math.pow, Math.sqrt, Math.round.",
           "A cast converts between number types: (int) 7.9 chops to 7, and (double) 7 becomes 7.0. Java converts small to big automatically (int to double), but big to small needs a cast, because information might be lost."],
         big: "int ÷ int throws the fraction away; % keeps the remainder; Math does the rest; casts convert between types.",
@@ -190,7 +190,7 @@ cbRegisterTrack("java", function () {
         demo: ["i = 0 → job", "i = 1 → job", "… i = 4 → job", "i = 5 → 5 < 5 is false → stop"]
       },
       deep: {
-        more: ["Loops can be labelled to break out of an outer loop from inside an inner one: outer: for (…) { for (…) { break outer; } }. Use it sparingly — a method with return is often clearer.",
+        more: ["Loops can be labeled to break out of an outer loop from inside an inner one: outer: for (…) { for (…) { break outer; } }. Use it sparingly — a method with return is often clearer.",
           "Counting down works the same way: for (int i = 10; i > 0; i--). And steps can be bigger: i += 2."],
         ex: { code: "public class Main {\n    public static void main(String[] args) {\n        for (int n = 1; n <= 5; n++) {\n            System.out.println(n + \" squared is \" + n * n);\n        }\n        int lives = 3;\n        while (lives > 0) {\n            System.out.println(\"Lives left: \" + lives);\n            lives--;\n        }\n        String[] team = {\"Ana\", \"Leo\", \"Mia\"};\n        for (String name : team) {\n            System.out.println(\"Hi \" + name);\n        }\n    }\n}",
           walk: ["Lines 3–5: squares of 1 to 5.", "Lines 6–10: count down the lives.", "Lines 11–14: for-each greets every name."] },
@@ -254,7 +254,7 @@ cbRegisterTrack("java", function () {
         demo: ["private int balance", "deposit(50) → allowed", "withdraw(500) → refused", "record Point(int x, int y)"]
       },
       deep: {
-        more: ["Getters and setters aren't always needed. Expose behaviour (takeDamage, heal) rather than raw data (setHp) when you can — it keeps the rules in one place.",
+        more: ["Getters and setters aren't always needed. Expose behavior (takeDamage, heal) rather than raw data (setHp) when you can — it keeps the rules in one place.",
           "Immutable objects (like records and Strings) can be shared freely, because nobody can change them behind your back."],
         ex: { code: "public class Main {\n    static class Account {\n        private int balance;\n\n        Account(int start) {\n            balance = start;\n        }\n\n        int getBalance() {\n            return balance;\n        }\n\n        boolean withdraw(int amount) {\n            if (amount > balance) return false;\n            balance -= amount;\n            return true;\n        }\n    }\n\n    record Point(int x, int y) { }\n\n    public static void main(String[] args) {\n        Account a = new Account(100);\n        System.out.println(a.withdraw(30) + \" \" + a.getBalance());\n        System.out.println(a.withdraw(500) + \" \" + a.getBalance());\n        Point p = new Point(3, 4);\n        System.out.println(p + \" x=\" + p.x());\n    }\n}",
           walk: ["Lines 2–18: balance is private; withdraw enforces the rule.", "Line 20: a record in one line.", "Line 24: true 70.", "Line 25: false 70 — refused.", "Lines 26–27: Point[x=3, y=4] x=3."] },
@@ -282,7 +282,7 @@ cbRegisterTrack("java", function () {
           "A HashMap stores key-value pairs: put(\"Ana\", 12), get(\"Ana\"), containsKey, getOrDefault. A HashSet keeps each value once and answers contains very fast.",
           "The type in angle brackets — List<String>, Map<String, Integer> — is a generic: it tells Java what the collection holds, so mistakes are caught at compile time. Collections hold objects, so use Integer, not int."],
         big: "ArrayList for ordered lists, HashMap for lookups by key, HashSet for unique values — all typed with generics.",
-        caption: "A train that grows (ArrayList), a wall of labelled drawers (HashMap), and a guest list with no repeats (HashSet). Tap Play.",
+        caption: "A train that grows (ArrayList), a wall of labeled drawers (HashMap), and a guest list with no repeats (HashSet). Tap Play.",
         demo: ["names.add(\"Ana\") → [Ana]", "ages.put(\"Ana\", 12)", "ages.get(\"Ana\") → 12", "Set.of(\"red\", \"blue\").contains(\"red\") → true"]
       },
       deep: {
@@ -365,7 +365,7 @@ cbRegisterTrack("java", function () {
           "Before writing something yourself, search the documentation: there's very likely a method for it. String.join glues text, Collections.max finds the largest, LocalDate.now() gives today, Duration measures time.",
           "The official API documentation lists every class with its methods and examples — learning to read it is one of the most valuable Java skills."],
         big: "java.lang, java.util, java.time and java.nio.file cover most daily work — check them before building your own.",
-        caption: "A workshop wall of labelled toolboxes, each one an import away. Tap Play.",
+        caption: "A workshop wall of labeled toolboxes, each one an import away. Tap Play.",
         demo: ["Collections.max(scores)", "String.join(\", \", names)", "LocalDate.of(2030, 1, 1)", "Optional.ofNullable(x).orElse(0)"]
       },
       deep: {
@@ -373,7 +373,7 @@ cbRegisterTrack("java", function () {
           "java.time replaced the old Date and Calendar classes. LocalDate, LocalTime and Duration are immutable and much easier to use correctly."],
         ex: { code: "import java.time.LocalDate;\nimport java.time.temporal.ChronoUnit;\nimport java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Integer> scores = List.of(40, 75, 60);\n        System.out.println(Collections.max(scores));\n        System.out.println(String.join(\" | \", List.of(\"Ana\", \"Leo\")));\n        LocalDate start = LocalDate.of(2025, 1, 1);\n        LocalDate end = LocalDate.of(2025, 3, 1);\n        System.out.println(ChronoUnit.DAYS.between(start, end));\n        Optional<String> nick = Optional.empty();\n        System.out.println(nick.orElse(\"no nickname\"));\n    }\n}",
           walk: ["Line 8: 75.", "Line 9: Ana | Leo.", "Lines 10–12: 59 days from Jan 1 to Mar 1, 2025.", "Lines 13–14: an empty Optional falls back: no nickname."] },
-        mistake: "Writing your own sorting or date maths. The library versions are tested on billions of inputs; yours isn't yet."
+        mistake: "Writing your own sorting or date math. The library versions are tested on billions of inputs; yours isn't yet."
       } },
     { title: "The Bug Hunter's Handbook", chapter: "Beyond the basics · Java shelf", line: ["Exception in thread \"main\" java.lang.NullPointerException", "at Main.main(Main.java:7)"],
       content: {
@@ -409,10 +409,10 @@ cbRegisterTrack("java", function () {
       } },
     { title: "Packages, Builds and JARs", chapter: "Beyond the basics · Java shelf", line: ["package com.example.game;", "mvn package"],
       content: {
-        story: ["Real Java projects have many classes organised into packages — folders named in reverse-domain style: com.example.game. The first line of each file declares its package, and import brings in classes from other packages.",
+        story: ["Real Java projects have many classes organized into packages — folders named in reverse-domain style: com.example.game. The first line of each file declares its package, and import brings in classes from other packages.",
           "Build tools manage compiling, testing and libraries. Maven (pom.xml) and Gradle (build.gradle) download dependencies from Maven Central, run tests, and package everything into a JAR file — a zip of compiled classes you can run with java -jar.",
           "IDEs like IntelliJ IDEA, Eclipse and VS Code understand these build files and set everything up for you."],
-        big: "Packages organise classes, Maven or Gradle build and fetch libraries, and a JAR is the packaged program.",
+        big: "Packages organize classes, Maven or Gradle build and fetch libraries, and a JAR is the packaged program.",
         caption: "Loose class files are sorted into package folders and packed into one JAR box. Tap Play.",
         demo: ["package com.example.game;", "import com.example.game.Player;", "$ mvn package", "→ target/game-1.0.jar"]
       },
@@ -460,7 +460,7 @@ cbRegisterTrack("java", function () {
     ["compiler", "javac: turns .java source into .class bytecode."],
     ["constructor", "Code that runs when an object is created with new."],
     ["double", "The type for numbers with a decimal point."],
-    ["encapsulation", "Keeping fields private and exposing behaviour through methods."],
+    ["encapsulation", "Keeping fields private and exposing behavior through methods."],
     ["enum", "A type with a fixed set of named values."],
     ["exception", "An object thrown when something goes wrong at run time."],
     ["extends", "Makes a class a child of another class."],

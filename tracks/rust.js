@@ -126,7 +126,7 @@ cbRegisterTrack("rust", function () {
           "Variables are immutable by default — once set, they can't change. That surprises newcomers, but it means you always know which values might change. Add mut when you need it: let mut lives = 3; then lives -= 1; is fine.",
           "You can make a new variable with the same name: let lives = lives - 1; This is shadowing — a fresh box, not a change. const makes a value fixed forever, with its type written out and its name in CAPITALS."],
         big: "let makes a variable that can't change; let mut makes one that can; const is fixed forever and typed.",
-        caption: "Five labelled boxes; only the one marked mut has an open lid. Tap Play.",
+        caption: "Five labeled boxes; only the one marked mut has an open lid. Tap Play.",
         demo: ["let score = 0  → i32", "let price = 4.99  → f64", "let mut lives = 3", "lives -= 1  → 2"]
       },
       deep: {
@@ -138,7 +138,7 @@ cbRegisterTrack("rust", function () {
       } },
     { title: "Operators and Math", chapter: "Calculating · + - * / %, conversions, overflow", line: "let avg = f64::from(total) / f64::from(count);",
       content: {
-        story: ["Rust does maths with + - * / and % (the remainder). Dividing two whole numbers gives a whole number, rounded toward zero: 7 / 2 is 3, and 7 % 2 is 1. With decimals on both sides you get a decimal: 7.0 / 2.0 is 3.5.",
+        story: ["Rust does math with + - * / and % (the remainder). Dividing two whole numbers gives a whole number, rounded toward zero: 7 / 2 is 3, and 7 % 2 is 1. With decimals on both sides you get a decimal: 7.0 / 2.0 is 3.5.",
           "Rust never mixes types by itself: an i32 and an f64 can't be added. Convert first: f64::from(coins) is a safe conversion that can never lose information; as f64 also converts, and is used when a conversion might round.",
           "Numbers have methods: 2i32.pow(10), 16f64.sqrt(), hp.max(80), (-5i32).abs(). Shortcuts change a variable in place: hp -= 30, score *= 2. There's no ++; write += 1."],
         big: "Whole-number division rounds toward zero, % gives the remainder, and you convert types yourself with f64::from or as.",
@@ -147,7 +147,7 @@ cbRegisterTrack("rust", function () {
       },
       deep: {
         more: ["Every integer type has a limit: a u8 holds 0 to 255. Going past it is called overflow. In a debug build Rust stops with a panic instead of quietly giving a wrong answer; methods like checked_add return None and wrapping_add wraps around on purpose.",
-          "Decimal maths is approximate on every computer: 0.1 + 0.2 isn't exactly 0.3. For money, count whole cents as integers."],
+          "Decimal math is approximate on every computer: 0.1 + 0.2 isn't exactly 0.3. For money, count whole cents as integers."],
         ex: { code: src(["fn main() {", "    println!(\"{}\", 7 / 2);", "    println!(\"{}\", 7 % 2);", "    println!(\"{}\", 7.0 / 2.0);", "    let coins = 10;", "    let players = 4;", "    println!(\"{}\", f64::from(coins) / f64::from(players));", "    println!(\"{} {}\", 16f64.sqrt(), 2i32.pow(10));", "    let mut hp: i32 = 100;", "    hp -= 30;", "    hp += 1;", "    println!(\"{hp} {} {}\", hp.max(80), (hp - 90).abs());", "    let big: u8 = 250;", "    println!(\"{:?} {}\", big.checked_add(10), big.wrapping_add(10));", "}"]),
           walk: ["Line 2: whole-number division: 3.", "Line 3: the remainder: 1.", "Line 4: decimals: 3.5.", "Lines 5–7: convert first: 2.5.", "Line 8: 4 1024.", "Lines 9–12: 100 − 30 + 1 = 71; max(80) gives 80, and (71 − 90).abs() is 19. Calling methods needs a known type, hence : i32.", "Lines 13–14: 250 + 10 doesn't fit a u8: None, and wrapping round gives 4."] },
         mistake: "Writing let avg = total / count; with whole numbers and expecting a decimal. 7 / 2 is 3. Convert both sides first: f64::from(total) / f64::from(count)."
@@ -188,7 +188,7 @@ cbRegisterTrack("rust", function () {
       content: {
         story: ["for walks through anything you can iterate: ranges, arrays, Vecs and more. 0..5 counts 0 to 4 (the end is left out); 1..=5 includes the 5. (1..=3).rev() counts backwards.",
           "while repeats as long as a test is true: while lives > 0 { lives -= 1; }. loop repeats forever until you break out — and break can hand a value back: let answer = loop { … break 42; };.",
-          "continue skips to the next round. Loops can be labelled, like 'outer: for …, so break 'outer leaves two loops at once."],
+          "continue skips to the next round. Loops can be labeled, like 'outer: for …, so break 'outer leaves two loops at once."],
         big: "for walks ranges and collections, while repeats while a test holds, and loop runs until break — which can return a value.",
         caption: "A counter goes round a track 0..3 and stops before 3. Tap Play.",
         demo: ["for i in 0..3", "i = 0 → lap 0", "i = 1 → lap 1", "i = 2 → lap 2, done"]
@@ -206,7 +206,7 @@ cbRegisterTrack("rust", function () {
           "When you write let s2 = s1; with a String, the text moves to s2 — and s1 can't be used anymore. Passing a String to a function moves it too. The compiler tracks every move, so two owners can never free the same memory.",
           "When you really want two copies, call .clone(). Simple values that live entirely on the stack — numbers, bool, char — are Copy: assigning them copies automatically, so let b = a; leaves a usable."],
         big: "Every value has one owner; assigning a String moves it, clone makes a real copy, and numbers are simply copied.",
-        caption: "A String's ownership tag passes from s1 to s2, and s1 goes grey. Tap Play.",
+        caption: "A String's ownership tag passes from s1 to s2, and s1 goes gray. Tap Play.",
         demo: ["let s1 = String::from(\"hello\")", "let s2 = s1;  → moved", "s1 can't be used", "s2.clone() → two Strings"]
       },
       deep: {
@@ -312,13 +312,13 @@ cbRegisterTrack("rust", function () {
           walk: ["Lines 1–9: return Ok with a number or Err with a message.", "Lines 2–4: map_err rewrites parse's error; ? passes it up.", "Lines 11–14: ? again: any error goes straight back to main.", "Lines 17–22: doubled: 14, then error: \"abc\" is not a number: invalid digit found in string, then error: 500 is too big.", "Lines 23–24: expect is fine when you know it works: 42."] },
         mistake: "Using ? in a function that doesn't return a Result or Option. The compiler says the ? “can only be used in a function that returns Result or Option” — change the return type."
       } },
-    { title: "Traits and Generics", chapter: "Shared behaviour · trait, impl for, <T>, Display", line: "trait Shape { fn area(&self) -> f64; }",
+    { title: "Traits and Generics", chapter: "Shared behavior · trait, impl for, <T>, Display", line: "trait Shape { fn area(&self) -> f64; }",
       content: {
         story: ["A trait is a set of methods a type promises to provide: trait Describe { fn describe(&self) -> String; }. impl Describe for Dog { … } keeps the promise. Traits can also give default methods that types get for free.",
           "Functions can accept any type with a trait: fn introduce(thing: &impl Describe). Generics say the same thing with a type parameter: fn largest<T: PartialOrd + Copy>(a: T, b: T) -> T works for numbers, letters and more.",
           "The standard traits run the language: Display for {} printing, Debug for {:?}, Clone, PartialEq for ==, PartialOrd for < and >, and Iterator for for loops."],
-        big: "Traits describe shared behaviour; impl Trait for Type provides it; generics with bounds work for every type that has it.",
-        caption: "A socket labelled Describe: a dog and a robot both plug in. Tap Play.",
+        big: "Traits describe shared behavior; impl Trait for Type provides it; generics with bounds work for every type that has it.",
+        caption: "A socket labeled Describe: a dog and a robot both plug in. Tap Play.",
         demo: ["trait Describe { fn describe… }", "impl Describe for Dog", "impl Describe for Robot", "introduce(&dog), introduce(&robot)"]
       },
       deep: {
@@ -349,7 +349,7 @@ cbRegisterTrack("rust", function () {
         story: ["cargo is Rust's all-in-one tool. cargo new game makes a project with Cargo.toml (its settings) and src/main.rs. cargo run builds and runs; cargo build --release makes a fast, finished program; cargo test runs tests.",
           "Libraries are called crates, and crates.io lists over a hundred thousand of them. Add one to the [dependencies] section of Cargo.toml (or run cargo add rand) and cargo downloads and builds it.",
           "Inside a project, mod groups code into modules. Everything is private unless marked pub. use brings a path into scope, like use std::collections::HashMap;."],
-        big: "cargo builds, runs and tests; crates come from crates.io; mod organises code, pub shares it, and use brings it in.",
+        big: "cargo builds, runs and tests; crates come from crates.io; mod organizes code, pub shares it, and use brings it in.",
         caption: "A project box opens: Cargo.toml on top, src/main.rs inside, crates arriving from crates.io. Tap Play.",
         demo: ["$ cargo new game", "Cargo.toml + src/main.rs", "$ cargo add rand", "$ cargo run"]
       },
@@ -369,7 +369,7 @@ cbRegisterTrack("rust", function () {
           "For more, there are crates: rand for random numbers, serde for saving data as JSON, regex for patterns, clap for command-line options, tokio for async networking.",
           "The documentation at doc.rust-lang.org/std is excellent and full of examples. Search it before writing something yourself."],
         big: "std covers text, collections, files and time; crates.io adds the rest, like rand, serde and regex.",
-        caption: "A workshop wall of labelled toolboxes, each one a use away. Tap Play.",
+        caption: "A workshop wall of labeled toolboxes, each one a use away. Tap Play.",
         demo: ["\"a b\".split_whitespace()", "\"42\".parse::<i32>()", "scores.sort()", "Instant::now().elapsed()"]
       },
       deep: {

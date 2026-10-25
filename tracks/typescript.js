@@ -123,7 +123,7 @@ cbRegisterTrack("typescript", function () {
           "Most of the time you can leave the annotation out: const lives = 3; is inferred as a number. Write types where they help readers — function parameters, return values, and anywhere inference can't see the type.",
           "any switches checking off for a value: it can be anything and TypeScript stops complaining. It's an escape hatch, not a habit — every any is a hole where bugs can hide."],
         big: "string, number, boolean — written after a colon, or inferred from the value; avoid any.",
-        caption: "Three labelled boxes, each refusing anything that isn't its own type. Tap Play.",
+        caption: "Three labeled boxes, each refusing anything that isn't its own type. Tap Play.",
         demo: ["let name: string = \"Ana\"", "let score: number = 0", "let alive: boolean = true", "score = \"lots\" → ✗ error"]
       },
       deep: {
@@ -131,7 +131,7 @@ cbRegisterTrack("typescript", function () {
           "bigint holds whole numbers of any size (123n) and symbol makes unique keys — you'll meet them rarely as a beginner."],
         ex: { code: "let name: string = \"Ana\";\nlet score: number = 0;\nlet alive: boolean = true;\nconst lives = 3;\nconst level = \"hard\";\nscore = score + lives;\nconsole.log(name, score, alive, level);\nconsole.log(typeof lives);",
           walk: ["Lines 1–3: three annotated variables.", "Line 4: inferred as number.", "Line 5: inferred as the exact literal \"hard\".", "Line 6: score becomes 3.", "Line 7: Ana 3 true hard.", "Line 8: number."] },
-        mistake: "Using the capitalised String, Number or Boolean as types. Those are wrapper objects; always use lower-case string, number and boolean."
+        mistake: "Using the capitalized String, Number or Boolean as types. Those are wrapper objects; always use lower-case string, number and boolean."
       } },
     { title: "Arrays and Tuples", chapter: "number[], Array<T>, readonly arrays, tuples", line: "const scores: number[] = [10, 20, 30];",
       content: {
@@ -155,7 +155,7 @@ cbRegisterTrack("typescript", function () {
           "Optional parameters have a ?: function greet(name?: string). Default values make them optional too: function greet(name = \"friend\"). Rest parameters collect the extras: function sum(...nums: number[]).",
           "Functions that return nothing are typed void. A function's own type looks like an arrow: (x: number) => number. That's how you type callbacks."],
         big: "Type every parameter, optionally the return; ? and defaults make parameters optional; (x: T) => U types a callback.",
-        caption: "A machine with labelled slots: only numbers fit the number slots. Tap Play.",
+        caption: "A machine with labeled slots: only numbers fit the number slots. Tap Play.",
         demo: ["damage(10, 3) ✓ → 7", "damage(\"10\", 3) ✗", "damage(10) ✗ missing def", "greet() ✓ name is optional"]
       },
       deep: {
@@ -240,10 +240,10 @@ cbRegisterTrack("typescript", function () {
       },
       deep: {
         more: ["TypeScript's private is checked at compile time only. JavaScript's own #private fields (#hp) are private at run time too.",
-          "Strict mode requires every field to be initialised in the constructor or with a default — no forgotten undefined fields."],
+          "Strict mode requires every field to be initialized in the constructor or with a default — no forgotten undefined fields."],
         ex: { code: "interface Caster {\n  cast(): number;\n}\nabstract class Hero {\n  constructor(public readonly name: string, protected hp: number = 100) {}\n  abstract attack(): string;\n  get health(): number {\n    return this.hp;\n  }\n}\nclass Wizard extends Hero implements Caster {\n  cast(): number {\n    return 12;\n  }\n  attack(): string {\n    return `${this.name} casts for ${this.cast()}`;\n  }\n}\nconst merlin = new Wizard(\"Merlin\");\nconsole.log(merlin.attack());\nconsole.log(merlin.health);",
           walk: ["Lines 1–3: a Caster must have cast.", "Lines 4–10: an abstract Hero with a readonly name, a protected hp and a getter.", "Lines 11–18: Wizard fills in attack and keeps the Caster promise.", "Lines 20–21: Merlin casts for 12, then 100."] },
-        mistake: "Declaring a field without initialising it in strict mode: class A { name: string; } is an error (“has no initializer”). Give it a value or set it in the constructor."
+        mistake: "Declaring a field without initializing it in strict mode: class A { name: string; } is an error (“has no initializer”). Give it a value or set it in the constructor."
       } },
     { title: "Enums and Literal Types", chapter: "enum, const objects, as const", line: 'const COLORS = ["red", "green", "blue"] as const;',
       content: {
@@ -406,7 +406,7 @@ cbRegisterTrack("typescript", function () {
           "Small, well-named types read like documentation: type Celsius = number; isn't checked differently, but it tells the reader what the number means."],
         ex: { code: "type State =\n  | { status: \"loading\" }\n  | { status: \"done\"; items: string[] }\n  | { status: \"error\"; message: string };\nfunction render(s: State): string {\n  switch (s.status) {\n    case \"loading\": return \"Loading…\";\n    case \"done\": return `${s.items.length} items`;\n    case \"error\": return `Oops: ${s.message}`;\n  }\n}\nconst states: State[] = [{ status: \"loading\" }, { status: \"done\", items: [\"a\", \"b\"] }, { status: \"error\", message: \"offline\" }];\nfor (const s of states) console.log(render(s));",
           walk: ["Lines 1–4: three states, each with only its own data.", "Lines 5–11: each case reads only what exists.", "Line 13: Loading…, 2 items, Oops: offline."] },
-        mistake: "Modelling state with optional fields ({ loading?: boolean; data?: …; error?: … }). It allows nonsense like loading and error at once; a union doesn't."
+        mistake: "Modeling state with optional fields ({ loading?: boolean; data?: …; error?: … }). It allows nonsense like loading and error at once; a union doesn't."
       } },
     { title: "Tooling and Projects", chapter: "Beyond the basics · TypeScript shelf", line: ["npx tsc --init", "npm i -D typescript"],
       content: {
@@ -426,10 +426,10 @@ cbRegisterTrack("typescript", function () {
       } },
     { title: "Testing Typed Code", chapter: "Beyond the basics · TypeScript shelf", line: ["test(\"adds\", () => {", "  expect(add(2, 2)).toBe(4);"],
       content: {
-        story: ["Types catch many bugs, but not wrong logic: add(2, 2) returning 5 type-checks perfectly. Tests check behaviour. Vitest and Jest run TypeScript tests; Node's built-in test runner works too.",
+        story: ["Types catch many bugs, but not wrong logic: add(2, 2) returning 5 type-checks perfectly. Tests check behavior. Vitest and Jest run TypeScript tests; Node's built-in test runner works too.",
           "A test calls your code with known inputs and asserts the expected output. Test the normal case, the edges and the errors — especially code that handles unknown data.",
           "Types themselves can be tested: expectTypeOf (in Vitest) or a line marked @ts-expect-error proves that wrong usage is rejected."],
-        big: "Types prove shapes, tests prove behaviour — you want both.",
+        big: "Types prove shapes, tests prove behavior — you want both.",
         caption: "A checklist where each test turns green as it passes. Tap Play.",
         demo: ["$ npx vitest", "✓ adds two numbers", "✓ rejects bad input", "Tests 2 passed"]
       },
