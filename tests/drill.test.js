@@ -3,7 +3,7 @@
 "use strict";
 const { test, before, after } = require("node:test");
 const assert = require("node:assert/strict");
-const { launch, newPage, trackIds } = require("./helpers/harness");
+const { launch, newPage, trackIds, eachTrack } = require("./helpers/harness");
 
 let env, ids;
 before(async () => { env = await launch(); ids = await trackIds(env); });
@@ -73,7 +73,7 @@ test("Escape steps out of a drill", async () => {
 });
 
 test("every drill line in every track accepts a typed rep", async () => {
-  for (const track of ids) {
+  await eachTrack(ids, async (track) => {
     const { ctx, page, log } = await newPage(env, { track });
     const n = await page.evaluate(() => BLOCKS.length);
     const bad = [];
@@ -86,5 +86,5 @@ test("every drill line in every track accepts a typed rep", async () => {
     assert.deepEqual(bad, [], `${track}: lines that did not count`);
     assert.deepEqual(log.pageErrors, [], `${track}: page errors`);
     await ctx.close();
-  }
+  });
 });

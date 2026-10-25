@@ -5,14 +5,14 @@ const assert = require("node:assert/strict");
 const path = require("path");
 const fs = require("fs");
 const os = require("os");
-const { launch, newPage, trackIds } = require("./helpers/harness");
+const { launch, newPage, trackIds, eachTrack } = require("./helpers/harness");
 
 let env, ids;
 before(async () => { env = await launch(); ids = await trackIds(env); });
 after(async () => { await env.close(); });
 
 test("PC: Compile & Run prints exactly the project's output", async () => {
-  for (const track of ids.filter((t) => t !== "drive")) {
+  await eachTrack(ids.filter((t) => t !== "drive"), async (track) => {
     const { ctx, page, log } = await newPage(env, { track });
     await page.click("#menuPc");
     const expected = await page.evaluate(() => PROJECTS[pcIndex].run(pcVars()));
@@ -22,11 +22,11 @@ test("PC: Compile & Run prints exactly the project's output", async () => {
     for (const line of expected) assert.ok(screen.includes(line), `${track}: missing output line ${JSON.stringify(line)}`);
     assert.deepEqual(log.pageErrors, []);
     await ctx.close();
-  }
+  });
 });
 
 test("Library: chapters open, Next walks the whole book, Picture mode plays", async () => {
-  for (const track of ids) {
+  await eachTrack(ids, async (track) => {
     const { ctx, page, log } = await newPage(env, { track });
     await page.click("#menuLibrary");
     const n = await page.evaluate(() => CHAPTERS.length);
@@ -40,7 +40,7 @@ test("Library: chapters open, Next walks the whole book, Picture mode plays", as
     assert.ok((await page.textContent("#stageConsole")).length > 0);
     assert.deepEqual(log.pageErrors, [], `${track}: page errors`);
     await ctx.close();
-  }
+  });
 });
 
 test("Library: glossary search filters", async () => {

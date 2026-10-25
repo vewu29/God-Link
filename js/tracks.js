@@ -46,6 +46,18 @@
     LIST.push(meta);
   }
   window.cbAddTrackMeta = addTrack;
+  addTrack({ id: "python", name: "Python", badge: "Py", group: "lang", color: "#3572a5", blocks: 30,
+    blurb: "The friendliest first language: clear code for data, automation, AI and the web.",
+    keywords: "beginner data science ai machine learning automation scripting",
+    file: "main.py", run: "python3 main.py", comment: "#", vaultFile: "vault.py", varPrefix: "" });
+  addTrack({ id: "javascript", name: "JavaScript", badge: "JS", group: "lang", color: "#8a6d00", blocks: 30,
+    blurb: "The language of the web: interactive pages, apps, servers with Node.js.",
+    keywords: "web browser website frontend node react js",
+    file: "main.js", run: "node main.js", comment: "//", vaultFile: "vault.js", varPrefix: "" });
+  addTrack({ id: "unity", name: "Unity", badge: "Unity", group: "engine", color: "#1f2937", blocks: 30,
+    blurb: "Make 2D and 3D games with Unity and C#: scripts, physics, input, UI and more.",
+    keywords: "game engine games 3d 2d c# csharp unity3d gamedev",
+    file: "Player.cs", run: "\u25B6 Play mode · Console", comment: "//", vaultFile: "Vault.cs", varPrefix: "" });
   window.CB_TRACK_GROUPS = GROUPS;
   window.CB_TRACK_LIST = LIST;
   window.cbTrackMeta = function (id) { for (var i = 0; i < LIST.length; i++) if (LIST[i].id === id) return LIST[i]; return null; };

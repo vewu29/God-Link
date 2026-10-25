@@ -1047,12 +1047,18 @@ function refreshPcCode() {
     num.className = "pc-ln"; num.setAttribute("aria-hidden", "true");
     num.textContent = String(li + 1);
     var body = document.createElement("span");
+    /* A line too long for a phone wraps with a hanging indent: the
+       continuation sits two characters deeper than the line's own
+       text, so indentation (which is meaning in Python) stays legible. */
+    var lead = line.match(/^ */)[0].length + 2;
+    body.style.paddingLeft = lead + "ch";
+    body.style.textIndent = -lead + "ch";
     var html = line.replace(/</g, "&lt;");
     p.vars.forEach(function (d) {
       /* The blue box's number, wherever the language declares it:
        int start = 5;  start = 5  let start = 5;  start := 5
        var start: Int = 5  $start = 5; — the first match per line. */
-      html = html.replace(new RegExp("(\\b" + d.key + "(?:\\s*:\\s*[\\w.<>\\[\\]]+)?\\s*:?=\\s*)" + v[d.key] + "(?![\\w.])"), '$1<span class="hl">' + v[d.key] + "</span>");
+      html = html.replace(new RegExp("(\\b" + d.key + "(?:\\s*:\\s*[\\w.<>\\[\\]]+)?\\s*:?=\\s*)" + v[d.key] + "(?=[fFdDmMlLuU]?(?![\\w.]))"), '$1<span class="hl">' + v[d.key] + "</span>");
     });
     body.innerHTML = html === "" ? "&nbsp;" : html;
     div.appendChild(num); div.appendChild(body);
@@ -1193,7 +1199,7 @@ $("compileBtn").addEventListener("click", function () {
      (and its spoken summary) arrives together, not in slices. */
   var pcReduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   var steps = [
-    { t: 0, html: '<span class="dim">$ ' + CB_META.run.replace(CB_META.file, p.file).replace(/&/g, "&amp;").replace(/</g, "&lt;") + "</span>" },
+    { t: 0, html: '<span class="dim">' + (CB_META.run.charAt(0) === "\u25B6" ? "" : "$ ") + CB_META.run.replace(CB_META.file, p.file).replace(/&/g, "&amp;").replace(/</g, "&lt;") + "</span>" },
     { t: pcReduced ? 0 : 500, html: '<span class="dim">' + (pcCodeChars($("pcType").value) === pcCodeChars(pcTarget()) ? "Your typed program matches. Running:" : "Running the program shown above:") + "</span>" }
   ];
   /* Loop 50 — run() is called ONCE and the lines kept: they

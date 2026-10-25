@@ -44,14 +44,17 @@ async function launch() {
 async function newPage(env, opts = {}) {
   const {
     viewport = { width: 390, height: 844 }, mobile = true, track = "cpp", bootSeen = true,
-    storage = {}, cdn = true, reducedMotion = "reduce", colorScheme = "light",
+    storage = {}, cdn = true, reducedMotion = "reduce", colorScheme = "light", world = false,
   } = opts;
   const ctx = await env.browser.newContext({ viewport, isMobile: mobile, hasTouch: mobile, deviceScaleFactor: mobile ? 2 : 1, reducedMotion, colorScheme });
   const log = { console: [], pageErrors: [] };
   await ctx.route("https://cdnjs.cloudflare.com/**", (route) => {
     const u = route.request().url();
     const key = Object.keys(CDN_MAP).find((k) => u.endsWith(k));
-    if (!cdn || !key || !fs.existsSync(CDN_MAP[key])) return route.abort();
+    // The 3D world takes seconds to build with software WebGL, so tests
+    // that don't need it get the app's own no-WebGL fallback (world:
+    // false); the smoke test builds the real world for every track.
+    if (!cdn || !key || !fs.existsSync(CDN_MAP[key]) || (!world && key.startsWith("three"))) return route.abort();
     route.fulfill({ status: 200, contentType: "application/javascript", body: fs.readFileSync(CDN_MAP[key]) });
   });
   await ctx.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
@@ -72,12 +75,30 @@ async function newPage(env, opts = {}) {
 }
 
 // Every track the app offers, read from the running page so tests
-// follow the registry instead of a hard-coded list.
+// follow the registry instead of a hard-coded list. CB_TRACKS=a,b limits
+// a run to some tracks (handy while writing one).
 async function trackIds(env) {
   const { ctx, page } = await newPage(env);
   const ids = await page.evaluate(() => (window.CB_TRACK_LIST ? window.CB_TRACK_LIST.map((t) => t.id) : ["cpp", "cs", "drive"]));
   await ctx.close();
-  return ids;
+  const only = (process.env.CB_TRACKS || "").split(",").filter(Boolean);
+  return only.length ? ids.filter((id) => only.includes(id)) : ids;
 }
 
-module.exports = { launch, newPage, trackIds, ROOT, APP };
+// Runs fn(track) for every track, a few at a time (each in its own
+// browser context), and collects failures instead of stopping at the
+// first, so one run reports every broken track.
+async function eachTrack(ids, fn, width = 4) {
+  const errors = [];
+  let next = 0;
+  async function worker() {
+    while (next < ids.length) {
+      const id = ids[next++];
+      try { await fn(id); } catch (e) { errors.push(`${id}: ${e.message}`); }
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(width, ids.length) }, worker));
+  if (errors.length) throw new Error(errors.join("\n"));
+}
+
+module.exports = { launch, newPage, trackIds, eachTrack, ROOT, APP };
