@@ -22,7 +22,7 @@
      it as a fallback (the file-name match in openFile still
      decides whether a remembered place applies) until their
      own first save. */
-  var STORE = window.__isDrive ? "code-block-book-drive-v1" : window.__isCS ? "code-block-book-cs-v1" : "code-block-book-v1";
+  var STORE = CB_META.bookKey;
   var LEGACY_STORE = "code-block-book-v1";
   var pdfDoc = null, pageNum = 1, zoom = 1, rendering = false, pendingPage = null;
   var lastHeardPage = 0;

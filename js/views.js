@@ -21,7 +21,7 @@ window.cbAnnounce = cbAnnounce;
 /* Loop 41 — the active track, exposed on the body so the
    surface structures can lean per mode (C++ / C# / Drive)
    from the same flags the mode scripts decide by. */
-document.body.setAttribute("data-track", window.__isDrive ? "drive" : window.__isCS ? "cs" : "cpp");
+document.body.setAttribute("data-track", window.__track);
 var views = { sandbox: $("sandboxView"), library: $("libraryView"), pc: $("pcView"), book: $("bookView"), vault: $("vaultView"), profile: $("profileView") };
 var menuBtns = { sandbox: $("menuSandbox"), library: $("menuLibrary"), pc: $("menuPc"), book: $("menuBook"), vault: $("menuVault"), profile: $("menuProfile") };
 /* Loop 45 — the building's floor plan: the six sections in
@@ -205,7 +205,7 @@ var LIB = [
    and References as one, plus Program Files, Operator Overloading,
    Polymorphism, Class Templates, Move Semantics, and Containers and
    Algorithms — get their own full stories here. */
-var CHAPTERS = window.__isDrive ? DRIVE_CHAPTERS : window.__isCS ? CS_CHAPTERS : [
+var CHAPTERS = window.CB_T ? CB_T.chapters : window.__isDrive ? DRIVE_CHAPTERS : window.__isCS ? CS_CHAPTERS : [
   { title: "Basic Ideas", chapter: "Book Ch. 1 · Basic Ideas", color: "#53b1fd", scene: 0, line: 'std::cout << "Hello";', content: LIB[0] },
   { title: "Fundamental Types", chapter: "Book Ch. 2 · Introducing Fundamental Types of Data", color: "#38bdf8", scene: 1, line: ["int score = 0;", "std::cin >> score;"],
     content: { story: ["Every value in C++ has a KIND, called a type. int holds whole numbers like 0, 7, or -3. double holds numbers with a dot, like 3.5. char holds ONE letter, and bool holds just true or false. The type is the shape of the box — it decides what fits inside.", "A variable is a box with a name tag and a shape. int score = 0; builds a whole-number box called score, with 0 inside to start. Later you can empty the box and put a different number in — the box stays the same, but what is inside can change. That is why it is called a variable: it varies!", "Almost every program follows one recipe: input, process, output. std::cin >> score; is the input step — the computer listens to the keyboard and pours what is typed into the box. Then your code does its work, and std::cout shows the result on the screen."],
@@ -274,7 +274,7 @@ var CHAPTERS = window.__isDrive ? DRIVE_CHAPTERS : window.__isCS ? CS_CHAPTERS :
    beginner mistake and how to spot it. All wording is original;
    facts and syntax follow cppreference.com, Microsoft Learn and
    Wikipedia (credited in the footer). */
-var DEEP = window.__isDrive ? DRIVE_DEEP : window.__isCS ? CS_DEEP : [
+var DEEP = window.CB_T ? CB_T.deep : window.__isDrive ? DRIVE_DEEP : window.__isCS ? CS_DEEP : [
   { more: ["A program is a list of instructions, read top to bottom, one step at a time — like a recipe the computer follows exactly. It never guesses and never skips ahead.", "Every C++ program starts in the same place: a function called main. Think of main as the front door. The computer walks in there first, and whatever main contains is the adventure."],
     ex: { code: 'std::cout << "Ready... ";\nstd::cout << "Set... ";\nstd::cout << "Go!";',
           walk: ["Line 1: the mouth says Ready... and stays on the same row, because nothing asked for a new line.", "Line 2: a second pour of words lands right beside the first: Ready... Set...", "Line 3: one more pour finishes the message. The screen shows: Ready... Set... Go!", "Three separate instructions, one flowing sentence — the computer simply follows them in order."] },
@@ -359,7 +359,7 @@ var DEEP = window.__isDrive ? DRIVE_DEEP : window.__isCS ? CS_DEEP : [
    modes and stage music serve them untouched. All prose original;
    facts and syntax follow cppreference.com, Microsoft Learn and
    Wikipedia (credited in the footer). */
-var SHELFBOOKS = window.__isDrive ? DRIVE_SHELVES : window.__isCS ? CS_SHELVES : [
+var SHELFBOOKS = window.CB_T ? CB_T.shelves : window.__isDrive ? DRIVE_SHELVES : window.__isCS ? CS_SHELVES : [
   { title: "Standard Library Field Guide", chapter: "Beyond the Book shelf", num: "S1", color: "#2563eb", scene: 23,
     line: ["#include <vector>", "#include <map>", "#include <algorithm>"],
     content: { story: ["Imagine moving into a workshop where every tool you will ever need is already hanging on the wall, sharpened and free. That is the Standard Library: a giant collection of ready-made C++ machinery that comes with the language itself. You never build it. You just fetch the shelf you need.", "The shelves hold two families of treasure. CONTAINERS hold your things: vector, the growing train from Chapter 5; map, a wall of labeled drawers where each drawer has a name; set, a shelf that keeps every different item exactly once; and string, the text box from Chapter 7. ALGORITHMS do the work: std::sort tidies, std::find hunts, std::count tallies, and std::reverse flips a stretch back to front.", "Each shelf stands behind one #include — the fetch instruction from Chapter 10. #include <map> wheels the drawer wall into your program. #include <algorithm> brings the machines. Professionals reach for these shelves every single day: they are not training wheels, they are the real professional kit."],
@@ -397,7 +397,7 @@ var SHELFBOOKS = window.__isDrive ? DRIVE_SHELVES : window.__isCS ? CS_SHELVES :
       caption: "The time machine's dial: 1979, 1985, 1998, 2011, 2017, 2020… one language, always growing. Members only. Tap Play to travel.",
       demo: ["1979 — Stroustrup starts C with classes.", "1985 — the first C++ book appears.", "1998 — the first world standard: C++98.", "2011 — the giant leap: auto, lambdas, smart pointers.", "2017 — your book's edition: C++17.", "2020 and beyond — the language keeps growing."] } }
 ];
-var SHELFDEEP = window.__isDrive ? DRIVE_SHELFDEEP : window.__isCS ? CS_SHELFDEEP : [
+var SHELFDEEP = window.CB_T ? CB_T.shelfDeep : window.__isDrive ? DRIVE_SHELFDEEP : window.__isCS ? CS_SHELFDEEP : [
   { more: ["Between the containers and the machines stand the ITERATORS — little bookmarks that point at one spot inside a container. begin() hands you a bookmark at the first item; end() is a bookmark just past the last. Algorithms travel from bookmark to bookmark, which is why the same std::sort works on a vector, an array, and half a dozen other holders.", "There is also a humble hero on the utility shelf: std::pair, a box with exactly two compartments — perfect for carrying two things that belong together, like a name and its score. You met its cousin std::move back in Chapter 17; the same <utility> shelf holds both."],
     ex: { code: 'std::map<std::string, int> scores;\nscores["V"] = 10;\nscores["V"] += 5;\nstd::cout << scores["V"];',
           walk: ["Line 1: fetch the drawer wall. Each drawer is found by a string name tag and holds an int. The whole wall is called scores.", "Line 2: open the drawer labeled V — it is built on the spot if it was not there — and put 10 inside.", "Line 3: the same drawer, found by the same name: add 5 onto what is already inside. The drawer now holds 15.", "Line 4: ask for the drawer by name and print what falls out: 15. No searching through a list — the name tag IS the address."] },
@@ -571,6 +571,28 @@ function sceneSVG(i) {
   return head + sun + s + ground + "</svg>";
 }
 
+/* A picture for chapters that bring no hand-drawn scene (the registry
+   tracks): the chapter's key line on a code card, read out token by
+   token, with the guide pointing at it — the same stage, sun and
+   ground as every other scene. */
+function sceneCard(b) {
+  function x(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  var lines = (Array.isArray(b.line) ? b.line : [b.line]).slice(0, 3);
+  var longest = lines.reduce(function (m, l) { return Math.max(m, l.length); }, 1);
+  var fs = Math.max(9, Math.min(16, Math.floor(430 / longest)));
+  var top = 112 - (lines.length - 1) * (fs + 8) / 2;
+  var card = '<g class="anim-sway"><rect x="34" y="58" width="332" height="118" rx="12" fill="#0b2545" stroke="#38bdf8" stroke-width="3"/>' +
+    '<circle cx="52" cy="72" r="4" fill="#38bdf8"/><circle cx="66" cy="72" r="4" fill="#2f7fe0"/><circle cx="80" cy="72" r="4" fill="#31b8c6"/>' +
+    lines.map(function (l, k) {
+      return '<text x="200" y="' + (top + k * (fs + 8)) + '" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="' + fs + '" fill="#eaf4ff" style="font-variant-ligatures:none">' + x(l) + "</text>";
+    }).join("") +
+    '<rect x="' + (200 + Math.min(150, lines[lines.length - 1].length * fs * 0.31)) + '" y="' + (top + (lines.length - 1) * (fs + 8) - fs + 2) + '" width="3" height="' + fs + '" fill="#7cc4ff" class="anim-pulse"/></g>';
+  var tag = '<g class="anim-bob"><rect x="132" y="22" width="136" height="28" rx="14" fill="#2f7fe0"/><text x="200" y="41" text-anchor="middle" font-family="Sora,sans-serif" font-weight="700" font-size="13" fill="#ffffff">' + x(b.title.length > 18 ? b.title.slice(0, 17) + "…" : b.title) + "</text></g>";
+  var head = '<svg class="stage-svg" viewBox="0 0 400 250" role="img" aria-label="Animated picture for this chapter">';
+  var ground = '<rect x="0" y="212" width="400" height="38" fill="#2f7fe0"/><ellipse cx="70" cy="222" rx="34" ry="7" fill="#2563eb"/><ellipse cx="330" cy="228" rx="42" ry="8" fill="#2563eb"/>';
+  var sun = '<circle cx="356" cy="38" r="20" fill="#7cc4ff" class="anim-pulse"/><circle cx="52" cy="42" r="13" fill="#ffffff" opacity="0.85"/><circle cx="72" cy="42" r="10" fill="#ffffff" opacity="0.85"/>';
+  return head + sun + card + tag + charFace(60, 182, 0.8, "#8d5a3a", b.color || "#31b8c6") + charFace(342, 182, 0.8, "#f1c27d", "#2563eb") + ground + "</svg>";
+}
 /* ---------- Library reader ---------- */
 var libGrid = $("libGrid"), currentChapter = 0, readerMode = "text", stageTimers = [];
 var activeBooks = CHAPTERS, activeDeep = DEEP, readerKind = "chapter";
@@ -641,11 +663,11 @@ function openEntry(i) {
   var sc = $("storyCard"); sc.innerHTML = "";
   L.story.forEach(function (p) { var el = document.createElement("p"); el.textContent = p; sc.appendChild(el); });
   $("bigIdea").textContent = L.big;
-  $("storyCode").innerHTML = '<span class="cm">' + (window.__isDrive ? "★ The rule to remember:" : "// A key line from this chapter:") + '</span>\n' + (Array.isArray(b.line) ? b.line.join("\n") : b.line).replace(/</g, "&lt;");
+  $("storyCode").innerHTML = '<span class="cm">' + (window.__isDrive ? "★ The rule to remember:" : cbCommentLabel("A key line from this chapter:").replace(/</g, "&lt;")) + '</span>\n' + (Array.isArray(b.line) ? b.line.join("\n") : b.line).replace(/</g, "&lt;");
   var D = activeDeep[i];
   if (D) {
     D.more.forEach(function (p) { var el2 = document.createElement("p"); el2.textContent = p; sc.appendChild(el2); });
-    $("exampleCode").innerHTML = '<span class="cm">' + (window.__isDrive ? "★ The chapter on one card:" : "// Another example to explore:") + '</span>\n' + D.ex.code.replace(/</g, "&lt;");
+    $("exampleCode").innerHTML = '<span class="cm">' + (window.__isDrive ? "★ The chapter on one card:" : cbCommentLabel("Another example to explore:").replace(/</g, "&lt;")) + '</span>\n' + D.ex.code.replace(/</g, "&lt;");
     $("exampleCode").classList.remove("hidden");
     var wc = $("walkCard"); wc.innerHTML = "";
     var wh = document.createElement("p");
@@ -659,7 +681,7 @@ function openEntry(i) {
     $("walkCard").classList.add("hidden");
     $("mistakeCard").classList.add("hidden");
   }
-  $("stageHolder").innerHTML = sceneSVG(b.scene);
+  $("stageHolder").innerHTML = typeof b.scene === "number" ? sceneSVG(b.scene) : sceneCard(b);
   $("stageCaption").textContent = L.caption;
   $("stageConsole").innerHTML = '<span class="dim">Press “Play the picture” and watch the idea happen, step by step.</span>';
   $("readerPos").textContent = (readerKind === "chapter"
@@ -818,7 +840,7 @@ $("stagePrevBtn").addEventListener("click", function () {
 });
 
 /* ================= THE PC ================= */
-var PROJECTS = window.__isCS ? CS_PROJECTS : [
+var PROJECTS = window.CB_T ? CB_T.projects : window.__isCS ? CS_PROJECTS : [
   { name: "Rocket Countdown", file: "countdown.cpp",
     about: "A for loop counts the rocket down to blast off. Change the start number and the rocket counts from somewhere new.",
     vars: [{ key: "start", label: "start", val: 5, min: 1, max: 12 }],
@@ -1159,7 +1181,7 @@ $("compileBtn").addEventListener("click", function () {
      (and its spoken summary) arrives together, not in slices. */
   var pcReduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   var steps = [
-    { t: 0, html: window.__isCS ? '<span class="dim">$ dotnet run ' + p.file + "</span>" : '<span class="dim">$ g++ ' + p.file + " -o app</span>" },
+    { t: 0, html: '<span class="dim">$ ' + CB_META.run.replace(CB_META.file, p.file).replace(/&/g, "&amp;").replace(/</g, "&lt;") + "</span>" },
     { t: pcReduced ? 0 : 500, html: '<span class="dim">Compiling… OK — no errors. Running:</span>' }
   ];
   /* Loop 50 — run() is called ONCE and the lines kept: they

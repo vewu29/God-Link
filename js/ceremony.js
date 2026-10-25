@@ -14,6 +14,11 @@
     line: "Every road block in your world is lit. You repeated the rules until they stuck — signs, signals, and safe driving, one line at a time. The music is playing the full arrangement for you.",
     certA: "has mastered all " + BLOCKS.length + " Minnesota road blocks",
     certB: "in the Code Block world — the complete driving track,"
+  } : window.CB_T ? {
+    eyebrow: CB_META.name + " track complete", title: "The " + CB_META.name + " Masterpiece",
+    line: "Every block in your world is lit. You typed each " + CB_META.name + " line eight perfect times, and now the music plays the full arrangement: the masterpiece you built one repetition at a time.",
+    certA: "has mastered all " + BLOCKS.length + " " + CB_META.name + " blocks",
+    certB: "in the Code Block world — the complete " + CB_META.name + " track,"
   } : isCS ? {
     eyebrow: "C# track complete", title: "The C# Masterpiece",
     line: "Every block in your world is lit — in a whole new language. You typed each line eight perfect times, and now the music plays the full arrangement: the masterpiece you built one repetition at a time.",

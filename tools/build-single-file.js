@@ -16,10 +16,16 @@ html = html.replace(/<link rel="stylesheet" href="([^"]+)" \/>/g, (m, href) => {
   if (/^https?:/.test(href)) return m;
   return "<style>\n" + fs.readFileSync(path.join(ROOT, href), "utf8") + "</style>";
 });
+const inline = (file) => "<script>\n" + fs.readFileSync(path.join(ROOT, file), "utf8").replace(/<\/script/gi, "<\\/script") + "</script>";
 html = html.replace(/<script src="([^"]+)"><\/script>/g, (m, src) => {
   if (/^https?:/.test(src)) return m;
-  const code = fs.readFileSync(path.join(ROOT, src), "utf8").replace(/<\/script/gi, "<\\/script");
-  return "<script>\n" + code + "</script>";
+  if (src !== "js/tracks.js") return inline(src);
+  // Every track ships inside the bundle; the registry sees __cbBundled
+  // and skips its on-demand loader. Track files only register (or, for
+  // the original C# and Drive files, declare) their data, and build
+  // nothing unless they are the active track.
+  const tracks = fs.readdirSync(path.join(ROOT, "tracks")).filter((f) => f.endsWith(".js")).sort();
+  return "<script>window.__cbBundled = true;</script>\n    " + inline(src) + "\n    " + tracks.map((f) => inline("tracks/" + f)).join("\n    ");
 });
 
 fs.mkdirSync(path.dirname(out), { recursive: true });

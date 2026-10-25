@@ -1,7 +1,7 @@
 "use strict";
 /* ================= DATA — 30 blocks, book chapter order ================= */
 var REPS_GOAL = 8;
-var BLOCKS = window.__isDrive ? DRIVE_BLOCKS : window.__isCS ? CS_BLOCKS : [
+var BLOCKS = window.CB_T ? CB_T.blocks : window.__isDrive ? DRIVE_BLOCKS : window.__isCS ? CS_BLOCKS : [
   { name: "Hello Block", short: "Hello", chapter: "Book Ch. 1 · Basic Ideas", color: "#53b1fd", icon: "i-say", verb: "say",
     line: 'std::cout << "Hello";',
     explain: 'std::cout is the screen\u2019s mouth. The << arrows pour text into it, so the words appear on screen. Every statement ends with a semicolon — the full stop of C++.' },
@@ -95,7 +95,7 @@ var BLOCKS = window.__isDrive ? DRIVE_BLOCKS : window.__isCS ? CS_BLOCKS : [
 ];
 
 /* ================= STATE (localStorage, in-memory fallback) ================= */
-var STORE_KEY = window.__isDrive ? "code-block-progress-drive-v1" : window.__isCS ? "code-block-progress-cs-v1" : "code-block-progress-v1";
+var STORE_KEY = CB_META.storeKey;
 var storeOK = true;
 var state = { reps: {}, celebrated: false };
 /* Loop 56 — storage hygiene: whatever an older build, a hand
@@ -355,7 +355,7 @@ function openBlock(i) {
   if (sessionBlock) sessionBlock.textContent = "Block " + (i + 1) + " of " + BLOCKS.length;
   paintSessionMood(storedMood());
   var cn = $("consoleName");
-  if (cn) cn.textContent = window.__isDrive ? "road-rules.txt" : window.__isCS ? "Program.cs" : "main.cpp";
+  if (cn) cn.textContent = CB_META.file;
   $("drillExplain").textContent = b.explain;
   typeInput.value = "";
   setStatus(isDone(i) ? "Mastered. Keep typing it for the rhythm — that\u2019s how it sticks." : "", isDone(i) ? "good" : "");

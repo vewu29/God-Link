@@ -19,7 +19,7 @@
   var go = document.getElementById("bootGo"), skip = document.getElementById("bootSkip");
   var title = document.getElementById("bootTitle"), line = document.getElementById("bootLine");
   var stats = document.getElementById("bootStats");
-  var track = window.__isDrive ? "Drive" : window.__isCS ? "C#" : "C++";
+  var track = window.__isDrive ? "Drive" : CB_META.name;
   var total = (typeof BLOCKS !== "undefined" && BLOCKS) ? BLOCKS.length : 0;
   var goal = (typeof REPS_GOAL !== "undefined") ? REPS_GOAL : 8;
   var done = 0, i;
@@ -53,7 +53,7 @@
   var banked = 0;
   try {
     if (profile && typeof cbVaultLen === "function") {
-      banked = cbVaultLen(profile.vault) + cbVaultLen(profile.vaultCS) + cbVaultLen(profile.vaultDrive);
+      banked = cbProfileTotals(profile).banked;
     }
   } catch (e) {}
   var chips = ['<span class="boot-stat"><strong>' + done + " / " + total + "</strong>&nbsp;blocks mastered</span>"];

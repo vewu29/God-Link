@@ -6,8 +6,8 @@
    The Vault generates its 10,000 drills deterministically from hand-written
    templates + word banks (seeded RNG), so every visit rebuilds the same vault. */
 function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
-var CB_PROG_KEY = window.__isDrive ? "progressDrive" : window.__isCS ? "progressCS" : "progress";
-var CB_VAULT_KEY = window.__isDrive ? "vaultDrive" : window.__isCS ? "vaultCS" : "vault";
+var CB_PROG_KEY = CB_META.profileProg;
+var CB_VAULT_KEY = CB_META.profileVault;
 
 /* ---------- Profile store ---------- */
 var CB_PROFILES_KEY = "code-block-profiles-v1";
@@ -111,8 +111,8 @@ function cbPaintHello() {
   row.classList.remove("hidden");
   $("helloAvatar").innerHTML = cbAvatarHTML(p.name, p.color);
   $("helloName").textContent = "Keep going, " + p.name;
-  var trackName = window.__isDrive ? "Drive" : window.__isCS ? "C#" : "C++";
-  var banked = cbVaultLen(p.vault) + cbVaultLen(p.vaultCS) + cbVaultLen(p.vaultDrive);
+  var trackName = CB_META.id === "drive" ? "Drive" : CB_META.name;
+  var banked = cbProfileTotals(p).banked;
   $("helloSub").textContent = cbMasteredCount() + " of " + BLOCKS.length + " " + trackName + " blocks mastered · " + banked.toLocaleString() + " Vault drills banked across all tracks";
 }
 var cbOrigRefresh = refreshProgress;
@@ -163,7 +163,7 @@ window.cbRenderProfile = function () {
     var picks = names.map(function (n) {
       var pr = cbStore.profiles[n];
       return '<button class="profile-pick" type="button" data-signin="' + esc(n) + '">' + cbAvatarHTML(n, pr.color) +
-        '<span><b>' + esc(n) + '</b><span>' + (cbCountProg(pr.progress) + cbCountProg(pr.progressCS) + cbCountProg(pr.progressDrive)) + ' blocks mastered · ' + (cbVaultLen(pr.vault) + cbVaultLen(pr.vaultCS) + cbVaultLen(pr.vaultDrive)).toLocaleString() + ' vault drills banked · tap to sign in</span></span></button>';
+        '<span><b>' + esc(n) + '</b><span>' + cbProfileTotals(pr).mastered + ' blocks mastered · ' + cbProfileTotals(pr).banked.toLocaleString() + ' vault drills banked · tap to sign in</span></span></button>';
     }).join("");
     var swatches = AVATAR_COLORS.map(function (c, i) {
       return '<button class="swatch' + (c === cbChosenColor ? " sel" : "") + '" type="button" data-color="' + c + '" style="background:' + c + '" aria-label="Avatar color ' + (i + 1) + '" aria-pressed="' + (c === cbChosenColor) + '"></button>';
@@ -179,7 +179,7 @@ window.cbRenderProfile = function () {
       '<p class="prof-msg" id="profMsg" aria-live="polite"></p></div>' +
       (names.length ? '<div class="prof-card"><h3 style="margin:0 0 4px;">Already have a profile on this device?</h3><p class="prof-sub">Tap your name to sign in — your saved progression comes right back.</p>' + picks + "</div>" : "") +
       '<div class="prof-card"><h3 style="margin:0 0 6px;">What members get</h3>' +
-      '<p class="prof-sub"><strong>The Vault</strong> — 10,000 extra drills in 100 themed packs.<br><strong>Member shelves</strong> — in C++ mode, Shelf S5 · The Pattern Workshop and Shelf S6 · The C++ Time Machine; the 10,000-drill Vault covers C++, C#, and Drive, each with its own progress.<br><strong>Saved progression</strong> — Sandbox mastery and Vault drills kept under your name, separate from guest progress and from other profiles on this device.</p></div>';
+      '<p class="prof-sub"><strong>The Vault</strong> — 10,000 extra drills in 100 themed packs.<br><strong>Member shelves</strong> — in C++ mode, Shelf S5 · The Pattern Workshop and Shelf S6 · The C++ Time Machine; every track has its own 10,000-drill Vault, each with its own progress.<br><strong>Saved progression</strong> — Sandbox mastery and Vault drills kept under your name, separate from guest progress and from other profiles on this device.</p></div>';
     $("swatchRow").addEventListener("click", function (ev) {
       var b = ev.target.closest("[data-color]"); if (!b) return;
       cbChosenColor = b.getAttribute("data-color");
@@ -223,22 +223,22 @@ window.cbRenderProfile = function () {
       return '<button class="profile-pick" type="button" data-switch="' + esc(n) + '">' + cbAvatarHTML(n, pr.color) +
         '<span><b>' + esc(n) + '</b><span>tap to switch to this profile</span></span></button>';
     }).join("");
-    var jRows = [["C++ blocks", cbCountProg(p.progress), 30], ["C# blocks", cbCountProg(p.progressCS), 30], ["Drive blocks", cbCountProg(p.progressDrive), 24], ["Vault drills", cbVaultLen(p.vault) + cbVaultLen(p.vaultCS) + cbVaultLen(p.vaultDrive), 30000]];
-    var journey = '<div class="journey" role="img" aria-label="Your journey across all three tracks and the Vault">' + jRows.map(function (r) {
+    var tRows = cbProfileRows(p);
+    var jRows = tRows.map(function (r) { return [r.meta.name + " blocks", r.mastered, r.meta.blocks]; });
+    jRows.push(["Vault drills", cbProfileTotals(p).banked, 10000 * tRows.length]);
+    var journey = '<div class="journey" role="img" aria-label="Your journey across every track you have started, and the Vault">' + jRows.map(function (r) {
       var pct = Math.max(0, Math.min(100, Math.round(100 * r[1] / r[2])));
       return '<div class="journey-row"><span class="j-label">' + r[0] + '</span><span class="j-track"><span class="j-fill" style="width:' + pct + '%"></span></span><span class="j-count">' + r[1].toLocaleString() + " / " + r[2].toLocaleString() + "</span></div>";
     }).join("") + "</div>";
     host.innerHTML =
       '<div class="prof-card"><div class="prof-head">' + cbAvatarHTML(p.name, p.color, true) +
-      '<div><p class="prof-name">' + esc(p.name) + '<span class="member-pill">Member</span></p><p class="prof-sub">Welcome back — this is your whole journey, all three tracks, saved under your name on this device.</p></div></div>' +
+      '<div><p class="prof-name">' + esc(p.name) + '<span class="member-pill">Member</span></p><p class="prof-sub">Welcome back — this is your whole journey, every track you have started, saved under your name on this device.</p></div></div>' +
       journey +
       '<div class="prof-stats">' +
-      '<div class="prof-stat"><b>' + cbCountProg(p.progress) + " / 30</b><span>C++ blocks mastered</span></div>" +
-      '<div class="prof-stat"><b>' + cbCountProg(p.progressCS) + " / 30</b><span>C# blocks mastered</span></div>" +
-      '<div class="prof-stat"><b>' + cbCountProg(p.progressDrive) + " / 24</b><span>Drive blocks mastered</span></div>" +
-      '<div class="prof-stat"><b>' + cbVaultLen(p.vault) + " / 10,000</b><span>C++ Vault drills</span></div>" +
-      '<div class="prof-stat"><b>' + cbVaultLen(p.vaultCS) + " / 10,000</b><span>C# Vault drills</span></div>" +
-      '<div class="prof-stat"><b>' + cbVaultLen(p.vaultDrive) + " / 10,000</b><span>Drive Vault drills</span></div>" +
+      tRows.map(function (r) {
+        return '<div class="prof-stat"><b>' + r.mastered + " / " + r.meta.blocks + "</b><span>" + esc(r.meta.name) + " blocks mastered</span></div>" +
+          '<div class="prof-stat"><b>' + r.banked.toLocaleString() + " / 10,000</b><span>" + esc(r.meta.name) + " Vault drills</span></div>";
+      }).join("") +
       '<div class="prof-stat"><b>' + (names.length) + '</b><span>Profiles on this device</span></div></div>' +
       '<button class="big-btn" id="profVault" type="button">Open the Vault — 10,000 drills</button>' +
       '<button class="ghost-btn" id="profOut" type="button">Sign out (keep browsing as guest)</button>' +
@@ -323,7 +323,7 @@ var MAPS = ["scores","vault","atlas","index","ledger"];
 var NS = ["game","shop","zoo","lab","guild","harbor"];
 var DECS = ["1.5","2.5","3.75","0.5","9.99","4.2","7.3","12.6"];
 var LETTERS = ["A","B","C","D","E","F","G","H","J","K","M","N","P","R","S","T","V","W","X","Z"];
-var VT = window.__isDrive ? DRIVE_VT : window.__isCS ? CS_VT : [
+var VT = window.CB_T ? CB_T.vt : window.__isDrive ? DRIVE_VT : window.__isCS ? CS_VT : [
   { line: 'std::cout << "{w}";', why: "cout pours the words in quotes straight onto the screen." },
   { line: "std::cout << {v};", why: "cout prints whatever value is inside the box right now." },
   { line: 'std::cout << "{w}: " << {v};', why: "Two pours in one line: a label first, then the box's value." },
@@ -407,7 +407,7 @@ var VT = window.__isDrive ? DRIVE_VT : window.__isCS ? CS_VT : [
   { line: "{arr}.insert({n});", why: "insert files a new item into an ordered container." },
   { line: "int s = std::accumulate({arr}.begin(), {arr}.end(), 0);", why: "accumulate adds the whole stretch into one running total." }
 ];
-var THEMES = window.__isDrive ? DRIVE_THEMES : window.__isCS ? CS_THEMES : [
+var THEMES = window.CB_T ? CB_T.themes : window.__isDrive ? DRIVE_THEMES : window.__isCS ? CS_THEMES : [
   { name: "Print & Talk", t: [0, 1, 2, 3, 24] },
   { name: "Boxes & Numbers", t: [4, 5, 6, 68, 70] },
   { name: "True, False & Letters", t: [7, 8, 9, 19, 17] },
@@ -458,6 +458,7 @@ function cbFill(tpl, r) {
   }
   function fillOnce(k, m) {
     if (window.__isDrive && window.cbDriveFill) { var dv = window.cbDriveFill(k, r); if (dv !== null) return dv; }
+          if (window.CB_T && CB_T.fill) { var tv = CB_T.fill(k, r); if (tv !== null && tv !== undefined) return tv; }
     switch (k) {
       case "v": case "u": case "r": return distinct(VARS, usedV);
       case "sv": return pick(STRVARS);
@@ -508,7 +509,7 @@ var vaultPack = -1, vaultDrill = -1, vaultCache = null;
 var vaultFilter = "all", vaultQuery = "";
 var VAULT_MILESTONES = [100, 500, 1000, 2500, 5000, 7500, 9000, 10000];
 var VAULT_CHEV = '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-chev-left"/></svg>';
-function cbVaultFileName() { return window.__isDrive ? "road-vault.txt" : window.__isCS ? "Vault.cs" : "vault.cpp"; }
+function cbVaultFileName() { return CB_META.vaultFile; }
 
 /* The monument: a 100×100 field of dots — one per drill in the
    Vault. Banked drills burn ice-blue; the rest wait in the dark. */
@@ -785,7 +786,7 @@ window.cbRenderVault = function () {
 };
 
 /* ---------- The Glossary: 309 words of C++ ---------- */
-var GLOSSARY = window.__isDrive ? DRIVE_GLOSSARY : window.__isCS ? CS_GLOSSARY : [
+var GLOSSARY = window.CB_T ? CB_T.glossary : window.__isDrive ? DRIVE_GLOSSARY : window.__isCS ? CS_GLOSSARY : [
   ["abstract class", "A blueprint with at least one promised-but-unwritten function; you can build children from it, never the blueprint itself."],
   ["accumulate", "A Standard Library machine that adds a whole stretch of values into one running total."],
   ["address", "Where a variable lives in memory — a number the computer uses like a house number."],
@@ -1098,7 +1099,7 @@ var GLOSSARY = window.__isDrive ? DRIVE_GLOSSARY : window.__isCS ? CS_GLOSSARY :
 ];
 
 /* ---------- Field Guide: 20 more Standard Library tools ---------- */
-var FIELDGUIDE = window.__isDrive ? DRIVE_FIELD : window.__isCS ? CS_FIELD : [
+var FIELDGUIDE = window.CB_T ? CB_T.field : window.__isDrive ? DRIVE_FIELD : window.__isCS ? CS_FIELD : [
   { name: "std::array", head: "<array>", what: "A fixed row of boxes that knows its own size and never grows — the plain array, dressed in container clothes so algorithms can visit it.", ex: "std::array<int, 3> row = {4, 8, 15};" },
   { name: "std::deque", head: "<deque>", what: "A double-ended queue: a growing row that adds items quickly at BOTH ends, front and back.", ex: "dq.push_front(1);  dq.push_back(2);" },
   { name: "std::list", head: "<list>", what: "A chain of items linked hand to hand. Slower to visit by number, but items can be added or removed mid-chain without moving anyone else.", ex: "trail.insert(it, 42);  // slip one in, mid-chain" },
@@ -1122,7 +1123,7 @@ var FIELDGUIDE = window.__isDrive ? DRIVE_FIELD : window.__isCS ? CS_FIELD : [
 ];
 
 /* ---------- Cheat Sheets: 10 new cards ---------- */
-var CHEATS = window.__isDrive ? DRIVE_CHEATS : window.__isCS ? CS_CHEATS : [
+var CHEATS = window.CB_T ? CB_T.cheats : window.__isDrive ? DRIVE_CHEATS : window.__isCS ? CS_CHEATS : [
   { title: "Decisions Card", body: "The if ladder and its cousins, on one card.", code: "if (a) { }\nelse if (b) { }\nelse { }\nint m = (a > b) ? a : b;" },
   { title: "Vector Moves Card", body: "The five moves a vector is asked for every day.", code: "v.push_back(9);      // grow at the end\nv.pop_back();        // shrink at the end\nv.size();            // how many?\nv.at(0);             // checked reach\nv.clear();           // empty it" },
   { title: "Map & Set Moves Card", body: "Drawers and one-of-each shelves, side by side.", code: "scores[\"V\"] = 10;    // open drawer V\nscores.count(\"V\");   // is there a V?\nseen.insert(7);       // file it in the set\nseen.count(7);        // 1 if present" },

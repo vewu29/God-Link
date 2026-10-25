@@ -2,24 +2,10 @@
 /* ================= C# MODE — parallel dataset for Code Block =================
    Inspired by the topic order of "C# 8.0 in a Nutshell" (Albahari & Albahari).
    Every explanation below is ORIGINAL Code Block prose — no book text is used.
-   This file loads BEFORE the main scripts. It sets window.__isCS from the
-   saved language choice; the main data declarations then pick the C# arrays
-   instead of the C++ ones, and C# progress uses its own storage keys, so the
-   two languages never overwrite each other. */
-window.__isCS = false;
-window.__isDrive = false;
-try {
-  var cbSavedMode = localStorage.getItem("code-block-lang-v1");
-  window.__isCS = cbSavedMode === "cs";
-  window.__isDrive = cbSavedMode === "drive";
-} catch (e) {}
-window.cbCountProg = function (prog) {
-  if (!prog || typeof prog !== "object" || !prog.reps || typeof prog.reps !== "object") return 0;
-  var c = 0;
-  for (var k in prog.reps) { var n = Number(prog.reps[k]); if (isFinite(n) && n >= 8) c++; }
-  return c;
-};
-window.cbVaultLen = function (v) { return (v && typeof v === "object" && !Array.isArray(v)) ? Object.keys(v).length : 0; };
+   js/tracks.js loads this file only when C# is the active track; the main
+   data declarations then pick the C# arrays instead of the C++ ones, and C#
+   progress keeps its own storage keys, so the tracks never overwrite each
+   other. */
 
 var CS_BLOCKS = [
   { name: "Hello Block", short: "Hello", chapter: "C# Book Ch. 1 · Introducing C#", color: "#53b1fd", icon: "i-say", verb: "say",
@@ -466,46 +452,8 @@ var CS_CHEATS = [
   { title: "Async Card", body: "Start early, await late, never block the screen.", code: "async Task<int> FetchScoreAsync() {\n    await Task.Delay(100);\n    return 250;\n}\nint score = await FetchScoreAsync();" }
 ];
 
-/* ---------- Language toggle + C# text polish ---------- */
+/* ---------- C# text polish ---------- */
 (function cbLangUI() {
-  var style = document.createElement("style");
-  style.textContent = ".lang-toggle{display:flex;gap:6px;background:linear-gradient(170deg,var(--surface) 55%,var(--ice) 150%);border:1px solid var(--line);border-radius:var(--r-tile);padding:5px;box-shadow:var(--shadow-sm);margin-bottom:12px;}" +
-    ".lang-btn{flex:1;border:none;background:transparent;color:var(--muted);border-radius:var(--r-row);padding:10px 4px;font-size:15px;font-weight:800;cursor:pointer;min-height:44px;font-family:inherit;}" +
-    ".lang-btn.active{background:var(--grad-primary);color:var(--on-accent);box-shadow:0 5px 16px rgba(37,99,235,.45);text-shadow:0 1px 2px rgba(4,30,60,.35);}";
-  document.head.appendChild(style);
-  function makeToggle() {
-    var cur = window.__isDrive ? "drive" : window.__isCS ? "cs" : "cpp";
-    var t = document.createElement("div");
-    t.className = "lang-toggle";
-    t.setAttribute("role", "group");
-    t.setAttribute("aria-label", "Choose your track");
-    [["cpp", "C++"], ["cs", "C#"], ["drive", "Drive"]].forEach(function (opt) {
-      var b = document.createElement("button");
-      b.type = "button";
-      b.className = "lang-btn" + (cur === opt[0] ? " active" : "");
-      b.textContent = opt[1];
-      b.setAttribute("aria-pressed", String(cur === opt[0]));
-      b.addEventListener("click", function () {
-        if (cur === opt[0]) return;
-        try {
-          if (opt[0] === "cpp") localStorage.removeItem("code-block-lang-v1");
-          else localStorage.setItem("code-block-lang-v1", opt[0]);
-        } catch (e) {}
-        location.reload();
-      });
-      t.appendChild(b);
-    });
-    return t;
-  }
-  /* The track switcher sits above the main menu, so it stays reachable from
-     every section — not just the Sandbox. Falls back to the Sandbox top. */
-  var nav = document.querySelector(".wrap > .menu");
-  if (nav && nav.parentNode) nav.parentNode.insertBefore(makeToggle(), nav);
-  else {
-    var sandbox = document.getElementById("sandboxView");
-    if (sandbox) sandbox.insertBefore(makeToggle(), sandbox.firstChild);
-  }
-
   /* Footer credit: C# sources join the C++ ones in every mode. */
   var notes = document.querySelectorAll(".wrap > .source-note");
   if (notes.length) {
