@@ -32,6 +32,8 @@ The output itself is trustworthy because the content tests run every practice pr
 | 11 | **Accessibility:** rooms had no landmarks, the music dock and track bar weren't labeled, and the PC's "Type along" label had 1.7:1 contrast. | Medium | Each room is a `main` landmark, the dock and bar are labeled regions, the footer is `contentinfo`, and the label is now 7:1. | `a11y.test.js`: no serious or critical axe findings in eight rooms, light and dark |
 | 12 | **Tracks were hard-wired as paired flags** (`__isCS` / `__isDrive`) in about 60 places, so a fourth track was impractical. | Structural | A track registry (`js/tracks.js`) and a grouped, searchable track picker. Original storage keys were kept, so saved progress still loads. | "track picker" tests; progress-survives test |
 | 13 | **The PC could only deal a random project**, so a learner couldn't go back to one they liked. | Low (usability) | A labeled project list, kept in step with Surprise me (`2be5e3d`). | "every project can be chosen by name" |
+| 14 | **The Vault never filled `{L}`** (a capital letter): its placeholder pattern only matched lower-case keys. The original C++ Vault taught `char score = '{L}';`, and the C, Lua, Ruby and SQL Vaults showed `{L}` as typed. | Medium (wrong code in drills) | The pattern now matches `{L}` (`6846dd0`). | "the Vault fills every placeholder" |
+| 15 | **Some Vault themes ran out of fresh lines** and dealt a filler `int drill2514 = 15;` instead. Unreal's Actor Basics theme (added in this pass) could make only about 23 different lines, so 430 of its 500 drills were filler; Unity and two other Unreal themes had a few. | Medium (content) | Higher-variety templates in those themes; no track deals a filler line now (`6846dd0`). | same test |
 
 ## Content verification (current)
 
@@ -49,17 +51,29 @@ Run `npm run test:content` to reproduce these numbers.
 | Rust | 54/54 (rustfmt + clippy, warnings are errors) | 10,030/10,030 | 45/45 |
 | C | 54/54 (clang-format, warnings are errors, ASan + UBSan) | 10,030/10,030 | 45/45 |
 | SQL | 54/54 (sqlite3) | 10,030/10,030 (compiled against a schema) | 45/45 |
+| HTML & CSS | 54/54 (Nu HTML Checker with no messages; drawn by Chromium, text and computed styles must match) | 10,030/10,030 (Nu HTML Checker) | 45/45 |
+| PHP | 54/54 (PHP 8.3, every warning fails) | 10,030/10,030 | 45/45 |
+| Ruby | 54/54 (`ruby -w`, every warning fails) | 10,030/10,030 | 45/45 |
+| Kotlin | 54/54 (kotlinc 2.1, warnings are errors) | 10,030/10,030 | 45/45 |
+| Lua | 54/54 (Lua 5.4) | 10,030/10,030 | 45/45 |
+| Bash | 54/54 (ShellCheck with every check on, then Bash 5) | 10,030/10,030 (`bash -n`, then ShellCheck) | 45/45 |
 | Unity | 36/36 (engine stand-in) | 10,030/10,030 | 47/47 |
 | Unreal | 36/36 (engine stand-in) | 10,030/10,030 | 47/47 |
 
 With 10–40 extra random settings per project, every track above still matches.
+
+Two browser checks guard the Vault on every track: no placeholder is left unfilled, and no pack falls back to a filler line.
 
 The stricter checks found real problems in new content before it shipped. All were fixed:
 
 - a TypeScript example that narrowed a variable to `never`;
 - Rust and Go formatting and lint issues;
 - an undefined-behavior bug (`stack[--top], top` in one call) in a C draft;
-- a SQL example whose output depended on how ties were ordered.
+- a SQL example whose output depended on how ties were ordered;
+- a PHP example that printed part of a line before an exception stopped it;
+- Ruby lines that `ruby -w` warns about (a literal in a condition, a space before an argument list);
+- a Bash checker gap: one comment-only drill line made ShellCheck stop at a parse error, so the first line check silently checked nothing. Any message ShellCheck gives outside a line now fails the batch, and each line is checked as its own file;
+- three HTML pages with sub-headings but no `<h1>`.
 
 ## Open items
 
@@ -72,4 +86,4 @@ These are known and not yet done. They need the owner's decision, or more work t
 5. **Hosting.** The site is ready for GitHub Pages or any static host (see the README), but it hasn't been published from this repository yet.
 6. **Third-party CDNs.** three.js (r128, 2021) and pdf.js load from cdnjs, and the fonts from Google Fonts. The app works without them, but self-hosting them would remove the dependency and the font requests to Google.
 7. **Progress lives in one browser.** There is no sync between devices. That's by design for privacy, but worth stating on the site.
-8. **More tracks.** Planned next: PHP, Ruby, Kotlin, Lua, Bash, HTML & CSS (needs a live-preview PC) and Swift.
+8. **More tracks.** PHP, Ruby, Kotlin, Lua, Bash and HTML & CSS are in. Swift is next; it needs a Swift toolchain in the test setup before its content can be verified like the others.

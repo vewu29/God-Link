@@ -42,6 +42,7 @@ Read an existing track (for example `tracks/python.js`) before writing a new one
 ### Rules for content
 
 - **Projects.** `run(v)` must produce exactly what the real program prints, for *every* value in each box's range, not just the defaults. The content check runs the default, minimum and maximum settings; add `CB_EXTRA_CASES=40` to try random ones too. Each box's value must appear in the code as the language declares it (`start = 5`, `let start = 5;`, `start := 5`, `.parameter set :start 5` …) so the PC can highlight it.
+- **Web pages (HTML & CSS).** A track with `preview: true` in `addTrack` has no console: Compile & Run draws the page in a sandboxed frame. There, `run(v)` is the text the page shows, one line per line of text, and each project also has `checks(v)`, a list of `[selector, CSS property, value]` the browser must compute (`.offsetWidth` reads an element property; `count:grid-template-columns` counts columns). Name each box after the CSS property or attribute it sets (`font-size`, `gap`, `value`) so the PC can highlight `font-size: 32px` or `value="40"`.
 - **Examples.** Chapter and shelf examples are whole programs that must run without errors. Mark one `browser: true` if it needs a web page (it's then type-checked or parsed only), or `test: true` if it's a test file (Go and Rust run their test tools on it).
 - **Walkthroughs.** Each `walk` step that starts "Line 5:" or "Lines 3–7:" must point at those exact lines, and any output it quotes must be what the program really prints. Run the example and check.
 - **Drills and Vault lines** must parse in the track's language. Every Vault template needs enough variety (placeholders with many possible values) that each 100-drill pack has no repeats.
@@ -52,7 +53,7 @@ Read an existing track (for example `tracks/python.js`) before writing a new one
 
 1. Write `tracks/<id>.js` as above.
 2. Add `addTrack({ id, name, badge, group, color, blocks: 30, blurb, keywords, file, run, comment, vaultFile, varPrefix })` in `js/tracks.js`.
-3. Teach the content check to run it: add `module.exports.<id> = { needs, build, checkLines, checkExamples }` in `tests/content/toolchains.js`, using the real compiler or interpreter. If no real toolchain can run in tests, say so plainly in the track and check as much as you can, the way the Unity and Unreal stand-ins do.
+3. Teach the content check to run it: add `module.exports.<id> = { needs, build, checkLines, checkExamples }` in `tests/content/toolchains.js`, using the real compiler or interpreter (slow toolchains can use `buildBatch` to build every case at once, as Kotlin and HTML do). If no real toolchain can run in tests, say so plainly in the track and check as much as you can, the way the Unity and Unreal stand-ins do.
 4. Run `npm run test:content -- <id>` and `CB_TRACKS=<id> npm test` until both pass.
 5. Update the track table in `README.md` and the numbers in `docs/AUDIT.md`.
 

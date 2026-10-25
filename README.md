@@ -10,8 +10,8 @@ It's free to use. The plan is for it to be supported by voluntary donations, nev
 
 | Group | Tracks |
 | --- | --- |
-| Programming languages | C++ · C# · Python · JavaScript · Java · TypeScript · Go · Rust · C |
-| Web & data | SQL |
+| Programming languages | C++ · C# · Python · JavaScript · Java · TypeScript · Go · Rust · C · Ruby · Kotlin · Lua · Bash |
+| Web & data | HTML & CSS · SQL · PHP |
 | Game engines | Unity (C#) · Unreal Engine 5 (C++) |
 | Road & life skills | Minnesota Drive (permit-test study) |
 
@@ -19,7 +19,7 @@ Every programming track has the same rooms:
 
 - **Sandbox**: 30 drill blocks, each one everyday line of code. A block is mastered after 8 perfect repetitions. A wrong letter is gently refused, and phone keyboards' smart quotes and dashes count as the plain character.
 - **Library**: 16–19 chapters in plain words (a story, the big idea, an animated picture, a deep dive, a worked example with a line-by-line walkthrough, and the most common mistake), plus 4–6 reference shelves, a glossary, a field guide and cheat cards.
-- **PC**: 12–25 practice programs per track. Pick one, type along, change the numbers in the blue boxes and run it again.
+- **PC**: 12–25 practice programs per track. Pick one, type along, change the numbers in the blue boxes and run it again. In HTML & CSS, Compile & Run opens your page in a sandboxed frame (no scripts, no forms) and your own browser draws it.
 - **Vault**: 10,000 generated drills per track, in 100 themed packs.
 - **My Book**: open your own PDF beside the drills.
 - **Profiles and certificates**: several learners can share one device, and finishing a track earns a certificate you can save as an image.
@@ -40,6 +40,12 @@ The PC does not compile anything in your browser. Each practice program's output
 | Rust | `rustfmt`-checked, built with clippy (warnings are errors), then run | syn |
 | C | `clang-format`-checked, built as C17 (warnings are errors), run under AddressSanitizer and UBSan | tree-sitter |
 | SQL | run by the `sqlite3` shell | SQLite itself, against a shared schema (so table and column names are checked too) |
+| HTML & CSS | checked by the W3C Nu HTML Checker (its CSS checker too) with no message at all, then drawn by Chromium: the page's text must match, and the styles its numbers set must compute to those numbers | the Nu HTML Checker, inside a small page |
+| PHP | run with PHP 8.3, every error reported; any warning fails | `php -l` |
+| Ruby | run with `ruby -w` (Ruby 3.3); any warning fails | Ruby's own compiler |
+| Kotlin | built by kotlinc 2.1 with warnings as errors, then run | the Kotlin compiler's parser |
+| Lua | run with Lua 5.4; any error output fails | Lua's own `load()` |
+| Bash | must pass ShellCheck with every check on, then run with Bash 5; any error output fails | `bash -n`, then ShellCheck |
 | Unity | compiled against a stand-in copy of the Unity API and played frame by frame | Roslyn |
 | Unreal | compiled with g++ against a stand-in copy of the UE5 API and played frame by frame | tree-sitter (reflection macros removed) |
 
@@ -72,16 +78,16 @@ Any static host works the same way: Netlify, Cloudflare Pages, or a plain web se
 ```sh
 npm ci                      # exact versions from package-lock.json
 npx playwright install chromium   # once, if no Chromium is installed
-npm test                    # browser suite: 26 tests, every track
+npm test                    # browser suite: 27 tests, every track
 npm run test:content        # run every practice program with real toolchains
 ```
 
 - `CB_TRACKS=go,rust npm test` runs the browser tests for just those tracks.
 - `npm run test:content -- python sql` checks just those tracks.
 - `CB_EXTRA_CASES=40 npm run test:content -- sql` also runs every project at 40 more seeded settings.
-- A toolchain that isn't installed is reported as **SKIP**, never as a pass. The content check needs g++, the .NET 8 SDK, Python 3, Node.js, a JDK (21+), Go, Rust (with rustfmt and clippy), gcc and clang-format, and sqlite3.
+- A toolchain that isn't installed is reported as **SKIP**, never as a pass. The content check needs g++, the .NET 8 SDK, Python 3, Node.js, a JDK (21+), Go, Rust (with rustfmt and clippy), gcc and clang-format, sqlite3, PHP 8, Ruby 3, kotlinc 2.1, Lua 5.4, Bash and ShellCheck. The Nu HTML Checker comes from `npm ci` (the `vnu-jar` dev dependency) and runs on the JDK.
 
-The browser suite covers mastery after 8 reps, wrong-letter handling, saving, every drill line in every track, PC output, the Library, the driving test, profiles and the Vault, My Book, the offline fallback, phone layouts at 320 and 390 px, the track picker, and an axe-core accessibility scan in light and dark mode.
+The browser suite covers mastery after 8 reps, wrong-letter handling, saving, every drill line in every track, PC output, the Library, the driving test, profiles and the Vault, My Book, the offline fallback, phone layouts at 320 and 390 px, the track picker, every Vault placeholder being filled (no pack falls back to filler lines), and an axe-core accessibility scan in light and dark mode.
 
 ## How it's organized
 
