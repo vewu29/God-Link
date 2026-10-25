@@ -748,3 +748,37 @@ module.exports.kotlin = {
     return errs;
   },
 };
+
+// ---------- Lua ----------
+// Programs and examples run with Lua 5.4. Lines and snippets are
+// compiled, not run, by Lua itself (tests/content/luacheck.lua).
+function luaRun(dir, code) {
+  fs.rmSync(dir, { recursive: true, force: true });
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, "main.lua"), code.replace(/\n*$/, "\n"));
+  const r = sh("lua5.4", ["main.lua"], { cwd: dir, timeout: 10000 });
+  return r.status === 0 && !r.stderr ? { ok: true, stdout: r.stdout } : { ok: false, error: r.stderr || `exit ${r.status}` };
+}
+function luaParseErrors(dir, items) {
+  const file = path.join(dir, "lua-items.txt");
+  fs.writeFileSync(file, items.join("\0"));
+  const r = sh("lua5.4", [path.join(__dirname, "luacheck.lua"), file], { timeout: 300000 });
+  if (r.status !== 0) return [{ i: 0, err: r.stderr }];
+  return r.stdout.split("\n").filter(Boolean).map((l) => { const t = l.indexOf("\t"); return { i: Number(l.slice(0, t)), err: l.slice(t + 1) }; });
+}
+module.exports.lua = {
+  needs: ["lua5.4"],
+  build: (dir, code) => luaRun(path.join(dir, "run"), code),
+  checkLines: (dir, lines) => luaParseErrors(dir, lines),
+  checkExamples: (dir, examples) => {
+    const errs = [];
+    const snippets = [];
+    examples.forEach((ex, i) => {
+      if (ex.run === undefined) { snippets.push(i); return; }
+      const r = luaRun(path.join(dir, "ex" + i), ex.code);
+      if (!r.ok) errs.push({ i, err: r.error });
+    });
+    luaParseErrors(dir, snippets.map((i) => examples[i].code)).forEach((e) => errs.push({ i: snippets[e.i], err: e.err }));
+    return errs;
+  },
+};

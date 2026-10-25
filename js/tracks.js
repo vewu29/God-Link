@@ -91,6 +91,10 @@
     blurb: "Google's choice for Android apps: modern, concise and safe from null crashes.",
     keywords: "android apps mobile jvm jetbrains java compose multiplatform",
     file: "main.kt", run: "kotlinc main.kt -include-runtime -d app.jar && java -jar app.jar", comment: "//", vaultFile: "vault.kt", varPrefix: "" });
+  addTrack({ id: "lua", name: "Lua", badge: "Lua", group: "lang", color: "#000080", blocks: 30,
+    blurb: "A small, fast scripting language behind LÖVE games, Roblox's Luau and Neovim.",
+    keywords: "games scripting roblox luau love2d neovim embedded beginner",
+    file: "main.lua", run: "lua main.lua", comment: "--", vaultFile: "vault.lua", varPrefix: "" });
   addTrack({ id: "unity", name: "Unity", badge: "Unity", group: "engine", color: "#1f2937", blocks: 30,
     blurb: "Make 2D and 3D games with Unity and C#: scripts, physics, input, UI and more.",
     keywords: "game engine games 3d 2d c# csharp unity3d gamedev",
