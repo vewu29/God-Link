@@ -58,6 +58,10 @@
     blurb: "Android apps, big business systems and Minecraft mods — typed, fast and everywhere.",
     keywords: "android minecraft enterprise jvm oop backend",
     file: "Main.java", run: "java Main.java", comment: "//", vaultFile: "Vault.java", varPrefix: "int " });
+  addTrack({ id: "typescript", name: "TypeScript", badge: "TS", group: "lang", color: "#2f74c0", blocks: 30,
+    blurb: "JavaScript with types: catch bugs before your code runs, in apps big and small.",
+    keywords: "web typed javascript react angular node frontend ts",
+    file: "main.ts", run: "npx tsc && node main.js", comment: "//", vaultFile: "vault.ts", varPrefix: "" });
   addTrack({ id: "unity", name: "Unity", badge: "Unity", group: "engine", color: "#1f2937", blocks: 30,
     blurb: "Make 2D and 3D games with Unity and C#: scripts, physics, input, UI and more.",
     keywords: "game engine games 3d 2d c# csharp unity3d gamedev",

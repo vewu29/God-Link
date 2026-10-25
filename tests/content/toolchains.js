@@ -300,3 +300,73 @@ module.exports.java = {
     return errs;
   },
 };
+
+// ---------- TypeScript ----------
+// Programs and runnable examples are type-checked in strict mode by the
+// TypeScript compiler (the same checks as "strict": true in a tsconfig),
+// compiled to ES2022 and run in Node. Lines and reference snippets are
+// parsed by the compiler's own parser.
+const TS_OPTIONS = () => {
+  const ts = require("typescript");
+  return { strict: true, target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ES2022, moduleDetection: ts.ModuleDetectionKind.Force,
+    lib: ["lib.es2022.d.ts", "lib.dom.d.ts"], types: [], noEmitOnError: true };
+};
+const tsLibCache = new Map();
+function tsCompile(code) {
+  const ts = require("typescript");
+  const options = TS_OPTIONS();
+  const host = ts.createCompilerHost(options);
+  const read = host.getSourceFile;
+  host.getSourceFile = (name, lang) => {
+    if (name === "main.ts") return ts.createSourceFile(name, code, lang);
+    if (!tsLibCache.has(name)) tsLibCache.set(name, read.call(host, name, lang));
+    return tsLibCache.get(name);
+  };
+  host.fileExists = ((exists) => (name) => name === "main.ts" || exists.call(host, name))(host.fileExists);
+  let js = "";
+  host.writeFile = (name, text) => { if (name.endsWith(".js")) js = text; };
+  const program = ts.createProgram(["main.ts"], options, host);
+  const diags = ts.getPreEmitDiagnostics(program);
+  if (diags.length) {
+    return { ok: false, error: ts.formatDiagnostics(diags, { getCanonicalFileName: (f) => f, getCurrentDirectory: () => "", getNewLine: () => "\n" }) };
+  }
+  program.emit();
+  return { ok: true, js };
+}
+function tsRun(dir, code) {
+  const c = tsCompile(code);
+  if (!c.ok) return c;
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, "main.mjs"), c.js);
+  const r = sh("node", ["main.mjs"], { cwd: dir, timeout: 10000 });
+  return r.status === 0 ? { ok: true, stdout: r.stdout } : { ok: false, error: r.stderr || `exit ${r.status}` };
+}
+function tsShapes(c) {
+  return [c, `${c}\n}`, `${c}\n}\n}`, `class __C {\n${c}\n}`, `class __C {\n${c}\n}\n}`, `async function __f() {\n${c}\n}`, `async function __f() {\n${c}\n}\n}`,
+    `switch (x) {\n${c}\n}`, `try { }\n${c}`, `if (x) { }\n${c}`, `interface __I {\n${c}\n}`];
+}
+function tsParseErrors(items) {
+  const ts = require("typescript");
+  const errs = [];
+  items.forEach((code, i) => {
+    const ok = tsShapes(code).some((src) => ts.createSourceFile("line.ts", src, ts.ScriptTarget.ES2022, false, ts.ScriptKind.TS).parseDiagnostics.length === 0);
+    if (!ok) errs.push({ i, err: "does not parse as TypeScript" });
+  });
+  return errs;
+}
+module.exports.typescript = {
+  needs: ["node"],
+  build: (dir, code) => tsRun(path.join(dir, "run"), code),
+  checkLines: (dir, lines) => tsParseErrors(lines),
+  // Chapter and shelf examples are whole programs: type-checked, and run
+  // unless they need a browser page. Cheat cards and key lines are parsed.
+  checkExamples: (dir, examples) => {
+    const errs = [];
+    examples.forEach((ex, i) => {
+      if (ex.run === undefined) { if (tsParseErrors([ex.code]).length) errs.push({ i, err: "does not parse as TypeScript" }); return; }
+      const r = ex.run ? tsRun(path.join(dir, "ex" + i), ex.code) : tsCompile(ex.code);
+      if (!r.ok) errs.push({ i, err: r.error });
+    });
+    return errs;
+  },
+};
