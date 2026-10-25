@@ -106,6 +106,10 @@
     blurb: "The command line's own language: automate files, servers and everyday chores.",
     keywords: "shell terminal command line linux mac unix scripting automation devops servers sh zsh",
     file: "main.sh", run: "bash main.sh", comment: "#", vaultFile: "vault.sh", varPrefix: "" });
+  addTrack({ id: "haskell", name: "Haskell", badge: "Hs", group: "lang", color: "#5e5086", blocks: 30,
+    blurb: "Pure functions, strong types and lazy lists: the language that changes how you think about code.",
+    keywords: "functional programming fp ghc ghci types lambda pure lazy monads recursion cabal stack",
+    file: "main.hs", run: "runghc main.hs", comment: "--", vaultFile: "vault.hs", varPrefix: "" });
   addTrack({ id: "r", name: "R", badge: "R", group: "sci", color: "#276dc3", blocks: 30,
     blurb: "The language of statistics and data science: vectors, tables, charts and answers.",
     keywords: "data science statistics analysis analytics research charts tidyverse ggplot rstudio math",

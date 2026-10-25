@@ -1069,3 +1069,50 @@ module.exports.r = {
     return errs;
   },
 };
+
+// ---------- Haskell ----------
+// Programs and examples run with runghc and -Wall, minus two warnings that
+// only flag beginner-friendly style (numbers left to default to Integer or
+// Double, and top-level names without a type line); any other warning or
+// error fails. Lines and snippets are parsed, not run, by GHC's own parser
+// (tests/content/hscheck.hs, built once against the ghc library that
+// ships with GHC).
+const HS_FLAGS = ["-Wall", "-Wno-type-defaults", "-Wno-missing-signatures"].map((f) => "--ghc-arg=" + f);
+let hscheck = null;
+function hsRun(dir, code) {
+  fs.rmSync(dir, { recursive: true, force: true });
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, "main.hs"), code.replace(/\n*$/, "\n"));
+  const r = sh("runghc", [...HS_FLAGS, "main.hs"], { cwd: dir });
+  return r.status === 0 && !r.stderr ? { ok: true, stdout: r.stdout } : { ok: false, error: r.stderr || `exit ${r.status}` };
+}
+function hsParseErrors(dir, items) {
+  if (!hscheck) {
+    const out = path.join(dir, "hscheck-build");
+    fs.mkdirSync(out, { recursive: true });
+    const b = sh("ghc", ["-O0", "-package", "ghc", "-outputdir", out, "-o", path.join(out, "hscheck"), path.join(__dirname, "hscheck.hs")], { timeout: 600000 });
+    if (b.status !== 0) throw new Error("hscheck build failed: " + b.stderr);
+    hscheck = { bin: path.join(out, "hscheck"), libdir: sh("ghc", ["--print-libdir"]).stdout.trim() };
+  }
+  const file = path.join(dir, `hs-items-${items.length}.txt`);
+  fs.writeFileSync(file, items.join("\0"));
+  const r = sh(hscheck.bin, [hscheck.libdir, file], { timeout: 600000, maxBuffer: 1 << 26 });
+  if (r.status !== 0) return [{ i: 0, err: r.stderr }];
+  return r.stdout.split("\n").filter(Boolean).map((l) => { const t = l.indexOf("\t"); return { i: Number(l.slice(0, t)), err: l.slice(t + 1) }; });
+}
+module.exports.haskell = {
+  needs: ["runghc", "ghc"],
+  build: (dir, code) => hsRun(path.join(dir, "run"), code),
+  checkLines: (dir, lines) => hsParseErrors(dir, lines),
+  checkExamples: (dir, examples) => {
+    const errs = [];
+    const snippets = [];
+    examples.forEach((ex, i) => {
+      if (ex.run === undefined) { snippets.push(i); return; }
+      const r = hsRun(path.join(dir, "ex" + i), ex.code);
+      if (!r.ok) errs.push({ i, err: r.error });
+    });
+    hsParseErrors(dir, snippets.map((i) => examples[i].code)).forEach((e) => errs.push({ i: snippets[e.i], err: e.err }));
+    return errs;
+  },
+};
