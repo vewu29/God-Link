@@ -18,6 +18,7 @@
   var GROUPS = [
     { id: "lang", name: "Programming languages" },
     { id: "web", name: "Web & data" },
+    { id: "sci", name: "Science & math" },
     { id: "engine", name: "Game engines" },
     { id: "life", name: "Road & life skills" }
   ];
@@ -105,6 +106,10 @@
     blurb: "The command line's own language: automate files, servers and everyday chores.",
     keywords: "shell terminal command line linux mac unix scripting automation devops servers sh zsh",
     file: "main.sh", run: "bash main.sh", comment: "#", vaultFile: "vault.sh", varPrefix: "" });
+  addTrack({ id: "r", name: "R", badge: "R", group: "sci", color: "#276dc3", blocks: 30,
+    blurb: "The language of statistics and data science: vectors, tables, charts and answers.",
+    keywords: "data science statistics analysis analytics research charts tidyverse ggplot rstudio math",
+    file: "main.R", run: "Rscript main.R", comment: "#", vaultFile: "vault.R", varPrefix: "" });
   addTrack({ id: "unity", name: "Unity", badge: "Unity", group: "engine", color: "#1f2937", blocks: 30,
     blurb: "Make 2D and 3D games with Unity and C#: scripts, physics, input, UI and more.",
     keywords: "game engine games 3d 2d c# csharp unity3d gamedev",

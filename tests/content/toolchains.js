@@ -1033,3 +1033,39 @@ module.exports.html = {
     return errs;
   },
 };
+
+// ---------- R ----------
+// Programs and examples run with Rscript; any output on stderr (an error,
+// or a warning R would print) fails. Lines and snippets are parsed, not
+// run, by R itself (tests/content/rcheck.R).
+const R_ENV = { PATH: process.env.PATH, HOME: process.env.HOME || "/tmp", LC_ALL: "C.UTF-8", R_LIBS_USER: "/nonexistent" };
+function rRun(dir, code) {
+  fs.rmSync(dir, { recursive: true, force: true });
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, "main.R"), code.replace(/\n*$/, "\n"));
+  const r = sh("Rscript", ["--vanilla", "main.R"], { cwd: dir, timeout: 30000, env: R_ENV });
+  return r.status === 0 && !r.stderr ? { ok: true, stdout: r.stdout } : { ok: false, error: r.stderr || `exit ${r.status}` };
+}
+function rParseErrors(dir, items) {
+  const file = path.join(dir, `r-items-${items.length}.txt`);
+  fs.writeFileSync(file, items.join("\0"));
+  const r = sh("Rscript", ["--vanilla", path.join(__dirname, "rcheck.R"), file], { timeout: 600000, env: R_ENV, maxBuffer: 1 << 26 });
+  if (r.status !== 0) return [{ i: 0, err: r.stderr }];
+  return r.stdout.split("\n").filter(Boolean).map((l) => { const t = l.indexOf("\t"); return { i: Number(l.slice(0, t)), err: l.slice(t + 1) }; });
+}
+module.exports.r = {
+  needs: ["Rscript"],
+  build: (dir, code) => rRun(path.join(dir, "run"), code),
+  checkLines: (dir, lines) => rParseErrors(dir, lines),
+  checkExamples: (dir, examples) => {
+    const errs = [];
+    const snippets = [];
+    examples.forEach((ex, i) => {
+      if (ex.run === undefined) { snippets.push(i); return; }
+      const r = rRun(path.join(dir, "ex" + i), ex.code);
+      if (!r.ok) errs.push({ i, err: r.error });
+    });
+    rParseErrors(dir, snippets.map((i) => examples[i].code)).forEach((e) => errs.push({ i: snippets[e.i], err: e.err }));
+    return errs;
+  },
+};
