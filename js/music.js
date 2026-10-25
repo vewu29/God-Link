@@ -369,14 +369,33 @@
   function layers() { return doneCount(); }
   function isMasterpiece() { return doneCount() >= BLOCKS.length; }
 
+  /* The finishing chain: a gentle tape-style saturation warms every
+     voice before the compressor, and the shared room reverb (the same
+     hall the typing sounds ring in) gives the music depth. */
+  function warmCurve() {
+    var n = 2048, c = new Float32Array(n), k = 1.6;
+    for (var i = 0; i < n; i++) { var x = i / (n - 1) * 2 - 1; c[i] = Math.tanh(k * x) / Math.tanh(k); }
+    return c;
+  }
   function buildGraph() {
     AC = window.cbAudioContext();
     master = AC.createGain(); master.gain.value = 0;
     var comp = AC.createDynamicsCompressor();
-    master.connect(comp); comp.connect(AC.destination);
+    comp.threshold.value = -18; comp.ratio.value = 3; comp.attack.value = 0.02; comp.release.value = 0.3;
+    var warm = AC.createWaveShaper();
+    warm.curve = warmCurve(); warm.oversample = "2x";
+    var air = AC.createBiquadFilter(); air.type = "highshelf"; air.frequency.value = 7000; air.gain.value = -3;
+    master.connect(warm); warm.connect(air); air.connect(comp); comp.connect(AC.destination);
+    var room = window.cbAudioRoom ? window.cbAudioRoom() : null;
+    if (room) { var send = AC.createGain(); send.gain.value = 0.34; comp.connect(send); send.connect(room); }
     padFilter = AC.createBiquadFilter();
     padFilter.type = "lowpass"; padFilter.frequency.value = 850; padFilter.Q.value = 0.4;
     padFilter.connect(master);
+    /* The pad filter breathes: a very slow LFO opens and closes it,
+       so the bed swells like slow breathing instead of sitting still. */
+    var lfo = AC.createOscillator(), lfoDepth = AC.createGain();
+    lfo.frequency.value = 0.06; lfoDepth.gain.value = 260;
+    lfo.connect(lfoDepth); lfoDepth.connect(padFilter.frequency); lfo.start();
     /* The pads get their own gain stage into the filter, so the
        pad bed can be balanced apart from the master bus. */
     padGain = AC.createGain(); padGain.gain.value = 0.9;
@@ -385,7 +404,14 @@
     delayNode = delay;
     var fb = AC.createGain(); fb.gain.value = 0.32;
     var wet = AC.createGain(); wet.gain.value = 0.22;
-    delay.connect(fb); fb.connect(delay); delay.connect(wet); wet.connect(master);
+    /* Ping-pong: each echo lands on the opposite side, softened by a
+       low-pass so repeats grow darker as they fade. */
+    var dampEcho = AC.createBiquadFilter(); dampEcho.type = "lowpass"; dampEcho.frequency.value = 3200;
+    var second = AC.createDelay(1); second.delayTime.value = delay.delayTime.value / 2;
+    delay.connect(dampEcho); dampEcho.connect(fb); fb.connect(delay);
+    delay.connect(wet); wet.connect(panDest(-0.6, master));
+    var wet2 = AC.createGain(); wet2.gain.value = 0.16;
+    delay.connect(second); second.connect(wet2); wet2.connect(panDest(0.6, master));
     delayIn = delay;
   }
   /* Loop 41 — stereo: until now every voice summed to the
@@ -410,17 +436,20 @@
     p.connect(dest);
     return p;
   }
+  /* Three voices per pad note — a sine in the middle and two gently
+     detuned triangles spread left and right — make a wide, slowly
+     shimmering chorus instead of a single flat tone. */
   function pad(freq, t, dur) {
-    [0, 5].forEach(function (det) {
+    [[0, "sine", 0, 0.04], [7, "triangle", 0.35, 0.026], [-7, "triangle", -0.35, 0.026]].forEach(function (v) {
       var o = AC.createOscillator();
-      o.type = det === 0 ? "sine" : "triangle";
-      o.frequency.value = freq; o.detune.value = det;
+      o.type = v[1];
+      o.frequency.value = freq; o.detune.value = v[0];
       var g = AC.createGain();
       g.gain.setValueAtTime(0, t);
-      g.gain.linearRampToValueAtTime(0.045, t + 1.1);
-      g.gain.setValueAtTime(0.045, t + dur - 1.0);
+      g.gain.linearRampToValueAtTime(v[3], t + 1.1);
+      g.gain.setValueAtTime(v[3], t + dur - 1.0);
       g.gain.linearRampToValueAtTime(0, t + dur + 0.4);
-      o.connect(g); g.connect(panDest(det === 0 ? -0.2 : 0.2, padGain));
+      o.connect(g); g.connect(panDest(v[2], padGain));
       o.start(t); o.stop(t + dur + 0.5);
     });
   }

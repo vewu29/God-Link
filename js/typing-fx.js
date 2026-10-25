@@ -28,8 +28,13 @@
   var REDUCED = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   var SETTINGS_KEY = "code-block-fx-settings-v1";
   var PROGRESS_KEY = "code-block-fx-progress-v1";
-  var SOUNDS = ["melody", "typewriter", "bubbles", "off"];
-  var SOUND_NAMES = { melody: "Melody", typewriter: "Typewriter", bubbles: "Bubbles", off: "Off" };
+  var SOUNDS = ["melody", "piano", "marimba", "crystal", "mechanical", "typewriter", "bubbles", "arcade", "off"];
+  var SOUND_NAMES = { melody: "Melody", piano: "Piano", marimba: "Marimba", crystal: "Crystal", mechanical: "Mechanical", typewriter: "Typewriter", bubbles: "Bubbles", arcade: "Arcade", off: "Off" };
+  var SOUND_NOTES = {
+    melody: "A soft tune that climbs with your combo", piano: "Warm piano notes, one per letter", marimba: "Wooden mallets, round and bright",
+    crystal: "Glassy bells that ring and fade", mechanical: "A clicky mechanical keyboard", typewriter: "An old typewriter's clack",
+    bubbles: "Little rising bubbles", arcade: "8-bit blips from an old game", off: "No key sounds"
+  };
   var DAILY_GOAL = 10;
   var TIERS = [
     { at: 0, name: "", word: "combo" },
@@ -125,6 +130,9 @@
     master = AC.createGain();
     master.gain.value = settings.volume;
     master.connect(comp); comp.connect(AC.destination);
+    /* A little of every sound goes to the page's shared room reverb. */
+    var room = window.cbAudioRoom ? window.cbAudioRoom() : null;
+    if (room) { var send = AC.createGain(); send.gain.value = 0.22; comp.connect(send); send.connect(room); }
     return AC;
   }
   var unlocked = false;
@@ -146,17 +154,26 @@
   }
   function musicOn() { return !!(window.__musicIsOn && window.__musicIsOn()); }
   function freq(midi) { return 440 * Math.pow(2, (midi - 69) / 12); }
-  function tone(f, t0, dur, type, gain, glideTo) {
+  /* Notes can sit left or right: the key sounds travel across the
+     stereo field as the line goes on. */
+  function out(pan) {
+    if (!pan || typeof AC.createStereoPanner !== "function") return master;
+    var p = AC.createStereoPanner();
+    p.pan.value = Math.max(-1, Math.min(1, pan));
+    p.connect(master);
+    return p;
+  }
+  function tone(f, t0, dur, type, gain, glideTo, pan) {
     var o = AC.createOscillator(), g = AC.createGain();
     o.type = type; o.frequency.setValueAtTime(f, t0);
     if (glideTo) o.frequency.exponentialRampToValueAtTime(glideTo, t0 + dur);
     g.gain.setValueAtTime(0.0001, t0);
     g.gain.exponentialRampToValueAtTime(gain, t0 + 0.006);
     g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-    o.connect(g); g.connect(master);
+    o.connect(g); g.connect(out(pan));
     o.start(t0); o.stop(t0 + dur + 0.03);
   }
-  function noise(t0, dur, f, q, gain, kind) {
+  function noise(t0, dur, f, q, gain, kind, pan) {
     if (!noiseBuf) {
       noiseBuf = AC.createBuffer(1, Math.floor(AC.sampleRate * 0.3), AC.sampleRate);
       var d = noiseBuf.getChannelData(0);
@@ -167,7 +184,7 @@
     flt.type = kind || "bandpass"; flt.frequency.value = f; flt.Q.value = q;
     g.gain.setValueAtTime(gain, t0);
     g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-    s.connect(flt); flt.connect(g); g.connect(master);
+    s.connect(flt); flt.connect(g); g.connect(out(pan));
     s.start(t0); s.stop(t0 + dur + 0.03);
   }
   /* The melody walks a major pentatonic scale up and down the line, and
@@ -179,17 +196,49 @@
   function soundKey(pos, ch, tier) {
     var c = ready(); if (!c) return;
     var t = c.currentTime, soft = musicOn() ? 0.55 : 1;
-    if (settings.sound === "typewriter") {
-      noise(t, 0.028, 3400, 1.1, 0.32 * soft);
-      tone(ch === " " ? 120 : 165, t, 0.045, "sine", 0.22 * soft, 110);
-    } else if (settings.sound === "bubbles") {
+    var pan = ((pos % 16) / 15) * 0.9 - 0.45;
+    var m0 = 60 + PENTA[WAVE[pos % WAVE.length]] + TIER_LIFT[tier] - (ch === " " ? 12 : 0), f0 = freq(m0);
+    var jit = 1 + (Math.random() - 0.5) * 0.06;
+    var kind = settings.sound;
+    if (kind === "typewriter") {
+      noise(t, 0.028, 3400 * jit, 1.1, 0.32 * soft, null, pan);
+      tone(ch === " " ? 120 : 165, t, 0.045, "sine", 0.22 * soft, 110, pan);
+    } else if (kind === "bubbles") {
       var fb = freq(72 + PENTA[WAVE[pos % WAVE.length]] + TIER_LIFT[tier]);
-      tone(fb * 0.7, t, 0.09, "sine", 0.2 * soft, fb * 1.45);
+      tone(fb * 0.7, t, 0.09, "sine", 0.2 * soft, fb * 1.45, pan);
+      tone(fb * 1.5, t + 0.03, 0.06, "sine", 0.05 * soft, fb * 2.2, -pan);
+    } else if (kind === "mechanical") {
+      /* The click of the switch, the clack of the cap, the thock of the board. */
+      noise(t, 0.012, 5600 * jit, 0.8, 0.5 * soft, null, pan);
+      noise(t + 0.006, 0.05, 1700 * jit, 1.6, 0.16 * soft, null, pan);
+      tone((ch === " " ? 68 : 96) * jit, t, 0.07, "sine", 0.3 * soft, 55, pan);
+    } else if (kind === "piano") {
+      /* A hammer, then a string's fundamental and its first overtones,
+         each fading at its own pace. */
+      noise(t, 0.012, 2600, 0.8, 0.05 * soft, "lowpass", pan);
+      tone(f0, t, 1.1, "triangle", 0.14 * soft, null, pan);
+      tone(f0 * 2, t, 0.6, "sine", 0.05 * soft, null, pan);
+      tone(f0 * 3, t, 0.32, "sine", 0.022 * soft, null, pan);
+      tone(f0 * 1.002, t, 0.9, "sine", 0.05 * soft, null, -pan * 0.5);
+    } else if (kind === "marimba") {
+      tone(f0, t, 0.42, "sine", 0.24 * soft, null, pan);
+      tone(f0 * 3.93, t, 0.09, "sine", 0.06 * soft, null, pan);
+      tone(f0 * 10.1, t, 0.03, "sine", 0.02 * soft, null, pan);
+      noise(t, 0.015, 900, 1, 0.05 * soft, "lowpass", pan);
+    } else if (kind === "crystal") {
+      var fc = f0 * 2;
+      tone(fc, t, 1.4, "sine", 0.075 * soft, null, pan);
+      tone(fc * 2.76, t, 0.55, "sine", 0.026 * soft, null, -pan);
+      tone(fc * 5.4, t, 0.25, "sine", 0.012 * soft, null, pan);
+      tone(fc * 1.003, t + 0.01, 1.2, "sine", 0.03 * soft, null, -pan);
+    } else if (kind === "arcade") {
+      tone(f0, t, 0.07, "square", 0.05 * soft, f0 * 1.5, pan);
+      tone(f0 * 2, t + 0.035, 0.05, "square", 0.03 * soft, null, pan);
     } else {
       var m = 67 + PENTA[WAVE[pos % WAVE.length]] + TIER_LIFT[tier];
       if (ch === " ") m -= 12;
-      tone(freq(m), t, 0.14, "triangle", 0.15 * soft);
-      tone(freq(m + 12), t, 0.07, "sine", 0.045 * soft);
+      tone(freq(m), t, 0.16, "triangle", 0.15 * soft, null, pan);
+      tone(freq(m + 12), t, 0.08, "sine", 0.045 * soft, null, pan);
     }
   }
   function soundSlip() {
@@ -422,24 +471,60 @@
       '<span class="fx-chip fx-wpm" title="Words per minute">' + ICO("i-zap") + '<b>—</b><span>wpm</span></span>' +
       '<span class="fx-chip fx-acc" title="Accuracy this session">' + ICO("i-target") + '<b>100%</b></span>' +
       '<span class="fx-chip fx-lv" title="Your level">' + ICO("i-star") + '<b>Lv 1</b><i class="fx-meter"><i></i></i></span>' +
-      '<button class="fx-chip fx-sound" type="button"></button>';
+      '<span class="fx-sound-wrap"><button class="fx-chip fx-sound" type="button" aria-haspopup="menu" aria-expanded="false"></button>' +
+      '<span class="fx-sound-menu hidden" role="menu" aria-label="Key sounds">' +
+      SOUNDS.map(function (k) {
+        return '<button type="button" role="menuitemradio" aria-checked="false" data-sound="' + k + '"><b>' + SOUND_NAMES[k] + "</b><span>" + SOUND_NOTES[k] + "</span></button>";
+      }).join("") + "</span></span>";
     var bar = card.querySelector(".console-bar");
     card.insertBefore(h, bar ? bar.nextSibling : card.firstChild);
-    h.querySelector(".fx-sound").addEventListener("click", function () {
-      var i = SOUNDS.indexOf(settings.sound);
-      settings.sound = SOUNDS[(i + 1) % SOUNDS.length];
+    var btn = h.querySelector(".fx-sound"), menu = h.querySelector(".fx-sound-menu");
+    function items() { return Array.prototype.slice.call(menu.querySelectorAll("[data-sound]")); }
+    function close(refocus) {
+      if (menu.classList.contains("hidden")) return;
+      menu.classList.add("hidden");
+      btn.setAttribute("aria-expanded", "false");
+      document.removeEventListener("pointerdown", outside, true);
+      if (refocus) btn.focus();
+    }
+    function outside(e) { if (!h.querySelector(".fx-sound-wrap").contains(e.target)) close(false); }
+    function open() {
+      items().forEach(function (b) { b.setAttribute("aria-checked", String(b.getAttribute("data-sound") === settings.sound)); });
+      menu.classList.remove("hidden");
+      btn.setAttribute("aria-expanded", "true");
+      document.addEventListener("pointerdown", outside, true);
+      var on = menu.querySelector('[aria-checked="true"]') || items()[0];
+      on.focus();
+    }
+    /* Clicks here must not reach the card, which would send focus (and,
+       on a phone, the keyboard) to the typing box. */
+    h.querySelector(".fx-sound-wrap").addEventListener("click", function (e) { e.stopPropagation(); });
+    btn.addEventListener("click", function () { if (menu.classList.contains("hidden")) open(); else close(true); });
+    menu.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-sound]");
+      if (!b) return;
+      settings.sound = b.getAttribute("data-sound");
       saveSettings();
-      if (settings.sound !== "off") { unlock(); soundKey(4, "a", 1); }
+      if (settings.sound !== "off") { unlock(); soundKey(4, "a", 1); setTimeout(function () { soundKey(7, "b", 1); }, 140); }
+      close(true);
       paintAll();
       announce("Key sounds: " + SOUND_NAMES[settings.sound]);
+    });
+    menu.addEventListener("keydown", function (e) {
+      var list = items(), i = list.indexOf(document.activeElement);
+      if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); close(true); }
+      else if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        e.preventDefault();
+        list[(i + (e.key === "ArrowDown" ? 1 : list.length - 1)) % list.length].focus();
+      } else if (e.key === "Home" || e.key === "End") { e.preventDefault(); list[e.key === "Home" ? 0 : list.length - 1].focus(); }
+      else if (e.key === "Tab") close(false);
     });
     return h;
   }
   function paintSound(btn) {
     var off = settings.sound === "off";
     btn.innerHTML = ICO(off ? "i-volume-off" : "i-volume") + "<span>" + SOUND_NAMES[settings.sound] + "</span>";
-    btn.setAttribute("aria-label", "Key sounds: " + SOUND_NAMES[settings.sound] + ". Tap to change.");
-    btn.setAttribute("aria-pressed", String(!off));
+    btn.setAttribute("aria-label", "Key sounds: " + SOUND_NAMES[settings.sound] + ". Choose a sound.");
   }
   function paintHud(card) {
     var h = hudOf(card), st = stateOf(card), p = prog();
@@ -535,6 +620,8 @@
     soundKey(idx, line.charAt(idx), tier);
     var el = target ? charEl(target, idx) : null;
     if (el) {
+      /* The letter itself pops and flashes blue (CSS .fx-zap). */
+      el.classList.remove("fx-zap"); void el.offsetWidth; el.classList.add("fx-zap");
       var p = spot(card, el);
       burst(card, p.x, p.y, line.charAt(idx) === " " ? 2 : 5, COLORS[tier], "spark");
     }

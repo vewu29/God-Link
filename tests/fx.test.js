@@ -78,21 +78,37 @@ test("Typing FX: a pasted line still counts as a rep but earns no XP", async () 
   await ctx.close();
 });
 
-test("Typing FX: the sound switch cycles through the sounds and is remembered", async () => {
+test("Typing FX: the sound menu offers every sound, previews it, and remembers the pick", async () => {
   const { ctx, page, log } = await newPage(env, { track: "python" });
   await openDrill(page, 0);
-  const seen = [];
-  for (let k = 0; k < 4; k++) {
-    seen.push(await page.getAttribute("#typeCard .fx-sound", "aria-label"));
-    await page.click("#typeCard .fx-sound");
-  }
-  assert.deepEqual(seen.map((l) => l.replace(/^Key sounds: (\w+)\..*$/, "$1")), ["Melody", "Typewriter", "Bubbles", "Off"]);
-  // The fourth click wrapped back to Melody; one more is Typewriter.
+  assert.match(await page.getAttribute("#typeCard .fx-sound", "aria-label"), /^Key sounds: Melody/);
   await page.click("#typeCard .fx-sound");
-  assert.equal(JSON.parse(await page.evaluate(() => localStorage.getItem("code-block-fx-settings-v1"))).sound, "typewriter");
+  assert.equal(await page.getAttribute("#typeCard .fx-sound", "aria-expanded"), "true");
+  const names = await page.$$eval("#typeCard .fx-sound-menu [data-sound] b", (els) => els.map((e) => e.textContent));
+  assert.deepEqual(names, ["Melody", "Piano", "Marimba", "Crystal", "Mechanical", "Typewriter", "Bubbles", "Arcade", "Off"]);
+  assert.equal(await page.evaluate(() => document.activeElement.getAttribute("data-sound")), "melody", "focus lands on the current sound");
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("Enter");
+  assert.equal(await page.isVisible("#typeCard .fx-sound-menu"), false);
+  assert.equal(await page.evaluate(() => document.activeElement.classList.contains("fx-sound")), true, "focus returns to the button");
+  assert.equal(JSON.parse(await page.evaluate(() => localStorage.getItem("code-block-fx-settings-v1"))).sound, "piano");
+  // Escape and an outside tap both close it without changing anything.
+  await page.click("#typeCard .fx-sound");
+  await page.keyboard.press("Escape");
+  assert.equal(await page.isVisible("#typeCard .fx-sound-menu"), false);
+  await page.click("#typeCard .fx-sound");
+  await page.mouse.click(5, 5);
+  assert.equal(await page.isVisible("#typeCard .fx-sound-menu"), false);
   await page.reload();
   await openDrill(page, 0);
-  assert.match(await page.getAttribute("#typeCard .fx-sound", "aria-label"), /^Key sounds: Typewriter/);
+  assert.match(await page.getAttribute("#typeCard .fx-sound", "aria-label"), /^Key sounds: Piano/);
+  // Every voice plays without an error.
+  await page.evaluate(() => { window.__unlock = true; });
+  for (const k of ["melody", "piano", "marimba", "crystal", "mechanical", "typewriter", "bubbles", "arcade"]) {
+    await page.evaluate((k) => CBFX.setSound(k), k);
+    await page.keyboard.type("x");
+    await page.keyboard.press("Backspace");
+  }
   assert.deepEqual(log.pageErrors, []);
   await ctx.close();
 });

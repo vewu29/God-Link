@@ -135,6 +135,39 @@
     try { sharedAudio = new C(); } catch (e) { sharedAudio = null; }
     return sharedAudio;
   };
+  /* A shared room: a stereo convolution reverb whose impulse is made
+     on the spot (early reflections, then a darkening, decaying tail),
+     so the music and the typing sounds sit in the same warm space
+     without any audio files. Engines send a little of each note here. */
+  var sharedRoom = null;
+  window.cbAudioRoom = function () {
+    var c = window.cbAudioContext();
+    if (!c || typeof c.createConvolver !== "function") return null;
+    if (sharedRoom && sharedRoom.ctx === c) return sharedRoom.input;
+    var rate = c.sampleRate, len = Math.floor(rate * 2.4);
+    var ir = c.createBuffer(2, len, rate);
+    for (var ch = 0; ch < 2; ch++) {
+      var d = ir.getChannelData(ch), lp = 0;
+      for (var i = 0; i < len; i++) {
+        var t = i / rate;
+        var damp = 0.35 + 0.6 * Math.exp(-t * 2.2);
+        lp += (Math.random() * 2 - 1 - lp) * damp;
+        d[i] = lp * Math.pow(1 - i / len, 2.6) * Math.exp(-t * 1.1);
+      }
+      [0.011, 0.019, 0.027, 0.041, 0.053].forEach(function (at, k) {
+        var j = Math.floor((at + ch * 0.0035) * rate);
+        if (j < len) d[j] += (k % 2 ? -0.5 : 0.6) / (k + 1);
+      });
+    }
+    var conv = c.createConvolver();
+    conv.buffer = ir;
+    var input = c.createGain(), out = c.createGain();
+    out.gain.value = 0.9;
+    var hp = c.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 180;
+    input.connect(hp); hp.connect(conv); conv.connect(out); out.connect(c.destination);
+    sharedRoom = { ctx: c, input: input };
+    return input;
+  };
   window.cbAudioWake = function () {
     var c = sharedAudio;
     if (c && c.state !== "running" && c.state !== "closed") { try { var p = c.resume(); if (p && p.catch) p.catch(function () {}); } catch (e) {} }
