@@ -228,8 +228,16 @@
 
 
         <div class="world-card">
-          <canvas id="world" width="640" height="860" tabindex="0" aria-label="3D top-down world of 30 code blocks. Tap a block to open its drill, drag to look around, pinch or scroll to zoom, double-tap to reset the view, or focus here and use the arrow keys to look around, the plus and minus keys to zoom, and Enter to open your next block."></canvas>
-          <div class="world-hint" id="worldHint">Tap a block to drill it · drag to look around · pinch or scroll to zoom · double-tap resets</div>
+          <div class="world-modes" role="group" aria-label="World view">
+            <span class="world-modes-label" aria-hidden="true">View</span>
+            <button class="world-mode-btn active" type="button" data-world-mode="road" aria-pressed="true">Original</button>
+            <button class="world-mode-btn" type="button" data-world-mode="tower" aria-pressed="false">Tower of Babel</button>
+          </div>
+          <div class="world-stage">
+            <canvas id="world" width="640" height="860" tabindex="0" aria-label="3D world of 30 code blocks on a winding road. Tap a block to open its drill, drag to look around, pinch or scroll to zoom, double-tap to reset the view, or focus here and use the arrow keys to look around, the plus and minus keys to zoom, and Enter to open your next block."></canvas>
+            <p class="world-banner" id="worldBanner" hidden>V has Come to!</p>
+            <div class="world-hint" id="worldHint">Tap a block to drill it · drag to look around · pinch or scroll to zoom · double-tap resets</div>
+          </div>
         </div>
 
         <div class="list-head sec-head">
@@ -540,7 +548,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="js/drill.js"></script>
 
-    <script src="js/world-music.js"></script>
+    <script src="js/world.js"></script>
+    <script src="js/music.js"></script>
 
     <script src="js/views.js"></script>
 

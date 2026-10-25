@@ -21,13 +21,16 @@ const ROOMS = [
   ["vault", () => document.querySelector("#menuVault").click()],
   ["profile", () => document.querySelector("#menuProfile").click()],
   ["track picker", () => document.querySelector("#trackCurrent").click()],
+  // The 3D world itself, in both views (the rooms above run without WebGL).
+  ["world, original view", null, { world: true }],
+  ["world, Tower of Babel", null, { world: true, storage: { "code-block-world-mode-v1": "tower" } }],
 ];
 
 for (const scheme of ["light", "dark"]) {
   test(`no serious or critical accessibility problems (${scheme})`, async () => {
     const problems = [];
-    for (const [room, open] of ROOMS) {
-      const { ctx, page } = await newPage(env, { colorScheme: scheme });
+    for (const [room, open, opts] of ROOMS) {
+      const { ctx, page } = await newPage(env, { colorScheme: scheme, ...(opts || {}) });
       if (open) { await page.evaluate(open); await page.waitForTimeout(700); }
       await page.addScriptTag({ content: AXE });
       const v = await page.evaluate(async () => (await axe.run(document, { resultTypes: ["violations"], runOnly: ["wcag2a", "wcag2aa", "wcag21aa", "best-practice"] })).violations

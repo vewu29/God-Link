@@ -20,6 +20,7 @@ Every programming track has the same rooms:
 - **Sandbox**: 30 drill blocks, each one everyday line of code. A block is mastered after 8 perfect repetitions. A wrong letter is gently refused, and phone keyboards' smart quotes and dashes count as the plain character.
 - **Library**: 16–19 chapters in plain words (a story, the big idea, an animated picture, a deep dive, a worked example with a line-by-line walkthrough, and the most common mistake), plus 4–6 reference shelves, a glossary, a field guide and cheat cards.
 - **PC**: 12–25 practice programs per track. Pick one, type along, change the numbers in the blue boxes and run it again. In HTML & CSS, Compile & Run opens your page in a sandboxed frame (no scripts, no forms) and your own browser draws it.
+- **The 3D world**: every block stands in a 3D scene you can tap, drag and zoom, in two views. **Original** lays them along a lit, winding road on a board; **Tower of Babel** builds them into a spiral ramp climbing a tiered tower under the message "V has Come to!", so mastering blocks climbs the tower. The choice is remembered on the device.
 - **Vault**: 10,000 generated drills per track, in 100 themed packs.
 - **My Book**: open your own PDF beside the drills.
 - **Profiles and certificates**: several learners can share one device, and finishing a track earns a certificate you can save as an image.
@@ -97,8 +98,10 @@ css/app.css           all styles
 js/tracks.js          the track registry: names, groups, storage keys, loader
 js/drill.js           Sandbox drills and mastery
 js/views.js           Library, PC and the rest of the rooms
+js/world.js           the 3D world: the original board and the Tower of Babel
+js/music.js           the generative music
 js/profiles-vault.js  profiles, the Vault and its generator
-js/…                  music, 3D world, book reader, ceremony, keyboard and focus helpers
+js/…                  book reader, ceremony, keyboard and focus helpers
 tracks/<id>.js        one file per track: all of its content
 tests/                browser tests (Playwright) and content checks
 tools/                the single-file builder
