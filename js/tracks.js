@@ -58,6 +58,10 @@
     blurb: "Make 2D and 3D games with Unity and C#: scripts, physics, input, UI and more.",
     keywords: "game engine games 3d 2d c# csharp unity3d gamedev",
     file: "Player.cs", run: "\u25B6 Play mode · Console", comment: "//", vaultFile: "Vault.cs", varPrefix: "" });
+  addTrack({ id: "unreal", name: "Unreal Engine", badge: "UE5", group: "engine", color: "#0e0e10", blocks: 30,
+    blurb: "Build Unreal Engine 5 games in C++: Actors, components, input, Blueprints and more.",
+    keywords: "game engine games 3d c++ cpp unreal ue5 epic gamedev blueprints",
+    file: "MyActor.cpp", run: "\u25B6 Play in Editor · Output Log", comment: "//", vaultFile: "Vault.cpp", varPrefix: "" });
   window.CB_TRACK_GROUPS = GROUPS;
   window.CB_TRACK_LIST = LIST;
   window.cbTrackMeta = function (id) { for (var i = 0; i < LIST.length; i++) if (LIST[i].id === id) return LIST[i]; return null; };

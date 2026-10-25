@@ -73,12 +73,12 @@ async function dumpTrack(env, track) {
     let lineBad = 0, exBad = 0;
     if (tc.checkLines) {
       const all = [...data.lines.map((l, i) => ({ where: `drill ${i + 1}`, code: l })), ...data.vault.map((l, i) => ({ where: `vault line ${i + 1}`, code: l }))];
-      const errs = tc.checkLines(dir, all.map((x) => x.code));
+      const errs = await tc.checkLines(dir, all.map((x) => x.code));
       errs.forEach((e) => { lineBad++; if (lineBad <= 12) console.log(`FAIL  ${track} · ${all[e.i].where} ${JSON.stringify(all[e.i].code)}: ${e.err}`); });
       notes.push(`${all.length - lineBad}/${all.length} drill + Vault lines parse`);
     }
     if (tc.checkExamples) {
-      const errs = tc.checkExamples(dir, data.examples);
+      const errs = await tc.checkExamples(dir, data.examples);
       errs.forEach((e) => { exBad++; console.log(`FAIL  ${track} · ${data.examples[e.i].where}: ${e.err.split("\n").slice(-3).join(" | ")}`); });
       notes.push(`${data.examples.length - exBad}/${data.examples.length} library examples check out`);
     }

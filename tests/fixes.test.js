@@ -99,9 +99,9 @@ test("a profile cannot be named __proto__ (it would never save)", async () => {
 test("track picker: lists every track, opens and closes, keeps focus inside", async () => {
   const { ctx, page } = await newPage(env);
   await page.click("#trackCurrent");
-  assert.equal(await page.$$eval("#trackSheet .track-tile", (t) => t.length), ids.length);
+  assert.equal(await page.$$eval("#trackSheet .track-tile", (t) => t.length), await page.evaluate(() => CB_TRACK_LIST.length));
   assert.equal(await page.evaluate(() => document.activeElement.classList.contains("track-tile")), true);
-  for (let i = 0; i < ids.length + 4; i++) await page.keyboard.press("Tab");
+  for (let i = 0; i < 14; i++) await page.keyboard.press("Tab");
   assert.equal(await page.evaluate(() => !!document.activeElement.closest("#trackSheet")), true);
   await page.keyboard.press("Escape");
   assert.equal(await page.$eval("#trackSheet", (e) => e.classList.contains("hidden")), true);

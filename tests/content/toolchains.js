@@ -193,3 +193,81 @@ module.exports.unity = {
     return errs;
   },
 };
+
+// ---------- Unreal (C++ against the stand-in API in stubs/unreal) ----------
+// Code is shown as one listing with "// Name.h" and "// Name.cpp"
+// markers; the test splits it into those files, points Unreal's real
+// include paths (CoreMinimal.h, GameFramework/Actor.h, …) at the stand-in,
+// compiles with g++ in C++20 and plays the harness: spawn, BeginPlay,
+// N frames of Tick, timers and overlaps. UE_LOG lines must match the app.
+const { tsErrors } = require("./treesitter");
+const UNREAL_STUBS = path.join(__dirname, "stubs", "unreal");
+const UE_HEADERS = ["CoreMinimal.h", "GameFramework/Actor.h", "GameFramework/Pawn.h", "GameFramework/Character.h", "GameFramework/GameModeBase.h",
+  "GameFramework/PlayerController.h", "GameFramework/CharacterMovementComponent.h", "GameFramework/SpringArmComponent.h", "Camera/CameraComponent.h",
+  "Components/ActorComponent.h", "Components/SceneComponent.h", "Components/StaticMeshComponent.h", "Components/BoxComponent.h",
+  "Components/SphereComponent.h", "Components/CapsuleComponent.h", "Components/PrimitiveComponent.h", "Components/AudioComponent.h",
+  "Components/TextRenderComponent.h", "Components/TextBlock.h", "Components/ProgressBar.h", "Engine/Engine.h", "Engine/World.h",
+  "Engine/DataAsset.h", "Engine/StaticMesh.h", "Kismet/GameplayStatics.h", "TimerManager.h", "EnhancedInputComponent.h",
+  "EnhancedInputSubsystems.h", "InputActionValue.h", "InputAction.h", "Blueprint/UserWidget.h", "Sound/SoundBase.h", "Math/UnrealMathUtility.h"];
+function unrealTree(dir) {
+  const inc = path.join(dir, "inc");
+  UE_HEADERS.forEach((h) => { const f = path.join(inc, h); fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, '#pragma once\n#include "UnrealStub.h"\n'); });
+  return inc;
+}
+function splitUnreal(code) {
+  const files = {};
+  let cur = null;
+  code.split("\n").forEach((line) => {
+    const m = line.match(/^\/\/ (\w+\.(?:h|cpp))$/);
+    if (m) { cur = m[1]; files[cur] = []; return; }
+    if (cur) files[cur].push(line);
+  });
+  return Object.fromEntries(Object.entries(files).map(([k, v]) => [k, v.join("\n").trim() + "\n"]));
+}
+function writeUnreal(dir, code) {
+  fs.rmSync(dir, { recursive: true, force: true });
+  fs.mkdirSync(dir, { recursive: true });
+  const files = splitUnreal(code);
+  for (const [name, text] of Object.entries(files)) {
+    fs.writeFileSync(path.join(dir, name), text);
+    for (const m of text.matchAll(/#include "(\w+)\.generated\.h"/g)) fs.writeFileSync(path.join(dir, m[1] + ".generated.h"), "#pragma once\n");
+  }
+  return files;
+}
+function gxx(dir, inc, extra) {
+  const cpps = fs.readdirSync(dir).filter((f) => f.endsWith(".cpp"));
+  return sh("g++", ["-std=c++20", "-w", "-I", inc, "-I", UNREAL_STUBS, "-I", ".", ...extra, ...cpps], { cwd: dir, timeout: 120000 });
+}
+const UE_MACROS = /\b(UPROPERTY|UFUNCTION|UCLASS|USTRUCT|UENUM|UMETA|UINTERFACE|GENERATED_BODY)\s*\((?:[^()]|\([^()]*\))*\)/g;
+function ueLineShapes(c) {
+  return [c, `void __f() {\n${c}\n}`, `class __C {\npublic:\n${c}\n};`, `${c}\n{ }`, `${c}\n{ };`, `class __C {\npublic:\n${c}\n{ }\n};`, `void __f() {\n${c}\n{ }\n}`];
+}
+module.exports.unreal = {
+  needs: ["g++"],
+  build: (dir, code, project, c) => {
+    const work = path.join(dir, "build");
+    const files = writeUnreal(work, code);
+    const inc = unrealTree(work);
+    const headers = Object.keys(files).filter((f) => f.endsWith(".h"));
+    fs.writeFileSync(path.join(work, "harness_main.cpp"), headers.map((h) => `#include "${h}"`).join("\n") + "\nint main() {\n  using namespace UEStub;\n" + (c.harness || "") + "\n  return 0;\n}\n");
+    const b = gxx(work, inc, ["-o", "app"]);
+    if (b.status !== 0) return { ok: false, error: b.stderr };
+    const r = sh("./app", [], { cwd: work, timeout: 10000 });
+    return r.status === 0 ? { ok: true, stdout: r.stdout } : { ok: false, error: `exit ${r.status}: ${r.stderr}` };
+  },
+  checkLines: (dir, lines) => tsErrors("cpp", lines, ueLineShapes, (c) => c.replace(UE_MACROS, "")),
+  // Whole examples (with file markers) must compile against the stand-in;
+  // snippets are parsed.
+  checkExamples: async (dir, examples) => {
+    const errs = await tsErrors("cpp", examples.map((e) => (/^\/\/ \w+\.(h|cpp)$/m.test(e.code) ? "" : e.code)), ueLineShapes, (c) => c.replace(UE_MACROS, ""));
+    examples.forEach((ex, i) => {
+      if (!/^\/\/ \w+\.(h|cpp)$/m.test(ex.code)) return;
+      const work = path.join(dir, "ex" + i);
+      writeUnreal(work, ex.code);
+      const inc = unrealTree(work);
+      const b = gxx(work, inc, ["-fsyntax-only"]);
+      if (b.status !== 0) errs.push({ i, err: b.stderr.split("\n").filter((l) => /error/.test(l)).slice(0, 2).join(" | ") });
+    });
+    return errs;
+  },
+};
