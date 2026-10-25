@@ -4252,3 +4252,42 @@
         }
       }
 
+      /* ---------- Letter colours and the rainbow finale ----------
+         Typed letters take turns through four bright colours (all far
+         above 7:1 on every theme's dark console), so letters 3 and 7
+         always match. A finished line plays the rainbow finale. */
+      .type-card .target-line .ch.ok.lc0, .target-line .ch.ok.lc0 { color: #38bdf8; text-shadow: 0 0 10px rgba(56, 189, 248, 0.45); }
+      .type-card .target-line .ch.ok.lc1, .target-line .ch.ok.lc1 { color: #c4b5fd; text-shadow: 0 0 10px rgba(196, 181, 253, 0.45); }
+      .type-card .target-line .ch.ok.lc2, .target-line .ch.ok.lc2 { color: #f9a8d4; text-shadow: 0 0 10px rgba(249, 168, 212, 0.45); }
+      .type-card .target-line .ch.ok.lc3, .target-line .ch.ok.lc3 { color: #fde047; text-shadow: 0 0 10px rgba(253, 224, 71, 0.4); }
+      .target-line.cb-finale { animation: finZoom 1.3s cubic-bezier(.3, 0, .2, 1) var(--fin-wave, 1500ms) both; transform-origin: center; }
+      .target-line.cb-finale .ch {
+        display: inline-block; position: relative;
+        animation: finWave 1.5s ease-in-out var(--fin-delay, 0ms) both;
+      }
+      @keyframes finWave {
+        0% { transform: scale(1); }
+        10% { color: #f87171; text-shadow: 0 0 14px #f87171; transform: translateY(-6%) scale(1.18); }
+        22% { color: #fb923c; text-shadow: 0 0 16px #fb923c; transform: translateY(-12%) scale(1.35); }
+        34% { color: #facc15; text-shadow: 0 0 18px #facc15; transform: translateY(-16%) scale(1.5); }
+        46% { color: #4ade80; text-shadow: 0 0 18px #4ade80; transform: translateY(-16%) scale(1.55); }
+        58% { color: #38bdf8; text-shadow: 0 0 18px #38bdf8; transform: translateY(-12%) scale(1.42); }
+        70% { color: #818cf8; text-shadow: 0 0 16px #818cf8; transform: translateY(-7%) scale(1.28); }
+        82% { color: #c084fc; text-shadow: 0 0 14px #c084fc; transform: translateY(-3%) scale(1.2); }
+        100% { color: var(--fin-end); text-shadow: 0 0 12px var(--fin-end); transform: scale(1.08); }
+      }
+      @keyframes finZoom {
+        0% { transform: scale(1); }
+        45% { transform: scale(1.14); filter: brightness(1.25) drop-shadow(0 0 14px rgba(125, 211, 252, 0.45)); }
+        75% { transform: scale(1.12); }
+        100% { transform: scale(1); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .target-line.cb-finale { animation: none; }
+        .target-line.cb-finale .ch { animation: finColours 0.7s linear both; }
+        @keyframes finColours {
+          0% { color: #f87171; } 16% { color: #fb923c; } 32% { color: #facc15; } 48% { color: #4ade80; }
+          64% { color: #38bdf8; } 80% { color: #818cf8; } 100% { color: var(--fin-end); }
+        }
+      }
+

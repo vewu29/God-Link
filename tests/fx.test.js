@@ -186,3 +186,27 @@ test("Typing FX: one shared audio engine, woken again after the phone pauses it"
   assert.deepEqual(log.pageErrors, []);
   await ctx.close();
 });
+
+test("Typing FX: typed letters take turns through four colours, and a finished line plays the rainbow finale", async () => {
+  const { ctx, page, log } = await newPage(env, { track: "python", reducedMotion: "no-preference" });
+  const line = await openDrill(page, 1);
+  await page.keyboard.type(line.slice(0, 8), { delay: 10 });
+  const cls = await page.$$eval("#targetLine .ch", (els) => els.slice(0, 8).map((e) => (e.className.match(/lc\d/) || [""])[0]));
+  assert.deepEqual(cls, ["lc0", "lc1", "lc2", "lc3", "lc0", "lc1", "lc2", "lc3"]);
+  assert.equal(cls[2], cls[6], "the 3rd and 7th letters share a colour");
+  const colours = await page.$$eval("#targetLine .ch", (els) => [getComputedStyle(els[2]).color, getComputedStyle(els[6]).color, getComputedStyle(els[3]).color]);
+  assert.equal(colours[0], colours[1]);
+  assert.notEqual(colours[0], colours[2]);
+  await page.keyboard.type(line.slice(8), { delay: 10 });
+  assert.equal(await page.evaluate(() => document.getElementById("targetLine").classList.contains("cb-finale")), true, "the finale plays");
+  const ends = await page.$$eval("#targetLine .ch", (els) => els.slice(0, 8).map((e) => e.style.getPropertyValue("--fin-end")));
+  assert.equal(new Set(ends).size, 7, "seven rainbow colours across the line");
+  await page.waitForTimeout(700);
+  assert.equal(await page.evaluate(() => document.getElementById("targetLine").classList.contains("cb-finale")), true, "still playing, in slow motion");
+  // Typing the next rep ends it at once.
+  await page.keyboard.type(line.charAt(0));
+  assert.equal(await page.evaluate(() => document.getElementById("targetLine").classList.contains("cb-finale")), false);
+  assert.equal(await page.inputValue("#typeInput"), line.charAt(0), "the first letter of the next rep is kept");
+  assert.deepEqual(log.pageErrors, []);
+  await ctx.close();
+});

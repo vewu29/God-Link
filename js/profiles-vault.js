@@ -735,7 +735,8 @@ window.cbRenderVault = function () {
   function paint() {
     var val = input.value, html = '<span class="word">';
     for (var i = 0; i < drill.line.length; i++) {
-      var cls = i < val.length ? "ok" : i === val.length ? "next" : "todo";
+      /* Typed letters take turns through four colours (lc0–lc3). */
+      var cls = i < val.length ? "ok lc" + (i % 4) : i === val.length ? "next" : "todo";
       /* Loop 71 — a lone plain space as a span's only content
          collapses to zero width in the browser's whitespace
          processing, so Vault target lines rendered run-together
@@ -797,6 +798,7 @@ window.cbRenderVault = function () {
       /* Loop 32: banking a drill answers like a perfect rep. */
       if (!echoBanked) {
         echoBanked = true;
+        if (window.CBFX) window.CBFX.finale(target);
         if (window.__musicEcho) window.__musicEcho("rep");
         if (window.CBFX) window.CBFX.finish(fxCard, target, { kind: "bank", line: drill.line, track: CB_META.id, block: gIdx });
       }

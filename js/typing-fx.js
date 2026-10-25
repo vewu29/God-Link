@@ -733,6 +733,43 @@
     } catch (e) {}
   }
 
+  /* ---------- The finished line: a slow-motion rainbow ----------
+     A wave runs left to right: each letter grows and flashes through
+     seven colours, settling on its own colour of the rainbow; then the
+     whole line zooms in so the eye takes in the full sequence. Seven
+     soft notes climb with the wave. Returns how long it lasts, so the
+     drill can hold the line that long; typing again ends it at once.
+     With reduced motion: the colours only, quickly, without growing. */
+  var RAINBOW = ["#f87171", "#fb923c", "#facc15", "#4ade80", "#38bdf8", "#818cf8", "#c084fc"];
+  function finale(target) {
+    if (!target) return 0;
+    var all = target.querySelectorAll(".ch"), n = all.length;
+    if (!n) return 0;
+    var each = REDUCED ? 700 : 1500;
+    var step = REDUCED ? 0 : Math.max(35, Math.min(110, 1900 / n));
+    var wave = step * (n - 1) + each, zoom = REDUCED ? 0 : 1300;
+    Array.prototype.forEach.call(all, function (el, i) {
+      el.style.setProperty("--fin-delay", Math.round(i * step) + "ms");
+      el.style.setProperty("--fin-end", RAINBOW[i % 7]);
+    });
+    target.style.setProperty("--fin-wave", Math.round(wave) + "ms");
+    target.classList.remove("cb-finale"); void target.offsetWidth;
+    target.classList.add("cb-finale");
+    var c = ready();
+    if (c && !musicOn()) {
+      var t = c.currentTime + 0.05;
+      [0, 2, 4, 5, 7, 9, 11].forEach(function (iv, k) {
+        var at = t + (k / 6) * (wave - each * 0.4) / 1000;
+        tone(freq(72 + iv), at, 1.3, "sine", 0.05, null, -0.6 + k * 0.2);
+        tone(freq(84 + iv), at, 0.6, "sine", 0.015, null, 0.6 - k * 0.2);
+      });
+    }
+    return Math.round(wave + zoom + 150);
+  }
+  function endFinale(target) {
+    if (target) target.classList.remove("cb-finale");
+  }
+
   paintToday();
   paintShelf();
 
@@ -773,6 +810,8 @@
       if (JSON.stringify(prog()) === before) return;
       saveProgress(); paintAll();
     },
+    finale: finale,
+    endFinale: endFinale,
     repaint: paintAll
   };
 })();

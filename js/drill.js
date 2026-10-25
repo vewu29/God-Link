@@ -303,6 +303,7 @@ function renderTarget(overrideTyped) {
      cleared error. Both are one-render affairs: the flags are
      consumed here, and a plain render strips the classes so
      typing never replays them. */
+  if (window.CBFX) window.CBFX.endFinale(targetLine);
   var fresh = freshTake; freshTake = false;
   targetLine.classList.toggle("fresh", fresh);
   if (forgiveNext) {
@@ -318,7 +319,9 @@ function renderTarget(overrideTyped) {
   var wordEl = null;
   for (var i = 0; i < b.line.length; i++) {
     var s = document.createElement("span");
-    s.className = "ch " + (i < typed.length ? "ok" : (i === typed.length ? "next" : "todo")) + (i === errAt ? " err" : "") + (i === justIdx ? " just" : "");
+    /* Typed letters take turns through four colours (lc0–lc3), so
+       the 3rd and 7th letters, say, always share one. */
+    s.className = "ch " + (i < typed.length ? "ok lc" + (i % 4) : (i === typed.length ? "next" : "todo")) + (i === errAt ? " err" : "") + (i === justIdx ? " just" : "");
     if (fresh) s.style.animationDelay = Math.min(i * 14, 320) + "ms";
     s.textContent = b.line[i] === " " ? "\u00A0" : b.line[i];
     if (!wordEl) { wordEl = document.createElement("span"); wordEl.className = "word"; targetLine.appendChild(wordEl); }
@@ -526,7 +529,10 @@ typeInput.addEventListener("input", function () {
     lastOkLen = 0;
     holdActive = true;
     /* Loop 46 — the reset line arrives as a fresh take. */
-    holdTimer = setTimeout(function () { holdActive = false; freshTake = true; renderTarget(); }, 480);
+    /* The finished line plays its rainbow finale (js/typing-fx.js)
+       before the fresh take; typing the next rep cuts it short. */
+    var hold = window.CBFX ? window.CBFX.finale(targetLine) : 0;
+    holdTimer = setTimeout(function () { holdActive = false; freshTake = true; renderTarget(); }, Math.max(480, hold));
   } else {
     if (drillStatus.classList.contains("bad")) setStatus("", "");
     if (window.__musicEcho) window.__musicEcho("key");
