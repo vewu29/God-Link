@@ -515,3 +515,45 @@ module.exports.sql = {
     return errs;
   },
 };
+
+// ---------- C ----------
+// Programs and examples must match clang-format (LLVM style, 4-space
+// indent), compile as C17 with every warning an error, and run cleanly
+// under AddressSanitizer and UndefinedBehaviorSanitizer — so a memory
+// leak, an out-of-bounds read or an integer overflow fails the check.
+// Lines and snippets are parsed by tree-sitter.
+const C_STYLE = "{BasedOnStyle: LLVM, IndentWidth: 4, ColumnLimit: 100}";
+const C_FLAGS = ["-std=c17", "-Wall", "-Wextra", "-Werror", "-pedantic", "-fsanitize=address,undefined", "-fno-sanitize-recover=all", "-g"];
+function cRun(dir, code) {
+  fs.rmSync(dir, { recursive: true, force: true });
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, "main.c"), code.replace(/\n*$/, "\n"));
+  const f = sh("clang-format", ["--style=" + C_STYLE, "main.c"], { cwd: dir });
+  if (f.stdout !== code.replace(/\n*$/, "\n")) {
+    fs.writeFileSync(path.join(dir, "formatted.c"), f.stdout);
+    return { ok: false, error: "not clang-formatted:\n" + sh("diff", ["main.c", "formatted.c"], { cwd: dir }).stdout.split("\n").slice(0, 12).join("\n") };
+  }
+  const c = sh("gcc", [...C_FLAGS, "main.c", "-o", "app", "-lm"], { cwd: dir });
+  if (c.status !== 0) return { ok: false, error: c.stderr };
+  const r = sh("./app", [], { cwd: dir, timeout: 10000, env: { ...process.env, ASAN_OPTIONS: "detect_leaks=1" } });
+  return r.status === 0 ? { ok: true, stdout: r.stdout } : { ok: false, error: `exit ${r.status}: ${r.stderr}` };
+}
+function cShapes(c) {
+  const fn = (s) => `void __f(void) {\n${s}\n}`;
+  return [c, `${c}\n}`, fn(c), fn(`${c}\n}`), fn(`switch (x) {\n${c}\n}`), fn(`if (x) {\n${c}\n}`), `struct __s {\n${c}\n};`, `enum __e {\n${c}\n};`];
+}
+module.exports.c = {
+  needs: ["gcc", "clang-format"],
+  build: (dir, code) => cRun(path.join(dir, "run"), code),
+  checkLines: (dir, lines) => tsErrors("c", lines, cShapes),
+  checkExamples: async (dir, examples) => {
+    const snippets = examples.map((e) => e.code);
+    const errs = (await tsErrors("c", snippets, cShapes)).filter((e) => examples[e.i].run === undefined);
+    examples.forEach((ex, i) => {
+      if (ex.run === undefined) return;
+      const r = cRun(path.join(dir, "ex" + i), ex.code);
+      if (!r.ok) errs.push({ i, err: r.error });
+    });
+    return errs;
+  },
+};

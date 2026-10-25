@@ -71,6 +71,10 @@
     blurb: "Fast and famously safe: catch memory bugs before they happen, in tools, games and systems.",
     keywords: "systems performance safe memory cargo crates webassembly wasm cli",
     file: "main.rs", run: "cargo run", comment: "//", vaultFile: "vault.rs", varPrefix: "" });
+  addTrack({ id: "c", name: "C", badge: "C", group: "lang", color: "#3d4f66", blocks: 30,
+    blurb: "The language under operating systems, games and gadgets: learn how computers really work.",
+    keywords: "systems embedded memory pointers low level operating system arduino microcontroller gcc",
+    file: "main.c", run: "gcc main.c -o app && ./app", comment: "//", vaultFile: "vault.c", varPrefix: "int " });
   addTrack({ id: "sql", name: "SQL", badge: "SQL", group: "web", color: "#0b5c7d", blocks: 30,
     blurb: "Ask databases questions: the language behind almost every app, website and spreadsheet of data.",
     keywords: "database databases query queries data sqlite postgres postgresql mysql analytics tables",
