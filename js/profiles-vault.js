@@ -27,7 +27,7 @@ try {
         var cbEntry = cbParsed.profiles[cbName];
         if (cbEntry && typeof cbEntry === "object" && !Array.isArray(cbEntry)) cbClean.profiles[cbName] = cbEntry;
       }
-      if (typeof cbParsed.active === "string" && cbClean.profiles[cbParsed.active]) cbClean.active = cbParsed.active;
+      if (typeof cbParsed.active === "string" && Object.prototype.hasOwnProperty.call(cbClean.profiles, cbParsed.active)) cbClean.active = cbParsed.active;
       cbStore = cbClean;
     }
   }
@@ -38,7 +38,7 @@ function cbSaveStore() { try { localStorage.setItem(CB_PROFILES_KEY, JSON.string
    instead of taking the profile room down with it. */
 if (typeof cbVaultLen !== "function") window.cbVaultLen = function (v) { return (v && typeof v === "object" && !Array.isArray(v)) ? Object.keys(v).length : 0; };
 if (typeof cbCountProg !== "function") window.cbCountProg = function () { return 0; };
-function cbProfile() { return cbStore.active ? cbStore.profiles[cbStore.active] || null : null; }
+function cbProfile() { return cbStore.active && Object.prototype.hasOwnProperty.call(cbStore.profiles, cbStore.active) ? cbStore.profiles[cbStore.active] : null; }
 window.cbIsMember = function () { return !!cbProfile(); };
 /* Loop 56 — a vault map counts only as a plain object; a
    string or array in its place would index as phantom
@@ -189,6 +189,9 @@ window.cbRenderProfile = function () {
       var name = $("profName").value.trim();
       var msg = $("profMsg");
       if (name.length < 2) { msg.textContent = "Give your profile a name of at least 2 characters."; msg.classList.add("err"); return; }
+      /* Names are keys in the saved store; a name the browser treats as
+         an object's own machinery (__proto__) would silently never save. */
+      if (name in {}) { msg.textContent = "That name is reserved by the browser — pick another."; msg.classList.add("err"); return; }
       var taken = names.some(function (n) { return n.toLowerCase() === name.toLowerCase(); });
       if (taken) { msg.textContent = "That name is already taken on this device — pick another, or sign in below."; msg.classList.add("err"); return; }
       var np = { name: name, color: cbChosenColor, progress: { reps: {}, celebrated: false }, vault: {}, progressCS: { reps: {}, celebrated: false }, vaultCS: {}, progressDrive: { reps: {}, celebrated: false }, vaultDrive: {} };
@@ -714,7 +717,7 @@ window.cbRenderVault = function () {
     '</div>';
   var input = $("vaultInput"), target = $("vaultTarget"), fill = $("vaultLineFill");
   function paint() {
-    var val = input.value, html = "";
+    var val = input.value, html = '<span class="word">';
     for (var i = 0; i < drill.line.length; i++) {
       var cls = i < val.length ? "ok" : i === val.length ? "next" : "todo";
       /* Loop 71 — a lone plain space as a span's only content
@@ -726,8 +729,9 @@ window.cbRenderVault = function () {
          same. Display only — comparisons still use drill.line. */
       var ch = drill.line.charAt(i);
       html += '<span class="ch ' + cls + '">' + (ch === " " ? "&nbsp;" : esc(ch)) + "</span>";
+      if (ch === " ") html += '</span><span class="word">';
     }
-    target.innerHTML = html;
+    target.innerHTML = html + "</span>";
     /* Loop 50 — same fix as the Sandbox target line: the Vault
        target's label ("The drill line to type") hid the line
        itself from screen readers. Carry the line in the label,
@@ -750,7 +754,8 @@ window.cbRenderVault = function () {
        U+00A0 / U+202F where the drill line has a plain space,
        and the strict walk below would refuse it at the spot
        that looks right. One char for one char, positions kept. */
-    if (/[\u00A0\u202F]/.test(input.value)) input.value = input.value.replace(/[\u00A0\u202F]/g, " ");
+    var folded = cbFoldTyping(input.value, drill.line);
+    if (folded !== input.value) input.value = folded;
     var val = input.value, i = 0;
     while (i < val.length && i < drill.line.length && val.charAt(i) === drill.line.charAt(i)) i++;
     if (val.length > i) {

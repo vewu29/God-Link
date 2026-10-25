@@ -3686,3 +3686,23 @@
         .track-sheet-card { max-width: 760px; max-height: 84vh; border-radius: 20px; }
         .track-grid { grid-template-columns: 1fr 1fr; }
       }
+
+      /* ---------- Audit fixes ----------
+         Code reads letter by letter: JetBrains Mono's contextual
+         ligatures drew <= as ≤ and == as one long bar, which a learner
+         copying a line cannot type. Contextual alternates are off
+         everywhere (prose fonts lose nothing visible). */
+      html { font-variant-ligatures: no-contextual; }
+      /* Drill lines wrap between words; a word longer than the line
+         still wraps inside itself. */
+      .target-line .word { display: inline-block; max-width: 100%; }
+      /* "Type along" sits on the light card in light mode, not on the
+         navy console its pale blue was chosen for (1.7:1 → 7:1). */
+      #pcView .pc-type-label { color: var(--muted); }
+      /* While drilling, the mastery card's "Start — <this block>"
+         button would point at the drill already open. */
+      body.drilling .continue-btn { display: none !important; }
+      /* On phones the thirty mood chips in the mastery card pushed the
+         blocks and the drill a screen and a half down; the same moods
+         live one tap away in the Music bubble at the top. */
+      @media (max-width: 640px) { .mastery .music-moods { display: none; } }

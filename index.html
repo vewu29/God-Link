@@ -101,7 +101,7 @@
            its play button presses the mastery card's music button, so
            the bubble drives the one existing music engine and never
            keeps a second copy of its state. -->
-      <div class="bubble-dock" id="bubbleDock">
+      <div class="bubble-dock" id="bubbleDock" role="region" aria-label="Music">
         <button class="bubble-toggle" id="bubbleToggle" type="button" aria-expanded="false" aria-controls="bubblePanel">
           <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-music"/></svg>
           <span>Music</span>
@@ -152,7 +152,7 @@
         </div>
       </div>
 
-      <div id="sandboxView">
+      <div id="sandboxView" role="main">
       <!-- Mastery header -->
       <section class="mastery" aria-label="Your progress toward mastery">
         <div class="mastery-top">
@@ -294,7 +294,7 @@
       </div><!-- /sandboxView -->
 
       <!-- ================= LIBRARY VIEW ================= -->
-      <div id="libraryView" class="hidden">
+      <div id="libraryView" class="hidden" role="main">
         <div id="libHome">
           <div class="lib-intro sec-head">
             <span class="sec-ico" aria-hidden="true"><svg aria-hidden="true" class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-book"/></svg></span>
@@ -409,7 +409,7 @@
       </div>
 
       <!-- ================= PC VIEW ================= -->
-      <div id="pcView" class="hidden">
+      <div id="pcView" class="hidden" role="main">
         <div class="pc-intro sec-head">
           <span class="sec-ico" aria-hidden="true"><svg aria-hidden="true" class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-monitor"/></svg></span>
           <div class="sec-text">
@@ -459,7 +459,7 @@
       </div>
 
       <!-- ================= MY BOOK VIEW ================= -->
-      <div id="bookView" class="hidden">
+      <div id="bookView" class="hidden" role="main">
         <div class="book-intro sec-head">
           <span class="sec-ico" aria-hidden="true"><svg aria-hidden="true" class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-book-open"/></svg></span>
           <div class="sec-text">
@@ -503,7 +503,7 @@
       </div>
 
       <!-- ================= SIGN UP / PROFILE VIEW ================= -->
-      <div id="profileView" class="hidden">
+      <div id="profileView" class="hidden" role="main">
         <div class="lib-intro sec-head">
           <span class="sec-ico" aria-hidden="true"><svg aria-hidden="true" class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-person"/></svg></span>
           <div class="sec-text">
@@ -516,7 +516,7 @@
       </div>
 
       <!-- ================= THE VAULT VIEW ================= -->
-      <div id="vaultView" class="hidden">
+      <div id="vaultView" class="hidden" role="main">
         <div class="lib-intro sec-head">
           <span class="sec-ico" aria-hidden="true"><svg aria-hidden="true" class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-lock"/></svg></span>
           <div class="sec-text">
@@ -528,7 +528,7 @@
         <div id="vaultMain"></div>
       </div>
 
-      <p class="source-note">Content sources: C++ facts and topic coverage checked against <a href="https://en.cppreference.com/">cppreference.com</a>, <a href="https://learn.microsoft.com/en-us/cpp/">Microsoft Learn</a> and <a href="https://en.wikipedia.org/wiki/C%2B%2B">Wikipedia</a>. Every explanation on this site is written in Code Block's own words.</p>
+      <p class="source-note" role="contentinfo">Content sources: C++ facts and topic coverage checked against <a href="https://en.cppreference.com/">cppreference.com</a>, <a href="https://learn.microsoft.com/en-us/cpp/">Microsoft Learn</a> and <a href="https://en.wikipedia.org/wiki/C%2B%2B">Wikipedia</a>. Every explanation on this site is written in Code Block's own words.</p>
 
     </div>
 

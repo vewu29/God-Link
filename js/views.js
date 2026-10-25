@@ -403,7 +403,7 @@ var SHELFDEEP = window.CB_T ? CB_T.shelfDeep : window.__isDrive ? DRIVE_SHELFDEE
           walk: ["Line 1: fetch the drawer wall. Each drawer is found by a string name tag and holds an int. The whole wall is called scores.", "Line 2: open the drawer labeled V — it is built on the spot if it was not there — and put 10 inside.", "Line 3: the same drawer, found by the same name: add 5 onto what is already inside. The drawer now holds 15.", "Line 4: ask for the drawer by name and print what falls out: 15. No searching through a list — the name tag IS the address."] },
     mistake: "Reaching for a shelf you never fetched. Using std::map without #include <map> makes the compiler answer as if it has never heard of a map — because in your program, it has not. When a library name is 'not declared', the missing #include is the first suspect, every time." },
   { more: ["Three more from the deep end: a POINTER is a signpost holding an address. A REFERENCE is a nickname for the very same box. A TEMPLATE is a fill-in-the-blank recipe where the type is the blank. And one extra for free — an ALGORITHM is any step-by-step method for getting a job done; std::sort is one you already know.", "Notice the pattern: every scary word is a friendly idea wearing a long coat. When a new word appears in a chapter, say its plain-words meaning out loud once, and the coat comes off for good."],
-    ex: { code: "// syntax: the spelling rules of C++\nint score = 0;    // variable: a named box\nscore += 1;       // add onto what is there\nif (score == 1) { // a question, asked with ==",
+    ex: { code: "// syntax: the spelling rules of C++\nint score = 0;    // variable: a named box\nscore += 1;       // add onto what is there\nif (score == 1) { // a question, asked with ==\n    score = 2;    // a statement inside a block\n}                 // the block closes",
           walk: ["Line 1: a comment — a note for humans. The compiler skips everything after //, so comments are the safest place to think in plain words.", "Line 2: a variable is born, and the comment beside it uses the glossary on purpose. Reading code aloud in plain words is a real skill, not a beginner crutch.", "Line 3: the box grows by one — the += shortcut from Chapter 3.", "Line 4: a question — and notice == doing glossary duty. Two equals signs ask; one equals sign would have filled the box instead."] },
     mistake: "Blaming the computer for a bug. The computer follows instructions exactly — a bug means the instructions themselves said the wrong thing. That is good news, not bad: instructions can be read, found, and fixed. The machine is never being stubborn; it is being literal." },
   { more: ["How to use a cheat sheet well: keep it open BESIDE your work, not instead of it. Type the line yourself every time — glancing is allowed, but copying without looking is where the learning leaks away. The Sandbox drills exist to move these shapes from the card into your fingers.", "And make the cards yours. The day a shape stops needing a glance, it has moved into your hands. The cheat sheets of professionals shrink over the years — not because they memorize harder, but because repetition quietly does the memorizing for them."],
@@ -1049,7 +1049,10 @@ function refreshPcCode() {
     var body = document.createElement("span");
     var html = line.replace(/</g, "&lt;");
     p.vars.forEach(function (d) {
-      html = html.replace(new RegExp("(int " + d.key + " = )" + v[d.key] + ";"), '$1<span class="hl">' + v[d.key] + "</span>;");
+      /* The blue box's number, wherever the language declares it:
+       int start = 5;  start = 5  let start = 5;  start := 5
+       var start: Int = 5  $start = 5; — the first match per line. */
+      html = html.replace(new RegExp("(\\b" + d.key + "(?:\\s*:\\s*[\\w.<>\\[\\]]+)?\\s*:?=\\s*)" + v[d.key] + "(?![\\w.])"), '$1<span class="hl">' + v[d.key] + "</span>");
     });
     body.innerHTML = html === "" ? "&nbsp;" : html;
     div.appendChild(num); div.appendChild(body);
@@ -1084,10 +1087,18 @@ function renderPc(resetScreen) {
        keys; the range rides along unless the label already
        carries it (the two day-of-year boxes do). */
     var labText = d.label || d.key;
-    lab.textContent = "int " + labText + (labText.indexOf(d.min + "-" + d.max) >= 0 ? "" : " (" + d.min + "–" + d.max + ")");
+    lab.textContent = (CB_META.varPrefix === undefined ? "int " : CB_META.varPrefix) + labText + (labText.indexOf(d.min + "-" + d.max) >= 0 ? "" : " (" + d.min + "–" + d.max + ")");
     var inp = document.createElement("input");
     inp.type = "number"; inp.id = "pcVar_" + d.key;
     inp.min = d.min; inp.max = d.max; inp.value = d.val;
+    /* The program uses the number clamped into its range; when the
+       box loses focus it shows that same number, so the box and the
+       code never disagree. */
+    inp.addEventListener("change", function () {
+      var n = parseInt(inp.value, 10);
+      inp.value = String(isNaN(n) ? d.val : Math.max(d.min, Math.min(d.max, n)));
+      refreshPcCode();
+    });
     inp.addEventListener("input", function () {
       pcStop(true);
       refreshPcCode();
@@ -1133,7 +1144,8 @@ function updatePcType() {
 var pcEchoFull = false;
 $("pcType").addEventListener("input", function () {
   var cleanTarget = pcCodeChars(pcTarget());
-  var val = $("pcType").value;
+  var val = cbFoldCode($("pcType").value);
+  if (val !== $("pcType").value) $("pcType").value = val;
   var ci = 0, bad = -1;
   for (var i = 0; i < val.length; i++) {
     if (/\s/.test(val[i])) continue;
@@ -1182,7 +1194,7 @@ $("compileBtn").addEventListener("click", function () {
   var pcReduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   var steps = [
     { t: 0, html: '<span class="dim">$ ' + CB_META.run.replace(CB_META.file, p.file).replace(/&/g, "&amp;").replace(/</g, "&lt;") + "</span>" },
-    { t: pcReduced ? 0 : 500, html: '<span class="dim">Compiling… OK — no errors. Running:</span>' }
+    { t: pcReduced ? 0 : 500, html: '<span class="dim">' + (pcCodeChars($("pcType").value) === pcCodeChars(pcTarget()) ? "Your typed program matches. Running:" : "Running the program shown above:") + "</span>" }
   ];
   /* Loop 50 — run() is called ONCE and the lines kept: they
      feed the screen steps AND the spoken summary at the end,

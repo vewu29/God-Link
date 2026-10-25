@@ -30,6 +30,8 @@
 
   var bar = document.createElement("div");
   bar.className = "lang-toggle track-bar";
+  bar.setAttribute("role", "region");
+  bar.setAttribute("aria-label", "Learning track");
   bar.innerHTML = '<button type="button" class="track-current" id="trackCurrent" aria-haspopup="dialog" aria-controls="trackSheet" aria-expanded="false">' +
     badge(cur) +
     '<span class="track-cur-text"><span class="track-kicker">Now learning</span><span class="track-cur-name">' + esc(cur.name) + "</span></span>" +

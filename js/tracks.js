@@ -76,8 +76,48 @@
     return t;
   };
 
+  /* Track files stay readable by writing each chapter's deep dive next
+     to the chapter itself ({ ..., deep: { more, ex, mistake } }) and
+     leaving colours and shelf numbers out; this fills in the parallel
+     arrays and the defaults the app's scripts expect. */
+  var PALETTE = ["#53b1fd", "#38bdf8", "#22d3ee", "#2fc4e8", "#3ec6dd", "#4a90d9", "#6d9df5", "#7aa5f8", "#5ea8f7", "#4fb3ff",
+    "#38a3f8", "#2fb9e8", "#3b8ef0", "#2f9be8", "#7fb2e5", "#6495ed", "#3f7de0", "#31b8c6"];
+  function normalize(T) {
+    function paint(list) { list.forEach(function (x, i) { if (!x.color) x.color = PALETTE[i % PALETTE.length]; }); }
+    paint(T.blocks); paint(T.chapters); paint(T.shelves);
+    T.shelves.forEach(function (s, i) { if (!s.num) s.num = "S" + (i + 1); });
+    if (!T.deep) T.deep = T.chapters.map(function (c) { return c.deep || null; });
+    if (!T.shelfDeep) T.shelfDeep = T.shelves.map(function (s) { return s.deep || null; });
+    T.projects.forEach(function (p) { if (!p.file) p.file = window.CB_META.file; });
+    return T;
+  }
   window.cbRegisterTrack = function (id, factory) {
-    if (id === window.__track && !window.CB_T) window.CB_T = factory();
+    if (id === window.__track && !window.CB_T) window.CB_T = normalize(factory());
+  };
+  /* Phone keyboards "improve" what you type: iOS Smart Punctuation turns
+     " into “ ”, ' into ’, -- into —, ... into …, and some keyboards and
+     dictation send a no-break space. None of that changes what the
+     learner meant, so where the target line has the plain character, the
+     look-alike is folded back to it — position by position, so a wrong
+     letter is still a wrong letter. */
+  window.cbFoldTyping = function (typed, target) {
+    var out = "", t = 0;
+    for (var k = 0; k < typed.length; k++) {
+      var c = typed.charAt(k), want = target.charAt(t);
+      if (c === "\u00A0" || c === "\u202F") c = " ";
+      else if (want === '"' && /[\u201C\u201D\u201E\u201F\u2033\u00AB\u00BB]/.test(c)) c = '"';
+      else if (want === "'" && /[\u2018\u2019\u201A\u201B\u2032]/.test(c)) c = "'";
+      else if (c === "\u2014" && target.substr(t, 2) === "--") c = "--";
+      else if (c === "\u2013" && want === "-") c = target.substr(t, 2) === "--" ? "--" : "-";
+      else if (c === "\u2026" && target.substr(t, 3) === "...") c = "...";
+      out += c; t += c.length;
+    }
+    return out;
+  };
+  /* The same fold for code typed with free whitespace (the PC), where
+     positions are not one-to-one: only look-alikes of plain ASCII. */
+  window.cbFoldCode = function (s) {
+    return s.replace(/[\u00A0\u202F]/g, " ").replace(/[\u201C\u201D\u201E\u201F\u2033]/g, '"').replace(/[\u2018\u2019\u201A\u201B\u2032]/g, "'").replace(/\u2014/g, "--").replace(/\u2026/g, "...");
   };
   /* A label written as a comment in the active track's language. */
   window.cbCommentLabel = function (text) {

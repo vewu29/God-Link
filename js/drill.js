@@ -309,12 +309,19 @@ function renderTarget(overrideTyped) {
     targetLine.classList.add("forgiven");
     setTimeout(function () { targetLine.classList.remove("forgiven"); }, 750);
   }
+  /* Letters are grouped into words (each word keeps its trailing
+     space), so a long line wraps between words on a phone instead of
+     splitting gameOver() into "gameOve / r()". A word longer than the
+     whole line still wraps inside itself. */
+  var wordEl = null;
   for (var i = 0; i < b.line.length; i++) {
     var s = document.createElement("span");
     s.className = "ch " + (i < typed.length ? "ok" : (i === typed.length ? "next" : "todo")) + (i === errAt ? " err" : "") + (i === justIdx ? " just" : "");
     if (fresh) s.style.animationDelay = Math.min(i * 14, 320) + "ms";
     s.textContent = b.line[i] === " " ? "\u00A0" : b.line[i];
-    targetLine.appendChild(s);
+    if (!wordEl) { wordEl = document.createElement("span"); wordEl.className = "word"; targetLine.appendChild(wordEl); }
+    wordEl.appendChild(s);
+    if (b.line[i] === " ") wordEl = null;
   }
   if (fresh) setTimeout(function () { targetLine.classList.remove("fresh"); }, 1000);
   if (lineProgressFill) lineProgressFill.style.width = (b.line.length ? Math.min(typed.length, b.line.length) / b.line.length * 100 : 0) + "%";
@@ -386,7 +393,19 @@ function openBlock(i) {
     if (guarded && (hubView.classList.contains("hidden") || !hubView.getClientRects().length)) return;
     hubView.classList.add("hidden");
     drillView.classList.remove("hidden");
-    window.scrollTo(0, 0);
+    document.body.classList.add("drilling");
+    /* The drill opens where it is: just under the sticky menu, not at
+       the top of the page where (on a phone) the mastery card would
+       hide it a screen and a half down. */
+    var menuEl = document.querySelector(".menu");
+    var stickyH = menuEl ? menuEl.getBoundingClientRect().height : 0;
+    var y = drillView.getBoundingClientRect().top + window.scrollY - stickyH - 12;
+    /* On a short screen the whole drill does not fit: then the typing
+       card itself goes just under the menu (the explanation is one
+       small scroll up). */
+    var inputBottom = typeInput.getBoundingClientRect().bottom + window.scrollY;
+    if (inputBottom - y > window.innerHeight - 16) y = typeCard.getBoundingClientRect().top + window.scrollY - stickyH - 12;
+    window.scrollTo(0, Math.max(0, y));
     setTimeout(function () { try { typeInput.focus({ preventScroll: true }); } catch (e) { typeInput.focus(); } }, 60);
   }
   if (picked) setTimeout(function () { swapToDrill(true); }, 380); else swapToDrill(false);
@@ -397,6 +416,7 @@ function closeDrill() {
   current = -1;
   drillView.classList.add("hidden");
   hubView.classList.remove("hidden");
+  document.body.classList.remove("drilling");
   typeInput.blur();
   window.scrollTo(0, 0);
   /* Loop 47 — the set-down: the world receives the block back
@@ -431,7 +451,7 @@ typeInput.addEventListener("input", function () {
      so this handler, renderTarget and the progress fill all
      read one alphabet. One char for one char: positions,
      caret and the wrong-letter hunt are untouched. */
-  var v = typeInput.value.replace(/[\u00A0\u202F]/g, " ");
+  var v = cbFoldTyping(typeInput.value, b.line);
   if (v !== typeInput.value) typeInput.value = v;
   /* Find the first wrong character — the line refuses it, gently. */
   var bad = -1;
