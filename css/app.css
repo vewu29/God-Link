@@ -3769,3 +3769,42 @@
         border: none; background: none; padding: 0; font: inherit; font-weight: 700;
         color: var(--accent); text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
       }
+
+      /* ---------- Support card (PayPal donations) ----------
+         One quiet card above the footer on every room: Code Block is
+         free for everyone, and a donation is an invitation, never a
+         gate. The button wears PayPal's own gold so it reads as
+         PayPal at a glance (dark ink on gold, 11:1). */
+      .support-card {
+        margin: var(--sp-5, 20px) auto 0; max-width: 760px;
+        display: grid; grid-template-columns: auto 1fr; gap: var(--sp-3) var(--sp-4, 16px); align-items: center;
+        padding: var(--sp-4, 16px) var(--sp-5, 20px);
+        background: var(--card-grad); border: 1px solid var(--line); border-radius: var(--r-card);
+        box-shadow: var(--elev-1), var(--edge-light);
+      }
+      .support-ico {
+        align-self: start;
+        width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center;
+        background: linear-gradient(135deg, #fb7185, #e11d48); color: #fff;
+        box-shadow: 0 6px 16px rgba(225, 29, 72, 0.3);
+      }
+      .support-ico .ico { width: 24px; height: 24px; }
+      .support-title { margin: 0 0 2px; font-size: var(--text-h3); color: var(--ink); }
+      .support-text p { margin: 0; color: var(--muted); font-size: var(--text-body); line-height: 1.55; }
+      .support-btn {
+        grid-column: 1 / -1; justify-self: start;
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 12px 20px; border-radius: 999px; min-height: 44px;
+        background: #ffc439; color: #111827; font-weight: 800; text-decoration: none;
+        border: 1px solid #e0a800; box-shadow: 0 6px 16px rgba(224, 168, 0, 0.28);
+        transition: var(--tap);
+      }
+      .support-btn .ico { width: 18px; height: 18px; color: #be123c; }
+      .support-btn:hover { transform: var(--lift); box-shadow: 0 10px 22px rgba(224, 168, 0, 0.34); }
+      .support-btn:active { transform: var(--press); }
+      .support-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+      @media (min-width: 640px) {
+        .support-card { grid-template-columns: auto 1fr auto; }
+        .support-btn { grid-column: auto; justify-self: end; }
+      }
+      @media (prefers-reduced-motion: reduce) { .support-btn:hover, .support-btn:active { transform: none; } }

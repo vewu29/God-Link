@@ -79,3 +79,17 @@ test("the app still works when the CDN and web fonts are unreachable", async () 
   assert.equal((await page.textContent("#repText")).trim(), "1 / 8 reps");
   await ctx.close();
 });
+
+test("the donate button goes to the creator's PayPal, in a new tab", async () => {
+  const { ctx, page } = await newPage(env, { track: "python" });
+  const link = await page.$eval("#donateLink", (a) => ({ href: a.href, target: a.target, rel: a.rel, text: a.textContent.replace(/\s+/g, " ").trim(), visible: !!a.getClientRects().length }));
+  const url = new URL(link.href);
+  assert.equal(url.origin + url.pathname, "https://www.paypal.com/donate/");
+  assert.equal(url.searchParams.get("business"), "vewu11@gmail.com");
+  assert.equal(url.searchParams.get("currency_code"), "USD");
+  assert.equal(link.target, "_blank");
+  assert.match(link.rel, /noopener/);
+  assert.match(link.text, /Donate with PayPal/);
+  assert.ok(link.visible, "the donate button is on the page");
+  await ctx.close();
+});
