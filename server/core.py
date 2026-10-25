@@ -427,12 +427,16 @@ def ep_signup(conn, ctx):
     username = check_username(text_field(body, "username", 40))
     password = check_password(text_field(body, "password", 400), username)
     public = body.get("public", True) is not False
+    # What the learner earned on this device before signing up comes along,
+    # up to one day's XP: it counts toward all time, not toward this week.
+    carry = body.get("carry") if isinstance(body.get("carry"), dict) else {}
     code = new_recovery_code()
     try:
         run(conn,
-            "INSERT INTO cb_users (username, username_key, pass_hash, recovery_hash, public_board, created_at, last_seen) "
-            "VALUES (%s, %s, %s, %s, %s, UTC_TIMESTAMP(), UTC_TIMESTAMP())",
-            (username, username.lower(), hash_password(password), recovery_hash(code), 1 if public else 0))
+            "INSERT INTO cb_users (username, username_key, pass_hash, recovery_hash, public_board, xp, best_wpm, created_at, last_seen) "
+            "VALUES (%s, %s, %s, %s, %s, %s, %s, UTC_TIMESTAMP(), UTC_TIMESTAMP())",
+            (username, username.lower(), hash_password(password), recovery_hash(code), 1 if public else 0,
+             whole(carry.get("xp"), XP_CAP_DAY), whole(carry.get("bestWpm"), WPM_CAP)))
     except pymysql.err.IntegrityError:
         raise ApiError(409, "taken", "That username is taken — try another.")
     user = one(conn, "SELECT " + USER_COLUMNS + " FROM cb_users WHERE username_key = %s", (username.lower(),))

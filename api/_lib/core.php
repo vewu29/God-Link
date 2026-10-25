@@ -337,12 +337,16 @@ function ep_signup(PDO $pdo, array $ctx): array {
   $username = cb_check_username(cb_text($body, 'username', 40));
   $password = cb_check_password(cb_text($body, 'password', 400), $username);
   $public = ($body['public'] ?? true) !== false;
+  /* What the learner earned on this device before signing up comes along,
+     up to one day's XP: it counts toward all time, not toward this week. */
+  $carry = is_object($ctx['raw']['carry'] ?? null) ? $body['carry'] : [];
   $code = cb_new_recovery_code();
   try {
     cb_run($pdo,
-      'INSERT INTO cb_users (username, username_key, pass_hash, recovery_hash, public_board, created_at, last_seen) '
-      . 'VALUES (?, ?, ?, ?, ?, UTC_TIMESTAMP(), UTC_TIMESTAMP())',
-      [$username, strtolower($username), cb_hash_password($password), cb_recovery_hash($code), $public ? 1 : 0]);
+      'INSERT INTO cb_users (username, username_key, pass_hash, recovery_hash, public_board, xp, best_wpm, created_at, last_seen) '
+      . 'VALUES (?, ?, ?, ?, ?, ?, ?, UTC_TIMESTAMP(), UTC_TIMESTAMP())',
+      [$username, strtolower($username), cb_hash_password($password), cb_recovery_hash($code), $public ? 1 : 0,
+        cb_whole($carry['xp'] ?? 0, CB_XP_CAP_DAY), cb_whole($carry['bestWpm'] ?? 0, CB_WPM_CAP)]);
   } catch (PDOException $e) {
     if ($e->getCode() === '23000') throw new ApiError(409, 'taken', 'That username is taken — try another.');
     throw $e;

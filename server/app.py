@@ -12,7 +12,7 @@ accounts are off and the page keeps progress on the device.
 from pathlib import Path
 
 from fastapi import FastAPI, Request
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from starlette.concurrency import run_in_threadpool
 from starlette.staticfiles import StaticFiles
 
@@ -90,16 +90,22 @@ async def api(request: Request):
     return response
 
 
+# The page says the API is here, so js/account.js switches accounts on
+# (a static copy of the site, without this line, never asks).
+API_META = '<head>\n    <meta name="cb-api" content="api/index.php">'
+
+
 def page():
-    return FileResponse(ROOT / "index.html", headers={"Cache-Control": "no-cache"})
+    html = (ROOT / "index.html").read_text(encoding="utf-8").replace("<head>", API_META, 1)
+    return HTMLResponse(html, headers={"Cache-Control": "no-cache"})
 
 
-@app.get("/")
+@app.api_route("/", methods=["GET", "HEAD"])
 async def home():
     return page()
 
 
-@app.get("/index.html")
+@app.api_route("/index.html", methods=["GET", "HEAD"])
 async def index():
     return page()
 

@@ -263,6 +263,19 @@ for (const server of SERVERS) {
       assert.equal(hidden.json.user.public, false);
     });
 
+    test("sign-up brings this device's XP along, up to a day's worth, toward all time only", async () => {
+      const a = await signUp(base, "c", { carry: { xp: 870.6, bestWpm: 300 } });
+      assert.deepEqual([a.user.xp, a.user.level, a.user.bestWpm, a.user.drills], [870, 4, 250, 0]);
+      const week = (await a.v.get("leaderboard", { query: "&period=week" })).json;
+      assert.equal(week.me.xp, 0);
+      assert.ok(!week.rows.some((row) => row.username === a.username));
+      assert.equal((await a.v.get("leaderboard", { query: "&period=all" })).json.me.xp, 870);
+      assert.equal((await signUp(base, "c", { carry: { xp: 99999 } })).user.xp, 5000);
+      for (const carry of [[870], "870", 870, null, { xp: "870" }, { xp: -5 }]) {
+        assert.equal((await signUp(base, "c", { carry })).user.xp, 0, JSON.stringify(carry));
+      }
+    });
+
     test("login: the same answer for a wrong password and an unknown name", async () => {
       const a = await signUp(base, "l");
       const v = visitor(base);
@@ -528,6 +541,7 @@ for (const server of SERVERS) {
       const page = await fetch(base + "/");
       assert.equal(page.status, 200);
       assert.match(page.headers.get("content-type"), /text\/html/);
+      assert.match(await page.text(), /<head>\s*<meta name="cb-api" content="api\/index.php">/, "the page says the API is here");
       assert.equal((await fetch(base + "/api/_lib/core.php")).status, 404);
       if (server.name === "python") {
         for (const p of ["/server/core.py", "/main.py", "/db/schema.sql", "/requirements.txt", "/tests/api/contract.test.js", "/.git/config"]) {
@@ -580,3 +594,62 @@ describe("API: one account, both servers", { skip: NO_DB || SERVERS.map((s) => s
     }
   });
 });
+
+/* The page itself, in a browser, against each real server: the page
+   marker turns accounts on, the session cookie works, and a typed line
+   reaches the database. */
+for (const server of SERVERS) {
+  describe(`Browser + API (${server.name})`, { skip: NO_DB || server.missing() || false }, () => {
+    let proc, base, browser;
+    before(async () => {
+      wipe();
+      const port = await freePort();
+      base = `http://127.0.0.1:${port}`;
+      proc = server.start(port);
+      for (let i = 0; i < 100; i++) {
+        try { if ((await fetch(base + "/api/index.php?r=health")).ok) break; } catch (e) { /* not up yet */ }
+        await new Promise((r) => setTimeout(r, 150));
+      }
+      browser = await require("playwright").chromium.launch();
+    });
+    after(async () => { if (browser) await browser.close(); if (proc) proc.kill(); });
+
+    test("sign up in the page, type a line, come back later still signed in", async () => {
+      const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, reducedMotion: "reduce" });
+      await ctx.route(/fonts\.(googleapis|gstatic)\.com|cdnjs\.cloudflare\.com/, (r) => r.abort());
+      await ctx.addInitScript(() => { if (!sessionStorage.getItem("seeded")) { sessionStorage.setItem("seeded", "1"); localStorage.setItem("code-block-boot-seen-v1", "1"); localStorage.setItem("code-block-lang-v1", "python"); } });
+      const page = await ctx.newPage();
+      const errors = [];
+      page.on("pageerror", (e) => errors.push(String(e)));
+      await page.goto(base + "/");
+      await page.waitForSelector("#liveStrip:not(.hidden)");
+      await page.click("#menuProfile");
+      await page.waitForSelector("#acctForm");
+      const name = fresh("w");
+      await page.fill("#acctUser", name);
+      await page.fill("#acctPass", "blue kite river");
+      await page.click("#acctGo");
+      await page.waitForSelector("#acctCode", { timeout: 20000 });
+      assert.match(await page.textContent("#acctCode"), CODE);
+      const cookie = (await ctx.cookies()).find((c) => c.name === "cb_session");
+      assert.ok(cookie && cookie.httpOnly && cookie.sameSite === "Lax", JSON.stringify(cookie));
+      await page.click("#acctCodeDone");
+      await page.click("#menuSandbox");
+      await page.click("#blockGrid button");
+      const line = await page.evaluate(() => document.getElementById("targetLine").textContent.replace(/\u00a0/g, " "));
+      await page.focus("#typeInput");
+      await page.keyboard.type(line, { delay: 5 });
+      await page.waitForFunction(async () => (await (await fetch("api/index.php?r=me")).json()).user.drills === 1, null, { polling: 300, timeout: 15000 });
+      await page.waitForFunction(async () => { const t = (await (await fetch("api/index.php?r=progress")).json()).tracks; return !!(t.python && t.python.data.reps[0] === 1 && t.fx); }, null, { polling: 500, timeout: 15000 });
+      await page.reload();
+      await page.click("#menuProfile");
+      await page.waitForSelector("#acctName");
+      assert.equal(await page.textContent("#acctName"), "@" + name);
+      await page.click("#acctLogout");
+      await page.waitForSelector("#acctForm");
+      assert.equal((await page.evaluate(async () => (await fetch("api/index.php?r=me")).status)), 401);
+      assert.deepEqual(errors, []);
+      await ctx.close();
+    });
+  });
+}
