@@ -75,6 +75,12 @@
     blurb: "The language under operating systems, games and gadgets: learn how computers really work.",
     keywords: "systems embedded memory pointers low level operating system arduino microcontroller gcc",
     file: "main.c", run: "gcc main.c -o app && ./app", comment: "//", vaultFile: "vault.c", varPrefix: "int " });
+  /* preview: Compile & Run draws the page in a sandboxed frame instead
+     of printing lines; run() is the text that page shows. */
+  addTrack({ id: "html", name: "HTML & CSS", badge: "HTML", group: "web", color: "#c2410c", blocks: 30,
+    blurb: "Build real web pages: HTML for the content, CSS for the look, in any browser.",
+    keywords: "web pages websites html5 css3 frontend design layout flexbox grid responsive accessibility beginner",
+    file: "index.html", run: "\u25B6 Open index.html in your browser", comment: "<!--", vaultFile: "vault.html", varPrefix: "", preview: true });
   addTrack({ id: "sql", name: "SQL", badge: "SQL", group: "web", color: "#0b5c7d", blocks: 30,
     blurb: "Ask databases questions: the language behind almost every app, website and spreadsheet of data.",
     keywords: "database databases query queries data sqlite postgres postgresql mysql analytics tables",

@@ -882,3 +882,154 @@ module.exports.bash = {
     return errs;
   },
 };
+
+// ---------- HTML & CSS ----------
+// Every page (each project at each setting, each library example)
+// must pass the W3C Nu HTML Checker (vnu, CSS checker on) with no
+// message at all, then is drawn by Chromium: a project's visible text
+// must equal the app's run(), and every one of its checks() must hold
+// in the styles the browser computes. Lines and snippets are checked
+// by vnu inside a small page, in the first shape that fits: the body,
+// the head, a list, a table or a row; for CSS, a style sheet, inside a
+// rule, or closing the block the line opens.
+const VNU = path.join(__dirname, "..", "..", "node_modules", "vnu-jar", "build", "dist", "vnu.jar");
+function htmlPage({ head = "", title = true, style = "", body = "" }) {
+  return "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n" + head + (title ? "<title>Check</title>\n" : "") +
+    (style ? "<style>\n" + style + "\n</style>\n" : "") + "</head>\n<body>\n" + body + "\n</body>\n</html>\n";
+}
+function htmlShapes(c) {
+  const t = c.trim();
+  const rest = "<head>\n<meta charset=\"utf-8\">\n<title>Check</title>\n</head>\n<body>\n<p>Check</p>\n</body>\n</html>\n";
+  if (/^<!DOCTYPE/i.test(t)) return [/<\/html>\s*$/i.test(t) ? c : c + "\n<html lang=\"en\">\n" + rest];
+  if (/^<html\b/i.test(t)) return ["<!DOCTYPE html>\n" + c + "\n" + rest];
+  if (t.startsWith("<")) {
+    // A label needs the field it names.
+    const fields = [...c.matchAll(/\bfor="([^"]+)"/g)].map((m) => m[1]).filter((id) => !c.includes(`id="${id}"`)).map((id) => `\n<input id="${id}">`).join("");
+    // A lone <h3> sits under an <h1> and an <h2>, as it would in a real page.
+    const level = Math.min(...[...c.matchAll(/<h([1-6])\b/g)].map((m) => Number(m[1])), 7);
+    let top = "";
+    for (let n = 1; n < level && level < 7; n++) top += `<h${n}>Check</h${n}>\n`;
+    const out = [htmlPage({ body: top + c + fields })];
+    if (/<(meta|link|title|base)\b/.test(c)) out.push(htmlPage({ head: c + "\n", title: !/<title\b/.test(c), body: "<p>Check</p>" }));
+    if (/^<li\b/.test(t)) out.push(htmlPage({ body: "<ul>\n" + c + "\n</ul>" }));
+    if (/^<tr\b/.test(t)) out.push(htmlPage({ body: "<table>\n" + c + "\n</table>" }));
+    if (/^<t[hd]\b/.test(t)) out.push(htmlPage({ body: "<table>\n<tr>" + c + "</tr>\n</table>" }));
+    return out;
+  }
+  return [htmlPage({ style: c }), htmlPage({ style: "p {\n" + c + "\n}" }), htmlPage({ style: c + "\n}" }), htmlPage({ style: c + "\n}\n}" })];
+}
+// vnu over many files in one JVM: file name → its first message.
+function vnuMessages(files, cwd) {
+  const out = new Map();
+  for (let k = 0; k < files.length; k += 1500) {
+    const r = sh("java", ["-jar", VNU, "--format", "gnu", "--also-check-css", ...files.slice(k, k + 1500)], { cwd, timeout: 900000, maxBuffer: 1 << 28 });
+    if (r.status !== 0 && r.status !== 1) throw new Error("vnu failed: " + r.stderr.slice(0, 400));
+    for (const l of (r.stderr + r.stdout).split("\n")) {
+      if (!l.trim() || l.startsWith("Picked up JAVA_TOOL_OPTIONS")) continue;
+      const m = l.match(/^"file:(.*?)":(?:[\d.-]+:)?\s*(.*)$/);
+      if (!m) throw new Error("vnu said something unexpected: " + l);
+      const f = path.basename(m[1]);
+      if (!out.has(f)) out.set(f, m[2]);
+    }
+  }
+  return out;
+}
+// Chromium draws each page: its visible text, and any check that fails.
+async function htmlRender(pages) {
+  const { chromium } = require("playwright");
+  const browser = await chromium.launch();
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 700 } });
+  await ctx.route("**/*", (route) => route.abort());
+  const page = await ctx.newPage();
+  const errors = [];
+  page.on("pageerror", (e) => errors.push(String(e)));
+  page.on("console", (m) => { if (m.type() === "error" && !/^Failed to load resource/.test(m.text())) errors.push(m.text()); });
+  const out = [];
+  for (const p of pages) {
+    errors.length = 0;
+    await page.setContent(p.code, { waitUntil: "load" });
+    const res = await page.evaluate((checks) => {
+      const text = document.body.innerText.split("\n").map((l) => l.replace(/\s+/g, " ").trim()).filter(Boolean);
+      const bad = [];
+      for (const [sel, prop, want] of checks || []) {
+        const el = document.querySelector(sel);
+        if (!el) { bad.push(sel + " is not on the page"); continue; }
+        const got = prop.startsWith(".") ? el[prop.slice(1)]
+          : prop.startsWith("count:") ? getComputedStyle(el).getPropertyValue(prop.slice(6)).trim().split(/\s+/).length
+          : getComputedStyle(el).getPropertyValue(prop).trim();
+        if (String(got) !== String(want)) bad.push(`${sel} ${prop} is ${got}, want ${want}`);
+      }
+      return { text, bad };
+    }, p.checks);
+    out.push({ text: res.text, problems: res.bad.concat(errors) });
+  }
+  await browser.close();
+  return out;
+}
+async function htmlLineErrors(dir, items) {
+  const uniq = [...new Set(items)];
+  const shapes = new Map(uniq.map((c) => [c, htmlShapes(c)]));
+  const first = new Map(), ok = new Set();
+  let pending = uniq;
+  for (let round = 0; pending.length; round++) {
+    const box = path.join(dir, `lines-${items.length}-${round}`);
+    fs.rmSync(box, { recursive: true, force: true });
+    fs.mkdirSync(box, { recursive: true });
+    const fileOf = new Map();
+    pending.forEach((c, i) => {
+      const s = shapes.get(c)[round];
+      if (!s) return;
+      fs.writeFileSync(path.join(box, `i${i}.html`), s);
+      fileOf.set(`i${i}.html`, c);
+    });
+    if (!fileOf.size) break;
+    const msgs = vnuMessages([...fileOf.keys()], box);
+    pending = [];
+    for (const [f, c] of fileOf) {
+      if (!msgs.has(f)) { ok.add(c); continue; }
+      if (!first.has(c)) first.set(c, msgs.get(f));
+      pending.push(c);
+    }
+  }
+  const out = [];
+  items.forEach((c, i) => { if (!ok.has(c)) out.push({ i, err: "vnu: " + (first.get(c) || "no shape fits") }); });
+  return out;
+}
+module.exports.html = {
+  // vnu.jar comes from npm install; without it the track is skipped, never passed.
+  needs: fs.existsSync(VNU) ? ["java"] : ["java", "vnu.jar"],
+  buildBatch: async (dir, codes, cases) => {
+    const box = path.join(dir, "pages");
+    fs.rmSync(box, { recursive: true, force: true });
+    fs.mkdirSync(box, { recursive: true });
+    const uniq = [...new Set(codes)];
+    uniq.forEach((c, i) => fs.writeFileSync(path.join(box, `p${i}.html`), c + "\n"));
+    const msgs = vnuMessages(uniq.map((c, i) => `p${i}.html`), box);
+    const drawn = await htmlRender(cases.map((c) => ({ code: c.code, checks: c.checks })));
+    return cases.map((c, i) => {
+      const f = `p${uniq.indexOf(c.code)}.html`;
+      if (msgs.has(f)) return { ok: false, error: "vnu: " + msgs.get(f) };
+      if (!c.checks || !c.checks.length) return { ok: false, error: "the project has no style checks" };
+      if (drawn[i].problems.length) return { ok: false, error: drawn[i].problems.join("\n") };
+      return { ok: true, stdout: drawn[i].text.join("\n") };
+    });
+  },
+  checkLines: (dir, lines) => htmlLineErrors(dir, lines),
+  checkExamples: async (dir, examples) => {
+    const errs = [];
+    const pages = [], snippets = [];
+    examples.forEach((ex, i) => (ex.run === undefined ? snippets : pages).push(i));
+    const box = path.join(dir, "examples");
+    fs.rmSync(box, { recursive: true, force: true });
+    fs.mkdirSync(box, { recursive: true });
+    pages.forEach((i) => fs.writeFileSync(path.join(box, `e${i}.html`), examples[i].code + "\n"));
+    const msgs = vnuMessages(pages.map((i) => `e${i}.html`), box);
+    const drawn = await htmlRender(pages.map((i) => ({ code: examples[i].code })));
+    pages.forEach((i, k) => {
+      if (msgs.has(`e${i}.html`)) errs.push({ i, err: "vnu: " + msgs.get(`e${i}.html`) });
+      else if (drawn[k].problems.length) errs.push({ i, err: drawn[k].problems.join(" | ") });
+    });
+    (await htmlLineErrors(dir, snippets.map((i) => examples[i].code))).forEach((e) => errs.push({ i: snippets[e.i], err: e.err }));
+    return errs;
+  },
+};
