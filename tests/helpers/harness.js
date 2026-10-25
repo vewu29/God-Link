@@ -44,7 +44,7 @@ async function launch() {
 async function newPage(env, opts = {}) {
   const {
     viewport = { width: 390, height: 844 }, mobile = true, track = "cpp", bootSeen = true,
-    storage = {}, cdn = true, reducedMotion = "reduce", colorScheme = "light", world = false,
+    storage = {}, cdn = true, reducedMotion = "reduce", colorScheme = "light", world = false, setup = null,
   } = opts;
   const ctx = await env.browser.newContext({ viewport, isMobile: mobile, hasTouch: mobile, deviceScaleFactor: mobile ? 2 : 1, reducedMotion, colorScheme });
   const log = { console: [], pageErrors: [] };
@@ -69,6 +69,8 @@ async function newPage(env, opts = {}) {
     sessionStorage.setItem("__cbSeeded", "1");
     for (const [k, v] of Object.entries(kv)) localStorage.setItem(k, v);
   }, init);
+  // setup(ctx) runs before the first load: routes for a stand-in API, say.
+  if (setup) await setup(ctx);
   const page = await ctx.newPage();
   page.on("console", (m) => { if (m.type() === "error") log.console.push(m.text()); });
   page.on("pageerror", (e) => log.pageErrors.push(String((e && e.stack) || e)));

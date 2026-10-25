@@ -129,3 +129,18 @@ test("Typing FX: the Vault console gets the same strip, and a typed drill pays X
   assert.deepEqual(log.pageErrors, []);
   await ctx.close();
 });
+
+test("Typing FX: a new profile on this device brings the guest's XP and trophies along", async () => {
+  const { ctx, page, log } = await newPage(env, { track: "python", storage: { "code-block-fx-progress-v1": JSON.stringify({ guest: { xp: 240, bestWpm: 44, trophies: { "first-rep": 1 } } }) } });
+  await page.click("#menuProfile");
+  await page.fill("#profName", "Mover");
+  await page.click("#profCreate");
+  const p = await page.evaluate(() => CBFX.progress());
+  assert.equal(p.xp, 240);
+  assert.equal(p.bestWpm, 44);
+  assert.ok(p.trophies["first-rep"]);
+  const store = await page.evaluate(() => JSON.parse(localStorage.getItem("code-block-fx-progress-v1")));
+  assert.equal(store["p:Mover"].xp, 240, "kept under the new profile");
+  assert.deepEqual(log.pageErrors, []);
+  await ctx.close();
+});

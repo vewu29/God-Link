@@ -141,7 +141,8 @@ refreshProgress = function () {
 $("helloVaultBtn").addEventListener("click", function () { showView("vault"); window.cbRenderVault(); });
 window.cbMemberNudge = function () {
   var msg = $("profMsgTop");
-  if (msg) { msg.textContent = "That shelf is members-only. Create a free profile below — it takes ten seconds and lives only on this device."; msg.classList.add("err"); }
+  var online = !!(window.CBAccount && window.CBAccount.available());
+  if (msg) { msg.textContent = online ? "That shelf is members-only. Make a free account above — it takes ten seconds — or keep a profile on this device only." : "That shelf is members-only. Create a free profile below — it takes ten seconds and lives only on this device."; msg.classList.add("err"); }
 };
 
 /* ---------- Sign up / profile view ---------- */
@@ -159,24 +160,30 @@ window.cbRenderProfile = function () {
   var host = $("profileMain");
   var p = cbProfile();
   var names = Object.keys(cbStore.profiles);
+  /* With the site's server on (js/account.js), online accounts lead and
+     a profile kept on this device only folds away beneath them. */
+  var online = !!(window.CBAccount && window.CBAccount.available());
   if (!p) {
     var picks = names.map(function (n) {
       var pr = cbStore.profiles[n];
-      return '<button class="profile-pick" type="button" data-signin="' + esc(n) + '">' + cbAvatarHTML(n, pr.color) +
-        '<span><b>' + esc(n) + '</b><span>' + cbProfileTotals(pr).mastered + ' blocks mastered · ' + cbProfileTotals(pr).banked.toLocaleString() + ' vault drills banked · tap to sign in</span></span></button>';
+      return '<button class="profile-pick" type="button" data-signin="' + esc(n) + '">' + cbAvatarHTML(pr.name || n, pr.color) +
+        '<span><b>' + esc(n) + '</b><span>' + cbProfileTotals(pr).mastered + ' blocks mastered · ' + cbProfileTotals(pr).banked.toLocaleString() + ' vault drills banked · ' + (pr.account ? "online account · tap to log in" : "tap to sign in") + '</span></span></button>';
     }).join("");
     var swatches = AVATAR_COLORS.map(function (c, i) {
       return '<button class="swatch' + (c === cbChosenColor ? " sel" : "") + '" type="button" data-color="' + c + '" style="background:' + c + '" aria-label="Avatar color ' + (i + 1) + '" aria-pressed="' + (c === cbChosenColor) + '"></button>';
     }).join("");
-    host.innerHTML =
-      '<p class="prof-msg err" id="profMsgTop" aria-live="polite"></p>' +
-      '<div class="prof-card"><h3 style="margin:0 0 4px;">Create your free profile</h3>' +
+    var localForm =
       '<p class="prof-sub">Pick a display name and an avatar color. Your progress on screen right now moves into the new profile, and from then on everything you master saves under your name on this device.</p>' +
       '<label class="prof-label" for="profName">Display name</label>' +
       '<input class="prof-input" id="profName" type="text" maxlength="24" placeholder="e.g. V, Nova, CodeFox…" autocomplete="off" />' +
       '<span class="prof-label">Avatar color</span><div class="swatch-row" id="swatchRow">' + swatches + '</div>' +
-      '<button class="big-btn" id="profCreate" type="button">Sign up &amp; unlock member content</button>' +
-      '<p class="prof-msg" id="profMsg" aria-live="polite"></p></div>' +
+      '<button class="big-btn" id="profCreate" type="button">' + (online ? "Make a profile on this device" : "Sign up &amp; unlock member content") + '</button>' +
+      '<p class="prof-msg" id="profMsg" aria-live="polite"></p>';
+    host.innerHTML =
+      '<p class="prof-msg err" id="profMsgTop" aria-live="polite"></p>' +
+      (online
+        ? '<details class="prof-card prof-local"><summary>Or keep a profile on this device only</summary>' + localForm + '</details>'
+        : '<div class="prof-card"><h3 style="margin:0 0 4px;">Create your free profile</h3>' + localForm + '</div>') +
       (names.length ? '<div class="prof-card"><h3 style="margin:0 0 4px;">Already have a profile on this device?</h3><p class="prof-sub">Tap your name to sign in — your saved progression comes right back.</p>' + picks + "</div>" : "") +
       '<div class="prof-card"><h3 style="margin:0 0 6px;">What members get</h3>' +
       '<p class="prof-sub"><strong>The Vault</strong> — 10,000 extra drills in 100 themed packs.<br><strong>Member shelves</strong> — in C++ mode, Shelf S5 · The Pattern Workshop and Shelf S6 · The C++ Time Machine; every track has its own 10,000-drill Vault, each with its own progress.<br><strong>Saved progression</strong> — Sandbox mastery and Vault drills kept under your name, separate from guest progress and from other profiles on this device.</p></div>';
@@ -192,6 +199,7 @@ window.cbRenderProfile = function () {
       /* Names are keys in the saved store; a name the browser treats as
          an object's own machinery (__proto__) would silently never save. */
       if (name in {}) { msg.textContent = "That name is reserved by the browser — pick another."; msg.classList.add("err"); return; }
+      if (name.charAt(0) === "@") { msg.textContent = "Names starting with @ are kept for online accounts — pick another."; msg.classList.add("err"); return; }
       var taken = names.some(function (n) { return n.toLowerCase() === name.toLowerCase(); });
       if (taken) { msg.textContent = "That name is already taken on this device — pick another, or sign in below."; msg.classList.add("err"); return; }
       var np = { name: name, color: cbChosenColor, progress: { reps: {}, celebrated: false }, vault: {}, progressCS: { reps: {}, celebrated: false }, vaultCS: {}, progressDrive: { reps: {}, celebrated: false }, vaultDrive: {} };
@@ -199,6 +207,7 @@ window.cbRenderProfile = function () {
       cbStore.profiles[name] = np;
       cbStore.active = name;
       cbSaveStore();
+      if (window.CBFX) window.CBFX.carry("guest");
       cbUpdateMenuLabel();
       window.cbRenderProfile();
       if (window.__refreshWorld) window.__refreshWorld();
@@ -210,6 +219,7 @@ window.cbRenderProfile = function () {
       btn.addEventListener("click", function () {
         var n = btn.getAttribute("data-signin");
         if (!cbStore.profiles[n]) return;
+        if (cbStore.profiles[n].account && window.CBAccount && window.CBAccount.claim(n)) return;
         cbStore.active = n;
         cbSaveStore();
         state = sanitizeState(cbStore.profiles[n][CB_PROG_KEY]);
@@ -223,9 +233,10 @@ window.cbRenderProfile = function () {
   } else {
     var others = names.filter(function (n) { return n !== cbStore.active; }).map(function (n) {
       var pr = cbStore.profiles[n];
-      return '<button class="profile-pick" type="button" data-switch="' + esc(n) + '">' + cbAvatarHTML(n, pr.color) +
-        '<span><b>' + esc(n) + '</b><span>tap to switch to this profile</span></span></button>';
+      return '<button class="profile-pick" type="button" data-switch="' + esc(n) + '">' + cbAvatarHTML(pr.name || n, pr.color) +
+        '<span><b>' + esc(n) + '</b><span>' + (pr.account ? "online account · tap to switch" : "tap to switch to this profile") + '</span></span></button>';
     }).join("");
+    var linked = !!(p.account && online);
     var tRows = cbProfileRows(p);
     var jRows = tRows.map(function (r) { return [r.meta.name + " blocks", r.mastered, r.meta.blocks]; });
     jRows.push(["Vault drills", cbProfileTotals(p).banked, 10000 * tRows.length]);
@@ -235,7 +246,7 @@ window.cbRenderProfile = function () {
     }).join("") + "</div>";
     host.innerHTML =
       '<div class="prof-card"><div class="prof-head">' + cbAvatarHTML(p.name, p.color, true) +
-      '<div><p class="prof-name">' + esc(p.name) + '<span class="member-pill">Member</span></p><p class="prof-sub">Welcome back — this is your whole journey, every track you have started, saved under your name on this device.</p></div></div>' +
+      '<div><p class="prof-name">' + esc(p.name) + '<span class="member-pill">Member</span></p><p class="prof-sub">Welcome back — this is your whole journey, every track you have started, ' + (p.account ? "saved to your online account and on this device." : "saved under your name on this device.") + '</p></div></div>' +
       journey +
       '<div class="prof-stats">' +
       tRows.map(function (r) {
@@ -244,12 +255,12 @@ window.cbRenderProfile = function () {
       }).join("") +
       '<div class="prof-stat"><b>' + (names.length) + '</b><span>Profiles on this device</span></div></div>' +
       '<button class="big-btn" id="profVault" type="button">Open the Vault — 10,000 drills</button>' +
-      '<button class="ghost-btn" id="profOut" type="button">Sign out (keep browsing as guest)</button>' +
-      '<button class="ghost-btn danger" id="profDelete" type="button">Delete this profile</button>' +
+      (linked ? "" : '<button class="ghost-btn" id="profOut" type="button">Sign out (keep browsing as guest)</button>' +
+      '<button class="ghost-btn danger" id="profDelete" type="button">Delete this profile</button>') +
       '<p class="prof-msg" id="profMsg" aria-live="polite"></p></div>' +
       (others ? '<div class="prof-card"><h3 style="margin:0 0 4px;">Switch profile</h3>' + others + "</div>" : "");
     $("profVault").addEventListener("click", function () { showView("vault"); window.cbRenderVault(); });
-    $("profOut").addEventListener("click", function () {
+    if (!linked) $("profOut").addEventListener("click", function () {
       cbStore.active = null;
       cbSaveStore();
       state = cbGuestState();
@@ -259,7 +270,7 @@ window.cbRenderProfile = function () {
       if (window.__refreshWorld) window.__refreshWorld();
       if (window.cbAnnounce) window.cbAnnounce("Signed out. Browsing as guest now.");
     });
-    $("profDelete").addEventListener("click", function () {
+    if (!linked) $("profDelete").addEventListener("click", function () {
       var btn = $("profDelete"), msg = $("profMsg");
       if (btn.getAttribute("data-arm") !== "1") {
         btn.setAttribute("data-arm", "1");
@@ -294,6 +305,7 @@ window.cbRenderProfile = function () {
       btn.addEventListener("click", function () {
         var n = btn.getAttribute("data-switch");
         if (!cbStore.profiles[n]) return;
+        if (cbStore.profiles[n].account && window.CBAccount && window.CBAccount.claim(n)) return;
         cbStore.active = n;
         cbSaveStore();
         state = sanitizeState(cbStore.profiles[n][CB_PROG_KEY]);
@@ -628,10 +640,11 @@ window.cbRenderVault = function () {
     host.innerHTML =
       cbMonumentHTML(0, true) +
       '<div class="vault-card empty-state es-card"><span class="es-ico" aria-hidden="true"><svg aria-hidden="true" class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-lock"/></svg></span><h3 style="margin:0 0 6px;">Members only</h3>' +
-      '<p class="prof-sub">Guests can browse the whole site — but the Vault\'s 10,000 drills open only for profiles, so your Vault progress can save under your name. Creating a profile is free, takes ten seconds, and never leaves this device.</p>' +
+      '<p class="prof-sub">Guests can browse the whole site — but the Vault\'s 10,000 drills open only for members, so your Vault progress can save under your name. ' +
+      (window.CBAccount && window.CBAccount.available() ? "Making a free account takes ten seconds, and your Vault progress then follows you to any device." : "Creating a profile is free, takes ten seconds, and never leaves this device.") + '</p>' +
       '<p class="prof-sub" style="margin-top:14px;"><strong>A taste of Pack 1 — three of its hundred lines:</strong></p>' + peek +
       '<div class="pack-grid">' + sample + '</div>' +
-      '<button class="big-btn" id="vaultSignup" type="button">Create a free profile to open the Vault</button></div>';
+      '<button class="big-btn" id="vaultSignup" type="button">' + (window.CBAccount && window.CBAccount.available() ? "Make a free account to open the Vault" : "Create a free profile to open the Vault") + '</button></div>';
     $("vaultSignup").addEventListener("click", function () { showView("profile"); window.cbRenderProfile(); });
     Array.prototype.forEach.call(host.querySelectorAll("[data-govault-signup]"), function (b) {
       b.addEventListener("click", function () { showView("profile"); window.cbRenderProfile(); });

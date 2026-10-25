@@ -7,8 +7,10 @@
    a combo: the meter heats up through five colours, and the notes climb
    with it. A finished line plays a rising chord, pays XP and records
    the speed; levels, a daily goal, a day streak and trophies are kept
-   per profile on this device (and sent to the server when signed in,
-   through the "cb:fx" event).
+   per profile on this device. Each finished line is also announced as
+   a "cb:fx" event, which js/account.js sends to the server, and an
+   online account's numbers are kept in step across devices through
+   syncData() / mergeSync() below.
 
    Sounds are synthesized with the Web Audio API — no audio files — and
    the audio context starts on the learner's first tap or key, as
@@ -58,12 +60,12 @@
   })();
   function saveSettings() { writeJSON(SETTINGS_KEY, settings); }
 
-  /* ---------- Progress (per profile, per account) ---------- */
+  /* ---------- Progress (per profile on this device) ----------
+     An online account is a profile too (js/account.js links one to it),
+     so the key is always the active profile's, or "guest". */
   var store = readJSON(PROGRESS_KEY);
   if (!store || typeof store !== "object" || Array.isArray(store)) store = {};
   function whoKey() {
-    var acct = window.CBAccount && window.CBAccount.user && window.CBAccount.user();
-    if (acct && acct.id) return "u:" + acct.id;
     var st = window.cbStore;
     return st && st.active ? "p:" + st.active : "guest";
   }
@@ -93,6 +95,18 @@
     return store[k];
   }
   function saveProgress() { writeJSON(PROGRESS_KEY, store); }
+  /* Fold another record into p: counts take the higher value, the
+     newer day wins the streak, and a trophy keeps its first date. */
+  function mergeInto(p, r) {
+    r = clean(r);
+    ["xp", "perfectRun", "banked", "maxCombo", "bestWpm"].forEach(function (k) { if (r[k] > p[k]) p[k] = r[k]; });
+    if (r.lastDay > p.lastDay) { p.lastDay = r.lastDay; p.streak = r.streak; }
+    else if (r.lastDay === p.lastDay && r.streak > p.streak) p.streak = r.streak;
+    if (r.today.day > p.today.day) p.today = r.today;
+    else if (r.today.day === p.today.day && r.today.reps > p.today.reps) p.today.reps = r.today.reps;
+    ["best", "tracks"].forEach(function (k) { for (var j in r[k]) if (!(r[k][j] <= p[k][j])) p[k][j] = r[k][j]; });
+    for (var t in r.trophies) if (!p.trophies[t] || r.trophies[t] < p.trophies[t]) p.trophies[t] = r.trophies[t];
+  }
 
   /* Level n begins at 50·(n−1)·n XP: 0, 100, 300, 600, 1000, … */
   function levelStart(n) { return 50 * (n - 1) * n; }
@@ -638,11 +652,34 @@
     combo: function () { return combo; },
     settings: function () { return { sound: settings.sound, volume: settings.volume, haptics: settings.haptics }; },
     setSound: function (s) { if (SOUNDS.indexOf(s) >= 0) { settings.sound = s; saveSettings(); paintAll(); } },
-    /* The account module replaces local progress with the server's
-       totals after sign-in, then repaints. */
+    /* js/account.js: after the server answers, its totals for the
+       account lift the ones shown here (never lower them). */
     adopt: function (fields) {
-      var p = prog();
-      ["xp", "streak", "bestWpm"].forEach(function (k) { if (fields && typeof fields[k] === "number" && fields[k] > p[k]) p[k] = Math.floor(fields[k]); });
+      if (!fields) return;
+      mergeInto(prog(), { xp: fields.xp, bestWpm: fields.bestWpm, streak: fields.streak, lastDay: typeof fields.lastDay === "string" ? fields.lastDay : "" });
+      saveProgress(); paintAll();
+    },
+    /* A new profile made from the guest (or a profile renamed) brings
+       its record along. */
+    carry: function (fromKey) {
+      if (!store[fromKey] || fromKey === whoKey()) return;
+      mergeInto(prog(), store[fromKey]);
+      saveProgress(); paintAll();
+    },
+    /* What an online account keeps on the server, and folding the
+       server's copy back in. Per-line bests of Vault drills stay on the
+       device: there can be thousands. */
+    syncData: function () {
+      var p = clean(prog()), best = {}, n = 0;
+      for (var k in p.best) if (k.indexOf("vault:") !== 0 && n++ < 600) best[k] = p.best[k];
+      p.best = best;
+      return p;
+    },
+    mergeSync: function (remote) {
+      if (!remote || typeof remote !== "object") return;
+      var before = JSON.stringify(prog());
+      mergeInto(prog(), remote);
+      if (JSON.stringify(prog()) === before) return;
       saveProgress(); paintAll();
     },
     repaint: paintAll
