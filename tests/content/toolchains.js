@@ -370,3 +370,64 @@ module.exports.typescript = {
     return errs;
   },
 };
+
+// ---------- Go ----------
+// Programs and examples are real modules: each must be gofmt-formatted
+// (the app shows tabs as four spaces), pass go vet, and then run with
+// go run (or pass go test, for testing lessons). A listing can hold
+// several files, each starting with a "// File: name.go" line. Lines and
+// snippets are parsed by Go's own parser (tests/content/goparse).
+const GO_ENV = { ...process.env, GOTOOLCHAIN: "local", GOPROXY: "off", GOFLAGS: "-mod=mod" };
+let goparseBin = null;
+function goFiles(code) {
+  const parts = code.split(/^\/\/ File: (\S+)\n/m);
+  if (parts.length === 1) return { "main.go": code };
+  const files = {};
+  for (let i = 1; i < parts.length; i += 2) files[parts[i]] = parts[i + 1];
+  return files;
+}
+const goTabs = (s) => s.split("\n").map((l) => l.replace(/^(?: {4})+/, (m) => "\t".repeat(m.length / 4))).join("\n");
+function goModule(dir, code) {
+  fs.rmSync(dir, { recursive: true, force: true });
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, "go.mod"), "module example.com/app\n\ngo 1.24\n");
+  for (const [name, src] of Object.entries(goFiles(code))) fs.writeFileSync(path.join(dir, name), goTabs(src).replace(/\n*$/, "\n"));
+  const fmt = sh("gofmt", ["-l", "."], { cwd: dir });
+  if (fmt.stdout.trim()) return "not gofmt-formatted:\n" + sh("gofmt", ["-d", "."], { cwd: dir }).stdout.split("\n").slice(0, 14).join("\n");
+  const vet = sh("go", ["vet", "./..."], { cwd: dir, env: GO_ENV });
+  return vet.status === 0 ? "" : vet.stderr;
+}
+function goRun(dir, code, test) {
+  const bad = goModule(dir, code);
+  if (bad) return { ok: false, error: bad };
+  const r = sh("go", test ? ["test", "./..."] : ["run", "."], { cwd: dir, env: GO_ENV, timeout: 60000 });
+  return r.status === 0 ? { ok: true, stdout: r.stdout } : { ok: false, error: r.stderr + r.stdout };
+}
+function goParseErrors(dir, items) {
+  if (!goparseBin) {
+    goparseBin = path.join(dir, "goparse");
+    const b = sh("go", ["build", "-o", goparseBin, path.join(__dirname, "goparse", "main.go")], { env: GO_ENV });
+    if (b.status !== 0) throw new Error("goparse build failed: " + b.stderr);
+  }
+  const file = path.join(dir, "items.json");
+  fs.writeFileSync(file, JSON.stringify(items));
+  const r = sh(goparseBin, [file]);
+  if (r.status !== 0) return [{ i: 0, err: r.stderr }];
+  return JSON.parse(r.stdout);
+}
+module.exports.go = {
+  needs: ["go", "gofmt"],
+  build: (dir, code) => goRun(path.join(dir, "run"), code),
+  checkLines: (dir, lines) => goParseErrors(dir, lines),
+  checkExamples: (dir, examples) => {
+    const errs = [];
+    const snippets = [];
+    examples.forEach((ex, i) => {
+      if (ex.run === undefined) { snippets.push(i); return; }
+      const r = goRun(path.join(dir, "ex" + i), ex.code, ex.test);
+      if (!r.ok) errs.push({ i, err: r.error });
+    });
+    goParseErrors(dir, snippets.map((i) => examples[i].code)).forEach((e) => errs.push({ i: snippets[e.i], err: e.err }));
+    return errs;
+  },
+};

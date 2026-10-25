@@ -23,8 +23,8 @@ async function dumpTrack(env, track) {
     lines: BLOCKS.map((b) => b.line),
     // Library and reference code, and every line the Vault can deal.
     examples: [
-      ...DEEP.map((d, i) => d && { where: "chapter " + (i + 1), code: d.ex.code, run: !d.ex.browser }),
-      ...SHELFDEEP.map((d, i) => d && { where: "shelf " + (i + 1), code: d.ex.code, run: !d.ex.browser }),
+      ...DEEP.map((d, i) => d && { where: "chapter " + (i + 1), code: d.ex.code, run: !d.ex.browser, test: !!d.ex.test }),
+      ...SHELFDEEP.map((d, i) => d && { where: "shelf " + (i + 1), code: d.ex.code, run: !d.ex.browser, test: !!d.ex.test }),
       ...CHEATS.map((c) => ({ where: "cheat card " + c.title, code: c.code })),
       ...CHAPTERS.map((c, i) => ({ where: "chapter " + (i + 1) + " key line", code: Array.isArray(c.line) ? c.line.join("\n") : c.line, line: true })),
     ].filter(Boolean),

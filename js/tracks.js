@@ -62,6 +62,10 @@
     blurb: "JavaScript with types: catch bugs before your code runs, in apps big and small.",
     keywords: "web typed javascript react angular node frontend ts",
     file: "main.ts", run: "npx tsc && node main.js", comment: "//", vaultFile: "vault.ts", varPrefix: "" });
+  addTrack({ id: "go", name: "Go", badge: "Go", group: "lang", color: "#00758f", blocks: 30,
+    blurb: "Simple, fast and built for the cloud: servers, tools and code that does many things at once.",
+    keywords: "golang backend cloud servers docker kubernetes concurrency web api",
+    file: "main.go", run: "go run main.go", comment: "//", vaultFile: "vault.go", varPrefix: "" });
   addTrack({ id: "unity", name: "Unity", badge: "Unity", group: "engine", color: "#1f2937", blocks: 30,
     blurb: "Make 2D and 3D games with Unity and C#: scripts, physics, input, UI and more.",
     keywords: "game engine games 3d 2d c# csharp unity3d gamedev",
