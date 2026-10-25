@@ -122,6 +122,27 @@
     blurb: "Build Unreal Engine 5 games in C++: Actors, components, input, Blueprints and more.",
     keywords: "game engine games 3d c++ cpp unreal ue5 epic gamedev blueprints",
     file: "MyActor.cpp", run: "\u25B6 Play in Editor · Output Log", comment: "//", vaultFile: "Vault.cpp", varPrefix: "" });
+  /* One audio engine for the whole page: the music, the Library's
+     picture music and the typing sounds all play through it. Phones
+     allow few engines at once and pause ("interrupt") them for calls,
+     the lock screen or another app's sound; with one shared engine,
+     waking it on the next tap or key brings every sound back. */
+  var sharedAudio = null;
+  window.cbAudioContext = function () {
+    if (sharedAudio && sharedAudio.state !== "closed") return sharedAudio;
+    var C = window.AudioContext || window.webkitAudioContext;
+    if (!C) return null;
+    try { sharedAudio = new C(); } catch (e) { sharedAudio = null; }
+    return sharedAudio;
+  };
+  window.cbAudioWake = function () {
+    var c = sharedAudio;
+    if (c && c.state !== "running" && c.state !== "closed") { try { var p = c.resume(); if (p && p.catch) p.catch(function () {}); } catch (e) {} }
+  };
+  ["pointerdown", "touchend", "keydown", "click"].forEach(function (t) { document.addEventListener(t, function () { window.cbAudioWake(); }, true); });
+  document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") window.cbAudioWake(); });
+  window.addEventListener("pageshow", function () { window.cbAudioWake(); });
+
   window.CB_TRACK_GROUPS = GROUPS;
   window.CB_TRACK_LIST = LIST;
   window.cbTrackMeta = function (id) { for (var i = 0; i < LIST.length; i++) if (LIST[i].id === id) return LIST[i]; return null; };

@@ -760,7 +760,7 @@ var STAGE_SCALE = [523.25, 587.33, 659.25, 783.99, 880.00, 1046.50];
    sound like the same room. */
 var STAGE_KEYS = [1, 1.122462, 1.259921, 0.840896];
 function stageBuild() {
-  stageAC = new (window.AudioContext || window.webkitAudioContext)();
+  stageAC = window.cbAudioContext();
   stageMaster = stageAC.createGain(); stageMaster.gain.value = 0;
   stageMaster.connect(stageAC.destination);
   /* The picture music's pad bed gets its own gain stage into the
@@ -822,7 +822,6 @@ function stopStageMusic() {
   $("stageMusicText").textContent = "Music off";
   if (stageAC && stageMaster) stageMaster.gain.setTargetAtTime(0, stageAC.currentTime, 0.25);
   clearInterval(stageTimer); stageTimer = null;
-  setTimeout(function () { if (!stageOn && stageAC) stageAC.suspend(); }, 800);
 }
 $("stageMusicBtn").addEventListener("click", function () {
   stageOn = !stageOn;

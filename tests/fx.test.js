@@ -144,3 +144,29 @@ test("Typing FX: a new profile on this device brings the guest's XP and trophies
   assert.deepEqual(log.pageErrors, []);
   await ctx.close();
 });
+
+test("Typing FX: one shared audio engine, woken again after the phone pauses it", async () => {
+  const { ctx, page, log } = await newPage(env, { track: "python" });
+  await page.evaluate(() => {
+    const C = window.AudioContext;
+    window.__engines = 0;
+    window.AudioContext = function () { window.__engines++; return new C(); };
+  });
+  await page.click("#blockGrid button");
+  const line = await page.evaluate(() => document.getElementById("targetLine").textContent.replace(/ /g, " "));
+  await page.focus("#typeInput");
+  await page.keyboard.type(line.slice(0, 3), { delay: 20 });
+  await page.click("#musicBtn");
+  await page.waitForTimeout(200);
+  await page.click("#musicBtn");
+  await page.waitForTimeout(1200);
+  assert.equal(await page.evaluate(() => window.cbAudioContext().state), "running", "stopping the music no longer pauses the engine the typing uses");
+  // A call, the lock screen or another app pauses it…
+  await page.evaluate(() => window.cbAudioContext().suspend());
+  await page.focus("#typeInput");
+  await page.keyboard.type(line.slice(3, 5), { delay: 20 });
+  await page.waitForFunction(() => window.cbAudioContext().state === "running");
+  assert.ok(await page.evaluate(() => window.__engines) <= 1, "music and typing share one engine");
+  assert.deepEqual(log.pageErrors, []);
+  await ctx.close();
+});

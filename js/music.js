@@ -370,7 +370,7 @@
   function isMasterpiece() { return doneCount() >= BLOCKS.length; }
 
   function buildGraph() {
-    AC = new (window.AudioContext || window.webkitAudioContext)();
+    AC = window.cbAudioContext();
     master = AC.createGain(); master.gain.value = 0;
     var comp = AC.createDynamicsCompressor();
     master.connect(comp); comp.connect(AC.destination);
@@ -631,7 +631,8 @@
     if (!AC) return;
     master.gain.setTargetAtTime(0, AC.currentTime, 0.3);
     clearInterval(timer); timer = null;
-    setTimeout(function () { if (!on && AC) AC.suspend(); }, 900);
+    /* The engine is shared with the typing sounds, so it is never
+       suspended here: the master gain is already fading to silence. */
   }
   /* Finale glissando: the moment a track's mastery reaches 100%,
      one quiet sine climbs an octave through the current mood's

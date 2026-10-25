@@ -4168,3 +4168,36 @@
       .tp-con i { display: block; width: 4px; height: 4px; border-radius: 50%; background: var(--con-glow); }
       .tp-con i:nth-child(2) { width: 14px; border-radius: 2px; background: var(--con-ink-2); }
       .tp-con i:nth-child(3) { width: 8px; border-radius: 2px; background: var(--sky); }
+
+      /* ---------- Desktop: every room uses the full width ----------
+         The progress card reads as a dashboard: the count and the next
+         step side by side, today's numbers beneath them. The 30 moods
+         live in the Music menu (as on phones), so the card no longer
+         holds a wall of buttons. Section intros span the page like the
+         header above them; the drill gets room to breathe; the profile
+         room splits into the account on the left and the leaderboard
+         and trophies on the right. */
+      @media (min-width: 1024px) {
+        .mastery .music-moods { display: none; }
+        .mastery { row-gap: 0; }
+        .mastery .mastery-sub { grid-column: 1; grid-row: 3; align-self: center; margin-top: 16px; }
+        .mastery .continue-btn { grid-column: 2; grid-row: 3; align-self: center; margin-top: 16px; }
+        .mastery #fxToday { grid-column: 1; grid-row: 4; align-self: start; }
+        .mastery #liveStrip { grid-column: 2; grid-row: 4; align-self: start; }
+        .mastery #helloRow { grid-column: 1 / -1; grid-row: 5; }
+        .mastery .music-note { grid-column: 1 / -1; grid-row: 6; }
+        .live-strip { flex-wrap: nowrap; }
+        .live-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+        .live-online { white-space: nowrap; }
+        .lib-intro, .shelf-head { max-width: none; }
+        .sec-text > p { max-width: 82ch; }
+        #drillView { max-width: 960px; }
+      }
+      @media (min-width: 1100px) {
+        .prof-cols { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr); gap: 0 24px; align-items: start; }
+        .prof-cols .prof-card { max-width: none; }
+        .prof-col-side .board, .prof-col-side .fx-shelf { margin-top: 14px; }
+        .prof-col-side { position: sticky; top: 92px; }
+        .prof-col-side .fx-shelf-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+

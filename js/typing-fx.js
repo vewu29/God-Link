@@ -115,10 +115,11 @@
   /* ---------- Audio ---------- */
   var AC = null, master = null, noiseBuf = null;
   function audio() {
-    if (AC) return AC;
-    var C = window.AudioContext || window.webkitAudioContext;
-    if (!C) return null;
-    try { AC = new C(); } catch (e) { AC = null; return null; }
+    var shared = window.cbAudioContext ? window.cbAudioContext() : null;
+    if (AC && AC === shared) return AC;
+    AC = shared;
+    noiseBuf = null;
+    if (!AC) return null;
     var comp = AC.createDynamicsCompressor();
     comp.threshold.value = -16; comp.ratio.value = 4;
     master = AC.createGain();
@@ -130,14 +131,17 @@
   function unlock() {
     if (settings.sound === "off") return;
     var c = audio();
-    if (c && c.state === "suspended") { try { c.resume(); } catch (e) {} }
+    if (c && window.cbAudioWake) window.cbAudioWake();
     unlocked = true;
   }
-  ["pointerdown", "keydown", "touchend"].forEach(function (t) { document.addEventListener(t, unlock, true); });
+  ["pointerdown", "keydown", "touchend", "input"].forEach(function (t) { document.addEventListener(t, unlock, true); });
   function ready() {
     if (settings.sound === "off" || !unlocked) return null;
     var c = audio();
-    if (!c || c.state !== "running") return null;
+    if (!c) return null;
+    /* Paused by the phone (a call, the lock screen, another app)?
+       Ask it to wake; this note is skipped, the next one plays. */
+    if (c.state !== "running") { if (window.cbAudioWake) window.cbAudioWake(); return null; }
     return c;
   }
   function musicOn() { return !!(window.__musicIsOn && window.__musicIsOn()); }
