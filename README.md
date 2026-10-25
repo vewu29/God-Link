@@ -2,16 +2,17 @@
 
 **A free place to learn to code — one line, eight perfect reps at a time.**
 
-Code Block teaches programming by repetition and plain words. You type a real line of code until your fingers know it, read what it means in everyday language, then copy and run whole little programs. It works on a phone, needs no account, and keeps your progress in your own browser.
+Code Block teaches programming by repetition and plain words. You type a real line of code until your fingers know it, read what it means in everyday language, then copy and run whole little programs. It works on a phone and needs no account. Where the site runs with its server, a free account saves your progress online, follows you to any device and puts you on the leaderboard.
 
-It's free to use. The plan is for it to be supported by voluntary donations, never a paywall. See [the project brief](docs/PROJECT_BRIEF.md) for the full vision.
+It's free to use, supported by voluntary donations (the **Donate with PayPal** button), never a paywall. See [the project brief](docs/PROJECT_BRIEF.md) for the full vision.
 
 ## What you can learn
 
 | Group | Tracks |
 | --- | --- |
-| Programming languages | C++ · C# · Python · JavaScript · Java · TypeScript · Go · Rust · C · Ruby · Kotlin · Lua · Bash |
+| Programming languages | C++ · C# · Python · JavaScript · Java · TypeScript · Go · Rust · C · Ruby · Kotlin · Lua · Bash · Haskell |
 | Web & data | HTML & CSS · SQL · PHP |
+| Science & math | R |
 | Game engines | Unity (C#) · Unreal Engine 5 (C++) |
 | Road & life skills | Minnesota Drive (permit-test study) |
 
@@ -24,6 +25,12 @@ Every programming track has the same rooms:
 - **Vault**: 10,000 generated drills per track, in 100 themed packs.
 - **My Book**: open your own PDF beside the drills.
 - **Profiles and certificates**: several learners can share one device, and finishing a track earns a certificate you can save as an image.
+
+Across every room:
+
+- **Every keystroke answers.** A right letter plays a note (or a key click, or a bubble) and throws a few sparks; a wrong one thuds, shakes and shows the key the line wanted. Runs of right letters build a combo that heats up through five colours. Finished lines pay XP toward levels, a daily goal and a day streak, and 16 trophies wait to be earned. Sounds are made in the browser (no audio files) and the effects step aside for reduced motion.
+- **Eleven colour themes**, from Sky (which follows the device's light or dark setting) to Forest, Ocean, Sunset, Galaxy, Terminal, Paper and High Contrast. Every theme is contrast-checked when it's built and scanned for accessibility in every room.
+- **Online accounts** (where the server runs): sign up with a username and password, no email. A one-time recovery code stands in for "forgot password". Your blocks, Vault drills, XP, streak and trophies are saved to the account and merged on every device you log in on. A leaderboard (this week and all time) and a live count of lines typed today make it a shared place to practise.
 
 ## How the content is checked
 
@@ -47,6 +54,8 @@ The PC does not compile anything in your browser. Each practice program's output
 | Kotlin | built by kotlinc 2.1 with warnings as errors, then run | the Kotlin compiler's parser |
 | Lua | run with Lua 5.4; any error output fails | Lua's own `load()` |
 | Bash | must pass ShellCheck with every check on, then run with Bash 5; any error output fails | `bash -n`, then ShellCheck |
+| Haskell | run with GHC 9.4's `runghc` and `-Wall`; any warning fails (type defaulting and missing signatures aside) | GHC's own parser, through the GHC API |
+| R | run with `Rscript` (R 4.3); any error or warning output fails | R's own parser |
 | Unity | compiled against a stand-in copy of the Unity API and played frame by frame | Roslyn |
 | Unreal | compiled with g++ against a stand-in copy of the UE5 API and played frame by frame | tree-sitter (reflection macros removed) |
 
@@ -54,7 +63,7 @@ The Unity and Unreal tracks say plainly in the app that their PC is a simulation
 
 ## Run it
 
-Code Block is plain HTML, CSS and JavaScript, with no build step and no server code.
+Code Block is plain HTML, CSS and JavaScript, with no build step. The server is optional: without it, everything except online accounts works.
 
 - **Quickest**: open `index.html` in a browser.
 - **Local server** (closer to how it's hosted):
@@ -65,7 +74,11 @@ Code Block is plain HTML, CSS and JavaScript, with no build step and no server c
 
 The 3D world loads three.js and the PDF reader loads pdf.js from cdnjs. The fonts come from Google Fonts. If those can't be reached, the app still works: it skips the 3D background and uses system fonts (a test checks this).
 
-## Put it online (GitHub Pages)
+## Put it online
+
+**With accounts** (a Python or PHP host with MySQL, such as Wasmer Edge): see [docs/DEPLOY.md](docs/DEPLOY.md). The database settings come only from the host's environment; no password is ever in the repository.
+
+**As a static site** (GitHub Pages):
 
 1. Merge the work into the branch you want to publish (usually `main`).
 2. In the repository on GitHub, open **Settings → Pages**.
@@ -79,8 +92,9 @@ Any static host works the same way: Netlify, Cloudflare Pages, or a plain web se
 ```sh
 npm ci                      # exact versions from package-lock.json
 npx playwright install chromium   # once, if no Chromium is installed
-npm test                    # browser suite: 27 tests, every track
+npm test                    # browser suite: every track, every room
 npm run test:content        # run every practice program with real toolchains
+DB_NAME=cb_test npm run test:api   # both servers against a MySQL test database (see docs/DEPLOY.md)
 ```
 
 - `CB_TRACKS=go,rust npm test` runs the browser tests for just those tracks.
@@ -88,24 +102,33 @@ npm run test:content        # run every practice program with real toolchains
 - `CB_EXTRA_CASES=40 npm run test:content -- sql` also runs every project at 40 more seeded settings.
 - A toolchain that isn't installed is reported as **SKIP**, never as a pass. The content check needs g++, the .NET 8 SDK, Python 3, Node.js, a JDK (21+), Go, Rust (with rustfmt and clippy), gcc and clang-format, sqlite3, PHP 8, Ruby 3, kotlinc 2.1, Lua 5.4, Bash and ShellCheck. The Nu HTML Checker comes from `npm ci` (the `vnu-jar` dev dependency) and runs on the JDK.
 
-The browser suite covers mastery after 8 reps, wrong-letter handling, saving, every drill line in every track, PC output, the Library, the driving test, profiles and the Vault, My Book, the offline fallback, phone layouts at 320 and 390 px, the track picker, every Vault placeholder being filled (no pack falls back to filler lines), and an axe-core accessibility scan in light and dark mode.
+The browser suite covers mastery after 8 reps, wrong-letter handling, saving, every drill line in every track, PC output, the Library, the driving test, profiles and the Vault, My Book, the offline fallback, phone layouts at 320 and 390 px, the track picker, every Vault placeholder being filled (no pack falls back to filler lines), the typing effects, every theme, the account screens (against a stand-in API), and an axe-core accessibility scan in light and dark mode and in every theme.
+
+The API suite runs one set of tests against the Python and the PHP server alike: sign-up rules, sessions, recovery, rate limits, the request checks, progress, XP caps, streaks, the leaderboard, an account made on one server used on the other, and the page itself signing up in a real browser.
 
 ## How it's organized
 
 ```
 index.html            the page: every room's markup
 css/app.css           all styles
+css/themes.css        the colour themes (generated by tools/build-themes.js)
 js/tracks.js          the track registry: names, groups, storage keys, loader
 js/drill.js           Sandbox drills and mastery
 js/views.js           Library, PC and the rest of the rooms
 js/world.js           the 3D world: the original board and the Tower of Babel
 js/music.js           the generative music
 js/profiles-vault.js  profiles, the Vault and its generator
+js/typing-fx.js       sounds, sparks, combos, XP, streaks and trophies
+js/theme.js           the theme picker
+js/account.js         online accounts, sync, the leaderboard and live count
 js/…                  book reader, ceremony, keyboard and focus helpers
 tracks/<id>.js        one file per track: all of its content
-tests/                browser tests (Playwright) and content checks
-tools/                the single-file builder
-docs/                 the project brief, the audit and licensing notes
+main.py, server/      the Python server (FastAPI): the page and the API
+index.php, api/       the same server in PHP
+db/schema.sql         the MySQL tables both servers use
+tests/                browser tests (Playwright), API tests and content checks
+tools/                the single-file and theme builders
+docs/                 the project brief, deployment, the audit and licensing notes
 archive/              the original single-file upload, unchanged
 ```
 
@@ -115,4 +138,4 @@ Each track's progress is saved under its own key, so learners can switch tracks 
 
 - [docs/AUDIT.md](docs/AUDIT.md) lists what the first review found, what was fixed and what's still open.
 - **License**: not chosen yet. Until one is added, the code and content are all rights reserved by the author. [docs/LICENSING.md](docs/LICENSING.md) recommends options.
-- **Donations**: not set up yet. No payment links exist on the site.
+- **Donations**: the **Donate with PayPal** button (at the foot of every room) goes to the creator's PayPal. Every lesson stays free either way.
