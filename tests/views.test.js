@@ -34,6 +34,35 @@ test("PC: Compile & Run prints exactly the project's output", async () => {
   });
 });
 
+test("PC: every blue-box number is highlighted where the code declares it", async () => {
+  // Two sliders pick something rather than set a number in the code:
+  // "pick" chooses a word, and "coins" decides how many coins the level holds.
+  const NOT_IN_CODE = ["pick", "coins"];
+  await eachTrack(ids.filter((t) => t !== "drive"), async (track) => {
+    const { ctx, page } = await newPage(env, { track });
+    await page.click("#menuPc");
+    const missing = await page.evaluate((skip) => {
+      const out = [];
+      for (let i = 0; i < PROJECTS.length; i++) {
+        const pick = document.getElementById("pcPick");
+        pick.value = String(i);
+        pick.dispatchEvent(new Event("change"));
+        const marked = [...document.querySelectorAll("#pcCode .hl")].map((e) => e.textContent);
+        const v = pcVars();
+        for (const d of PROJECTS[i].vars) {
+          if (skip.includes(d.key)) continue;
+          const at = marked.indexOf(String(v[d.key]));
+          if (at < 0) out.push(PROJECTS[i].name + ": " + d.key);
+          else marked.splice(at, 1);
+        }
+      }
+      return out;
+    }, NOT_IN_CODE);
+    assert.deepEqual(missing, [], `${track}: these sliders' numbers aren't highlighted in the code`);
+    await ctx.close();
+  });
+});
+
 test("Library: chapters open, Next walks the whole book, Picture mode plays", async () => {
   await eachTrack(ids, async (track) => {
     const { ctx, page, log } = await newPage(env, { track });

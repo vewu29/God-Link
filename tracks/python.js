@@ -616,7 +616,7 @@ cbRegisterTrack("python", function () {
       explain: "Brackets add the marks first, then // 3 averages them as a whole number. The elif ladder checks the highest grade first." },
     { name: "Shopping List", about: "A list grows with append, and a loop prints every item with its position.",
       vars: [{ key: "extra", label: "price of the extra item", val: 4, min: 1, max: 99 }],
-      code: function (v) { return ["prices = [3, 5, 2]", "prices.append(" + v.extra + ")", "for i, p in enumerate(prices, start=1):", "    print(f\"Item {i}: ${p}\")", "print(f\"Items: {len(prices)}\")", "print(f\"Total: ${sum(prices)}\")"]; },
+      code: function (v) { return ["prices = [3, 5, 2]", "extra = " + v.extra, "prices.append(extra)", "for i, p in enumerate(prices, start=1):", "    print(f\"Item {i}: ${p}\")", "print(f\"Items: {len(prices)}\")", "print(f\"Total: ${sum(prices)}\")"]; },
       run: function (v) { var p = [3, 5, 2, v.extra], o = []; p.forEach(function (x, i) { o.push("Item " + (i + 1) + ": $" + x); }); o.push("Items: 4"); o.push("Total: $" + (10 + v.extra)); return o; },
       explain: "append adds your item to the end. enumerate numbers the items for us, len counts them, and sum adds them all up." },
     { name: "Cheer Maker", about: "Multiplying a list repeats it, and join glues the words together with spaces.",

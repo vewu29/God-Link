@@ -1058,13 +1058,14 @@ function refreshPcCode() {
       /* The blue box's number, wherever the language declares it:
        int start = 5;  start = 5  let start = 5;  start := 5
        var start: Int = 5  $start = 5;  .parameter set :start 5
-       start <- 5 (R) — the first match per line. The line is already
-       HTML-escaped here, so R's arrow is matched as &lt;-. */
+       start <- 5 (R)  float Speed = 200.f; (a suffix may follow) — the
+       first match per line. The line is already HTML-escaped here, so
+       R's arrow is matched as &lt;-. */
       html = CB_META.preview
         /* HTML & CSS: a CSS property or an attribute — width: 120px,
            --gap: 16px, start="3" — the number before any unit. */
         ? html.replace(new RegExp("((?:^|[\\s;{])(?:--)?" + d.key + ":\\s*|\\b" + d.key + "=\")" + v[d.key] + "(?=(?:px|rem|em|%|ms|s|deg|fr|vw|vh)?(?![\\w.]))"), '$1<span class="hl">' + v[d.key] + "</span>")
-        : html.replace(new RegExp("(\\b" + d.key + "(?:\\s*:\\s*[\\w.<>\\[\\]]+)?\\s*(?::?=|&lt;-)\\s*|:" + d.key + "\\s+)" + v[d.key] + "(?=[fFdDmMlLuU]?(?![\\w.]))"), '$1<span class="hl">' + v[d.key] + "</span>");
+        : html.replace(new RegExp("(\\b" + d.key + "(?:\\s*:\\s*[\\w.<>\\[\\]]+)?\\s*(?::?=|&lt;-)\\s*|:" + d.key + "\\s+)" + v[d.key] + "(?=(?:\\.0*)?[fFdDmMlLuU]?(?![\\w.]))"), '$1<span class="hl">' + v[d.key] + "</span>");
     });
     body.innerHTML = html === "" ? "&nbsp;" : html;
     div.appendChild(num); div.appendChild(body);
