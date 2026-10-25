@@ -62,6 +62,9 @@ async function newPage(env, opts = {}) {
   if (bootSeen) init["code-block-boot-seen-v1"] = "1";
   if (track !== "cpp") init["code-block-lang-v1"] = track;
   await ctx.addInitScript((kv) => {
+    // Only the app itself is seeded; frames inside it (the sandboxed
+    // HTML & CSS preview has no storage at all) are left alone.
+    if (window.top !== window) return;
     if (sessionStorage.getItem("__cbSeeded")) return;
     sessionStorage.setItem("__cbSeeded", "1");
     for (const [k, v] of Object.entries(kv)) localStorage.setItem(k, v);

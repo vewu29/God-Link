@@ -44,7 +44,8 @@ async function dumpTrack(env, track) {
       }
       // harness(v): test-only setup for engine tracks (which objects to
       // build, how many frames to play); never shown in the app.
-      return { name: p.name, file: p.file, cases: Object.entries(sets).map(([k, v]) => ({ k, v, code: p.code(v).join("\n"), out: p.run(v), harness: p.harness ? p.harness(v) : null })) };
+      // checks(v): for HTML & CSS, the styles the browser must compute.
+      return { name: p.name, file: p.file, cases: Object.entries(sets).map(([k, v]) => ({ k, v, code: p.code(v).join("\n"), out: p.run(v), harness: p.harness ? p.harness(v) : null, checks: p.checks ? p.checks(v) : null })) };
     }),
   }), extra);
   await ctx.close();
@@ -67,12 +68,13 @@ async function dumpTrack(env, track) {
     fs.mkdirSync(dir, { recursive: true });
     if (tc.setup) tc.setup(dir);
     let bad = 0, n = 0;
-    // Slow compilers (Kotlin) can build every case in one batch.
-    const batch = tc.buildBatch ? tc.buildBatch(dir, data.projects.flatMap((p) => p.cases.map((c) => c.code))) : null;
+    // Slow compilers (Kotlin) and browsers (HTML) build every case in one batch.
+    const cases = data.projects.flatMap((p) => p.cases);
+    const batch = tc.buildBatch ? await tc.buildBatch(dir, cases.map((c) => c.code), cases) : null;
     for (const p of data.projects) {
       for (const c of p.cases) {
         n++;
-        const r = batch ? batch[n - 1] : tc.build(dir, c.code, p, c);
+        const r = batch ? batch[n - 1] : await tc.build(dir, c.code, p, c);
         if (!r.ok) { bad++; console.log(`FAIL  ${track} · ${p.name} (${c.k}): does not build\n      ${r.error.split("\n").slice(0, 4).join("\n      ")}`); continue; }
         const got = r.stdout.replace(/\r/g, "").replace(/\n$/, "");
         const want = c.out.join("\n");

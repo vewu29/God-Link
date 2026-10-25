@@ -1059,7 +1059,11 @@ function refreshPcCode() {
        int start = 5;  start = 5  let start = 5;  start := 5
        var start: Int = 5  $start = 5;  .parameter set :start 5
        — the first match per line. */
-      html = html.replace(new RegExp("(\\b" + d.key + "(?:\\s*:\\s*[\\w.<>\\[\\]]+)?\\s*:?=\\s*|:" + d.key + "\\s+)" + v[d.key] + "(?=[fFdDmMlLuU]?(?![\\w.]))"), '$1<span class="hl">' + v[d.key] + "</span>");
+      html = CB_META.preview
+        /* HTML & CSS: a CSS property or an attribute — width: 120px,
+           --gap: 16px, start="3" — the number before any unit. */
+        ? html.replace(new RegExp("((?:^|[\\s;{])(?:--)?" + d.key + ":\\s*|\\b" + d.key + "=\")" + v[d.key] + "(?=(?:px|rem|em|%|ms|s|deg|fr|vw|vh)?(?![\\w.]))"), '$1<span class="hl">' + v[d.key] + "</span>")
+        : html.replace(new RegExp("(\\b" + d.key + "(?:\\s*:\\s*[\\w.<>\\[\\]]+)?\\s*:?=\\s*|:" + d.key + "\\s+)" + v[d.key] + "(?=[fFdDmMlLuU]?(?![\\w.]))"), '$1<span class="hl">' + v[d.key] + "</span>");
     });
     body.innerHTML = html === "" ? "&nbsp;" : html;
     div.appendChild(num); div.appendChild(body);
@@ -1202,21 +1206,41 @@ $("compileBtn").addEventListener("click", function () {
   var pcReduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   var steps = [
     { t: 0, html: '<span class="dim">' + (CB_META.run.charAt(0) === "\u25B6" ? "" : "$ ") + CB_META.run.replace(CB_META.file, p.file).replace(/&/g, "&amp;").replace(/</g, "&lt;") + "</span>" },
-    { t: pcReduced ? 0 : 500, html: '<span class="dim">' + (pcCodeChars($("pcType").value) === pcCodeChars(pcTarget()) ? "Your typed program matches. Running:" : "Running the program shown above:") + "</span>" }
+    { t: pcReduced ? 0 : 500, html: '<span class="dim">' + (pcCodeChars($("pcType").value) === pcCodeChars(pcTarget())
+      ? (CB_META.preview ? "Your typed page matches. Opening it:" : "Your typed program matches. Running:")
+      : (CB_META.preview ? "Opening the page shown above:" : "Running the program shown above:")) + "</span>" }
   ];
   /* Loop 50 — run() is called ONCE and the lines kept: they
      feed the screen steps AND the spoken summary at the end,
      so ears hear exactly the output eyes saw (a random project
      can no longer tell two different stories). */
   var runLines = p.run(v);
-  runLines.forEach(function (line, k) {
-    steps.push({ t: pcReduced ? 0 : 1050 + k * 430, text: line });
-  });
-  steps.push({ t: pcReduced ? 0 : 1050 + runLines.length * 430 + 250, html: '<span class="dim">— Program finished. Change a number in a blue box and run it again to see a different show. —</span>' });
+  var finishAt;
+  if (CB_META.preview) {
+    /* HTML & CSS: no console to print to. The page itself is drawn
+       by this browser in a sandboxed frame (no scripts, no forms);
+       run() is the text it shows, for the spoken summary. */
+    steps.push({ t: pcReduced ? 0 : 1050, frame: pcTarget() });
+    finishAt = 1650;
+  } else {
+    runLines.forEach(function (line, k) {
+      steps.push({ t: pcReduced ? 0 : 1050 + k * 430, text: line });
+    });
+    finishAt = 1050 + runLines.length * 430 + 250;
+  }
+  steps.push({ t: pcReduced ? 0 : finishAt, html: '<span class="dim">— ' + (CB_META.preview ? "Page open" : "Program finished") + ". Change a number in a blue box and run it again to see a different show. —</span>" });
   steps.forEach(function (s) {
     pcTimers.push(setTimeout(function () {
       var d = document.createElement("div");
-      if (s.html) d.innerHTML = s.html; else d.textContent = s.text;
+      if (s.frame) {
+        var f = document.createElement("iframe");
+        f.className = "pc-preview";
+        f.setAttribute("sandbox", "");
+        f.setAttribute("referrerpolicy", "no-referrer");
+        f.title = "Your page, drawn by the browser";
+        f.srcdoc = s.frame;
+        d.appendChild(f);
+      } else if (s.html) d.innerHTML = s.html; else d.textContent = s.text;
       sc.appendChild(d);
       if (s === steps[steps.length - 1]) {
         pcRunning = false; $("stopBtn").disabled = true;
@@ -1226,7 +1250,9 @@ $("compileBtn").addEventListener("click", function () {
            lines land every 430ms and would be read as
            fragments), so when the run lands, speak the whole
            output once, as one utterance. */
-        if (window.cbAnnounce) window.cbAnnounce("Program finished. " + (runLines.length ? "Output: " + runLines.join(" ") : "No output."));
+        if (window.cbAnnounce) window.cbAnnounce(CB_META.preview
+          ? "Page open. It shows: " + runLines.join(" ")
+          : "Program finished. " + (runLines.length ? "Output: " + runLines.join(" ") : "No output."));
       } else {
         pcCursorShow();
       }

@@ -18,7 +18,16 @@ test("PC: Compile & Run prints exactly the project's output", async () => {
     const expected = await page.evaluate(() => PROJECTS[pcIndex].run(pcVars()));
     await page.click("#compileBtn");
     await page.waitForFunction(() => document.querySelector("#pcStatusText").textContent === "Finished", null, { timeout: 15000 });
-    const screen = await page.$$eval("#pcScreen > div", (ds) => ds.map((d) => d.textContent));
+    let screen = await page.$$eval("#pcScreen > div", (ds) => ds.map((d) => d.textContent));
+    if (await page.evaluate(() => !!CB_META.preview)) {
+      // HTML & CSS: the page is drawn in a sandboxed frame; read the text the browser shows.
+      const code = await page.evaluate(() => pcTarget());
+      assert.equal(await page.$eval("#pcScreen iframe.pc-preview", (f) => f.getAttribute("srcdoc")), code, `${track}: the frame holds the page's code`);
+      const frame = page.frames().find((f) => f.url() === "about:srcdoc");
+      await frame.waitForLoadState();
+      screen = (await frame.evaluate(() => document.body.innerText)).split("\n").map((l) => l.replace(/\s+/g, " ").trim()).filter(Boolean);
+      assert.deepEqual(screen, expected, `${track}: the page shows the project's text`);
+    }
     for (const line of expected) assert.ok(screen.includes(line), `${track}: missing output line ${JSON.stringify(line)}`);
     assert.deepEqual(log.pageErrors, []);
     await ctx.close();
