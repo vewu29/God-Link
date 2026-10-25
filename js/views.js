@@ -1057,8 +1057,9 @@ function refreshPcCode() {
     p.vars.forEach(function (d) {
       /* The blue box's number, wherever the language declares it:
        int start = 5;  start = 5  let start = 5;  start := 5
-       var start: Int = 5  $start = 5; — the first match per line. */
-      html = html.replace(new RegExp("(\\b" + d.key + "(?:\\s*:\\s*[\\w.<>\\[\\]]+)?\\s*:?=\\s*)" + v[d.key] + "(?=[fFdDmMlLuU]?(?![\\w.]))"), '$1<span class="hl">' + v[d.key] + "</span>");
+       var start: Int = 5  $start = 5;  .parameter set :start 5
+       — the first match per line. */
+      html = html.replace(new RegExp("(\\b" + d.key + "(?:\\s*:\\s*[\\w.<>\\[\\]]+)?\\s*:?=\\s*|:" + d.key + "\\s+)" + v[d.key] + "(?=[fFdDmMlLuU]?(?![\\w.]))"), '$1<span class="hl">' + v[d.key] + "</span>");
     });
     body.innerHTML = html === "" ? "&nbsp;" : html;
     div.appendChild(num); div.appendChild(body);

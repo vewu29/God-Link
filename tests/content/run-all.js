@@ -7,6 +7,7 @@
 //
 // Toolchains that are not installed are reported as SKIP, never PASS.
 // Usage: node tests/content/run-all.js [trackId ...]
+// CB_EXTRA_CASES=n also runs every project at n more seeded settings.
 "use strict";
 const fs = require("fs");
 const os = require("os");
@@ -19,7 +20,8 @@ function has(cmd) { return spawnSync("sh", ["-c", `command -v ${cmd}`]).status =
 
 async function dumpTrack(env, track) {
   const { ctx, page } = await newPage(env, { track });
-  const data = await page.evaluate(() => ({
+  const extra = Number(process.env.CB_EXTRA_CASES || 0);
+  const data = await page.evaluate((extra) => ({
     lines: BLOCKS.map((b) => b.line),
     // Library and reference code, and every line the Vault can deal.
     examples: [
@@ -32,11 +34,19 @@ async function dumpTrack(env, track) {
     projects: (window.__isDrive ? [] : PROJECTS).map((p) => {
       const sets = { default: {}, min: {}, max: {} };
       p.vars.forEach((d) => { sets.default[d.key] = d.val; sets.min[d.key] = d.min; sets.max[d.key] = d.max; });
+      // CB_EXTRA_CASES=n adds n more settings, drawn from a fixed seed.
+      let seed = 7;
+      const rnd = () => { seed = (seed * 1103515245 + 12345) % 2147483648; return seed / 2147483648; };
+      for (let k = 0; k < extra; k++) {
+        const s = {};
+        p.vars.forEach((d) => { s[d.key] = d.min + Math.floor(rnd() * (d.max - d.min + 1)); });
+        sets["random " + (k + 1)] = s;
+      }
       // harness(v): test-only setup for engine tracks (which objects to
       // build, how many frames to play); never shown in the app.
       return { name: p.name, file: p.file, cases: Object.entries(sets).map(([k, v]) => ({ k, v, code: p.code(v).join("\n"), out: p.run(v), harness: p.harness ? p.harness(v) : null })) };
     }),
-  }));
+  }), extra);
   await ctx.close();
   return data;
 }

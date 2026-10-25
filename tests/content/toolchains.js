@@ -478,3 +478,40 @@ module.exports.rust = {
     return errs;
   },
 };
+
+// ---------- SQL ----------
+// Programs and examples are scripts run by the sqlite3 shell on a fresh
+// in-memory database, stopping at the first error (-bail). Lines are
+// compiled against a shared schema, and cheat-card snippets run on a
+// fresh copy of it (tests/content/sqlcheck.py).
+function sqlCheck(dir, mode, items) {
+  const file = path.join(dir, mode + ".json");
+  fs.writeFileSync(file, JSON.stringify(items));
+  const r = sh("python3", ["-I", path.join(__dirname, "sqlcheck.py"), mode, file]);
+  if (r.status !== 0) return [{ i: 0, err: r.stderr }];
+  return JSON.parse(r.stdout);
+}
+function sqlRun(code) {
+  const r = sh("sqlite3", ["-bail", ":memory:"], { input: code + "\n", timeout: 10000 });
+  return r.status === 0 && !r.stderr ? { ok: true, stdout: r.stdout } : { ok: false, error: r.stderr || `exit ${r.status}` };
+}
+module.exports.sql = {
+  needs: ["sqlite3", "python3"],
+  build: (dir, code) => sqlRun(code),
+  checkLines: (dir, lines) => sqlCheck(dir, "lines", lines),
+  checkExamples: (dir, examples) => {
+    // Chapter key lines are checked like drill lines; cheat cards run.
+    const errs = [];
+    const keyLines = [];
+    const snippets = [];
+    examples.forEach((ex, i) => {
+      if (ex.line) { keyLines.push(i); return; }
+      if (ex.run === undefined) { snippets.push(i); return; }
+      const r = sqlRun(ex.code);
+      if (!r.ok) errs.push({ i, err: r.error });
+    });
+    sqlCheck(dir, "lines", keyLines.map((i) => examples[i].code)).forEach((e) => errs.push({ i: keyLines[e.i], err: e.err }));
+    sqlCheck(dir, "snippets", snippets.map((i) => examples[i].code)).forEach((e) => errs.push({ i: snippets[e.i], err: e.err }));
+    return errs;
+  },
+};

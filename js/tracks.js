@@ -17,6 +17,7 @@
 (function () {
   var GROUPS = [
     { id: "lang", name: "Programming languages" },
+    { id: "web", name: "Web & data" },
     { id: "engine", name: "Game engines" },
     { id: "life", name: "Road & life skills" }
   ];
@@ -70,6 +71,10 @@
     blurb: "Fast and famously safe: catch memory bugs before they happen, in tools, games and systems.",
     keywords: "systems performance safe memory cargo crates webassembly wasm cli",
     file: "main.rs", run: "cargo run", comment: "//", vaultFile: "vault.rs", varPrefix: "" });
+  addTrack({ id: "sql", name: "SQL", badge: "SQL", group: "web", color: "#0b5c7d", blocks: 30,
+    blurb: "Ask databases questions: the language behind almost every app, website and spreadsheet of data.",
+    keywords: "database databases query queries data sqlite postgres postgresql mysql analytics tables",
+    file: "main.sql", run: "sqlite3 game.db < main.sql", comment: "--", vaultFile: "vault.sql", varPrefix: ":" });
   addTrack({ id: "unity", name: "Unity", badge: "Unity", group: "engine", color: "#1f2937", blocks: 30,
     blurb: "Make 2D and 3D games with Unity and C#: scripts, physics, input, UI and more.",
     keywords: "game engine games 3d 2d c# csharp unity3d gamedev",
