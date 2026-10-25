@@ -677,3 +677,74 @@ module.exports.ruby = {
     return errs;
   },
 };
+
+// ---------- Kotlin ----------
+// kotlinc takes seconds to start, so programs are compiled in one batch:
+// each goes in its own package (c0, c1, …), all are built together with
+// warnings as errors, and each then runs on the JVM. A file with a
+// warning or error is reported and the rest are rebuilt without it.
+// Lines and snippets are parsed by the Kotlin compiler's own parser
+// (tests/content/ktparse).
+const KOTLIN_HOME = (() => { try { return path.resolve(fs.realpathSync(spawnSync("sh", ["-c", "command -v kotlinc"], { encoding: "utf8" }).stdout.trim()), "..", ".."); } catch (e) { return ""; } })();
+const KOTLIN_LIB = (jar) => path.join(KOTLIN_HOME, "lib", jar);
+const javaOut = (s) => s.replace(/^Picked up JAVA_TOOL_OPTIONS.*\n/gm, "");
+function kotlinBatch(dir, codes) {
+  const root = path.join(dir, "kt-batch");
+  fs.rmSync(root, { recursive: true, force: true });
+  const files = codes.map((code, i) => {
+    const f = path.join(root, "c" + i, "main.kt");
+    fs.mkdirSync(path.dirname(f), { recursive: true });
+    fs.writeFileSync(f, `package c${i}\n\n${code}\n`);
+    return f;
+  });
+  const results = codes.map(() => null);
+  let pending = codes.map((_, i) => i);
+  const out = path.join(root, "out");
+  for (let round = 0; round < 4 && pending.length; round++) {
+    fs.rmSync(out, { recursive: true, force: true });
+    const r = sh("kotlinc", ["-Werror", "-nowarn=false", ...pending.map((i) => files[i]), "-d", out], { timeout: 900000 });
+    const text = javaOut(r.stdout + r.stderr);
+    if (r.status === 0) break;
+    const bad = new Set();
+    for (const m of text.matchAll(/c(\d+)\/main\.kt:\d+:\d+: (?:error|warning): [^\n]*/g)) {
+      bad.add(Number(m[1]));
+      results[m[1]] = { ok: false, error: ((results[m[1]] && results[m[1]].error) || "") + m[0] + "\n" };
+    }
+    if (!bad.size) { pending.forEach((i) => (results[i] = { ok: false, error: text })); pending = []; break; }
+    pending = pending.filter((i) => !bad.has(i));
+  }
+  const cp = [out, KOTLIN_LIB("kotlin-stdlib.jar")].join(":");
+  pending.forEach((i) => {
+    const r = sh("java", ["-cp", cp, `c${i}.MainKt`], { timeout: 20000 });
+    results[i] = r.status === 0 ? { ok: true, stdout: r.stdout } : { ok: false, error: `exit ${r.status}: ${javaOut(r.stderr)}` };
+  });
+  return results;
+}
+let ktparseDir = null;
+function kotlinParseErrors(dir, items) {
+  const cp = [KOTLIN_LIB("kotlin-compiler.jar"), KOTLIN_LIB("kotlin-stdlib.jar")];
+  if (!ktparseDir) {
+    ktparseDir = path.join(dir, "ktparse-out");
+    const b = sh("kotlinc", ["-cp", cp[0], path.join(__dirname, "ktparse", "KtParse.kt"), "-d", ktparseDir], { timeout: 600000 });
+    if (b.status !== 0) throw new Error("ktparse build failed: " + javaOut(b.stderr));
+  }
+  const file = path.join(dir, "kt-items.txt");
+  fs.writeFileSync(file, items.join("\0"));
+  const r = sh("java", ["-cp", [ktparseDir, ...cp].join(":"), "KtParseKt", file], { timeout: 600000 });
+  if (r.status !== 0) return [{ i: 0, err: javaOut(r.stderr) }];
+  return r.stdout.split("\n").filter(Boolean).map((l) => { const t = l.indexOf("\t"); return { i: Number(l.slice(0, t)), err: l.slice(t + 1) }; });
+}
+module.exports.kotlin = {
+  needs: ["kotlinc", "java"],
+  build: (dir, code) => kotlinBatch(dir, [code])[0],
+  buildBatch: (dir, codes) => kotlinBatch(dir, codes),
+  checkLines: (dir, lines) => kotlinParseErrors(dir, lines),
+  checkExamples: (dir, examples) => {
+    const errs = [];
+    const runnable = [], snippets = [];
+    examples.forEach((ex, i) => (ex.run === undefined ? snippets : runnable).push(i));
+    kotlinBatch(path.join(dir, "examples"), runnable.map((i) => examples[i].code)).forEach((r, k) => { if (!r.ok) errs.push({ i: runnable[k], err: r.error }); });
+    kotlinParseErrors(dir, snippets.map((i) => examples[i].code)).forEach((e) => errs.push({ i: snippets[e.i], err: e.err }));
+    return errs;
+  },
+};

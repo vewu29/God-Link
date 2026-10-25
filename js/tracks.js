@@ -87,6 +87,10 @@
     blurb: "A friendly language that reads like English, behind Ruby on Rails and countless startups.",
     keywords: "rails web backend scripting beginner friendly startups shopify",
     file: "main.rb", run: "ruby main.rb", comment: "#", vaultFile: "vault.rb", varPrefix: "" });
+  addTrack({ id: "kotlin", name: "Kotlin", badge: "Kt", group: "lang", color: "#6b3fd6", blocks: 30,
+    blurb: "Google's choice for Android apps: modern, concise and safe from null crashes.",
+    keywords: "android apps mobile jvm jetbrains java compose multiplatform",
+    file: "main.kt", run: "kotlinc main.kt -include-runtime -d app.jar && java -jar app.jar", comment: "//", vaultFile: "vault.kt", varPrefix: "" });
   addTrack({ id: "unity", name: "Unity", badge: "Unity", group: "engine", color: "#1f2937", blocks: 30,
     blurb: "Make 2D and 3D games with Unity and C#: scripts, physics, input, UI and more.",
     keywords: "game engine games 3d 2d c# csharp unity3d gamedev",

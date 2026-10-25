@@ -67,10 +67,12 @@ async function dumpTrack(env, track) {
     fs.mkdirSync(dir, { recursive: true });
     if (tc.setup) tc.setup(dir);
     let bad = 0, n = 0;
+    // Slow compilers (Kotlin) can build every case in one batch.
+    const batch = tc.buildBatch ? tc.buildBatch(dir, data.projects.flatMap((p) => p.cases.map((c) => c.code))) : null;
     for (const p of data.projects) {
       for (const c of p.cases) {
         n++;
-        const r = tc.build(dir, c.code, p, c);
+        const r = batch ? batch[n - 1] : tc.build(dir, c.code, p, c);
         if (!r.ok) { bad++; console.log(`FAIL  ${track} · ${p.name} (${c.k}): does not build\n      ${r.error.split("\n").slice(0, 4).join("\n      ")}`); continue; }
         const got = r.stdout.replace(/\r/g, "").replace(/\n$/, "");
         const want = c.out.join("\n");
