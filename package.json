@@ -7,7 +7,8 @@
     "test": "node --test --test-concurrency=2 tests/*.test.js",
     "test:content": "node tests/content/run-all.js",
     "build:single": "node tools/build-single-file.js",
-    "build:themes": "node tools/build-themes.js"
+    "build:themes": "node tools/build-themes.js",
+    "test:api": "node --test --test-concurrency=1 tests/api/*.test.js"
   },
   "devDependencies": {
     "acorn": "8.12.1",

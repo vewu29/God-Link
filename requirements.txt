@@ -1,0 +1,7 @@
+# Code Block's Python server (main.py → server/). Wasmer Edge installs these.
+fastapi>=0.110
+uvicorn>=0.29
+# MySQL, in pure Python. It logs in to MySQL 8 over TLS, or without TLS
+# through server/mysql_login.py — so the compiled `cryptography` package
+# isn't needed (add it here if you'd rather PyMySQL used it).
+pymysql>=1.1

@@ -1,0 +1,2 @@
+# The API's code is included by api/index.php, never fetched directly.
+Require all denied
