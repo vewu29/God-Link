@@ -710,7 +710,9 @@ cbRegisterTrack("unity", function () {
     { line: "{o}.SetActive({b});", why: "SetActive switches a GameObject on or off." },
     { line: "enabled = {b};", why: "enabled switches this script on or off." },
     { line: 'GameObject {o} = GameObject.FindWithTag("{w}");', why: "FindWithTag finds an object by its tag — do it once, not every frame." },
-    { line: "if ({o} == null) return;", why: "Guard against missing references before using them." }
+    { line: "if ({o} == null) return;", why: "Guard against missing references before using them." },
+    { line: "gameObject.SetActive({v} > {n});", why: "A comparison is a bool, so it can switch an object on or off." },
+    { line: "Instantiate({k}Prefab, new Vector3({n}, 0f, {n2}), Quaternion.identity);", why: "Spawn the copy at an exact spot." }
   ];
   var themes = [
     { name: "First Scripts", t: [0, 1, 2, 10, 11] },
@@ -721,7 +723,7 @@ cbRegisterTrack("unity", function () {
     { name: "Player Input", t: [17, 18, 19, 20, 14] },
     { name: "Physics Pushes", t: [21, 22, 23, 24, 3] },
     { name: "Collisions", t: [25, 26, 27, 28, 29] },
-    { name: "Spawning", t: [30, 31, 29, 28, 39] },
+    { name: "Spawning", t: [30, 31, 29, 59, 39] },
     { name: "Game Math", t: [32, 33, 34, 35, 36] },
     { name: "Dice & Ranges", t: [37, 35, 36, 6, 11] },
     { name: "Coroutines", t: [38, 39, 40, 41, 42] },
@@ -730,7 +732,7 @@ cbRegisterTrack("unity", function () {
     { name: "UI Wiring", t: [47, 48, 11, 46, 7] },
     { name: "Data Assets", t: [49, 50, 5, 6, 0] },
     { name: "Animation & Sound", t: [51, 52, 53, 18, 1] },
-    { name: "On and Off", t: [54, 55, 57, 2, 4] },
+    { name: "On and Off", t: [54, 55, 58, 2, 4] },
     { name: "Safe References", t: [56, 57, 21, 4, 32] },
     { name: "Unity Masters", t: [33, 34, 22, 38, 47] }
   ];

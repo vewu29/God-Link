@@ -481,7 +481,10 @@ function cbFill(tpl, r) {
     }
     return m;
   }
-  return tpl.line.replace(/\{([a-z0-9]+)\}/g, function (m, k) {
+  /* {L} (a capital letter) is the one upper-case key; the old
+     lower-case-only pattern skipped it, so "char x = '{L}';" reached
+     the Vault unfilled. */
+  return tpl.line.replace(/\{([a-z0-9]+|L)\}/g, function (m, k) {
     if (Object.prototype.hasOwnProperty.call(memo, k)) return memo[k];
     var val = fillOnce(k, m);
     memo[k] = val;

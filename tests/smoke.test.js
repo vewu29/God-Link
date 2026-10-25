@@ -31,6 +31,29 @@ test("each track loads with no script errors and real content", async () => {
   }, 1);
 });
 
+test("the Vault fills every placeholder and never runs short of fresh lines", async () => {
+  await eachTrack(ids, async (track) => {
+    const { ctx, page } = await newPage(env, { track });
+    const bad = await page.evaluate(() => {
+      // A key is a placeholder when cbFill fills it; {0} in C and {x} in Rust are code.
+      const keys = new Set(VT.flatMap((t) => [...t.line.matchAll(/\{([A-Za-z0-9]+)\}/g)].map((m) => m[1]))
+        .filter((k) => cbFill({ line: "{" + k + "}" }, cbRng(1)) !== "{" + k + "}"));
+      const out = [];
+      // {L} is the one capital key, which an older pattern skipped.
+      if (cbFill({ line: "{L}" }, cbRng(1)) === "{L}") out.push("{L} is not filled");
+      for (let p = 0; p < 100; p++) {
+        cbGenPack(p).forEach((d) => {
+          const left = [...d.line.matchAll(/\{([A-Za-z0-9]+)\}/g)].map((m) => m[1]).filter((k) => keys.has(k));
+          if (left.length || /^int drill\d+ = \d+;$/.test(d.line)) out.push(d.line);
+        });
+      }
+      return out;
+    });
+    assert.deepEqual(bad.slice(0, 5), [], `${track}: ${bad.length} Vault lines left unfilled or fell back`);
+    await ctx.close();
+  });
+});
+
 test("no sideways scrolling on small phones, phones and desktop", async () => {
   for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }, { width: 1280, height: 800 }]) {
     await eachTrack(ids, async (track) => {

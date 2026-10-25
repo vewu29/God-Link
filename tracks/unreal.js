@@ -743,7 +743,11 @@ cbRegisterTrack("unreal", function () {
     { line: "AddMovementInput(GetActorForwardVector(), {v});", why: "Characters move by adding movement input." },
     { line: 'GEngine->AddOnScreenDebugMessage(-1, {d}.f, FColor::Green, TEXT("{w}"));', why: "Show a quick debug message on screen." },
     { line: 'UGameplayStatics::OpenLevel(this, FName(TEXT("{w}")));', why: "OpenLevel loads another map." },
-    { line: "APawn* {o} = UGameplayStatics::GetPlayerPawn(this, 0);", why: "GetPlayerPawn finds the first player." }
+    { line: "APawn* {o} = UGameplayStatics::GetPlayerPawn(this, 0);", why: "GetPlayerPawn finds the first player." },
+    { line: "SetActorLocation(FVector({n}.f, {n2}.f, 0.f));", why: "Place the Actor at an exact spot, in centimeters." },
+    { line: "AddMovementInput(GetActorRightVector(), {v});", why: "The right vector moves a character sideways." },
+    { line: "GetWorldTimerManager().SetTimer({c}Timer, this, &{c}::{f}, {d}.f, false);", why: "false makes a one-shot timer: it fires once." },
+    { line: "AddControllerYawInput({v} * {d}.f);", why: "Yaw input turns the view left and right; the multiplier sets the sensitivity." }
   ];
   var themes = [
     { name: "Logging", t: [0, 1, 2, 3, 9] },
@@ -751,17 +755,17 @@ cbRegisterTrack("unreal", function () {
     { name: "Text Building", t: [9, 7, 8, 2, 0] },
     { name: "Properties", t: [10, 11, 12, 13, 4] },
     { name: "Functions for Blueprints", t: [14, 15, 13, 10, 12] },
-    { name: "Actor Basics", t: [16, 17, 18, 19, 20] },
+    { name: "Actor Basics", t: [16, 18, 20, 58, 24] },
     { name: "Moving Actors", t: [21, 22, 23, 24, 25] },
     { name: "Distances & Directions", t: [26, 27, 25, 21, 22] },
     { name: "Components", t: [28, 29, 30, 28, 17] },
     { name: "Spawning", t: [31, 32, 33, 34, 35] },
-    { name: "Timers", t: [36, 37, 38, 34, 19] },
+    { name: "Timers", t: [36, 37, 38, 60, 19] },
     { name: "Overlaps", t: [39, 40, 41, 34, 35] },
     { name: "FMath", t: [42, 43, 44, 4, 5] },
     { name: "TArray", t: [45, 46, 47, 48, 49] },
     { name: "TMap", t: [50, 51, 46, 47, 9] },
-    { name: "Input", t: [52, 53, 54, 14, 19] },
+    { name: "Input", t: [52, 53, 54, 61, 59] },
     { name: "Debug & Levels", t: [55, 56, 0, 1, 2] },
     { name: "Player Lookups", t: [57, 35, 26, 27, 41] },
     { name: "Safety First", t: [35, 33, 34, 40, 41] },
