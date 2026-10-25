@@ -456,7 +456,7 @@ DRIVE_QUIZ.push(
     ".quiz-facts{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 4px;}" +
     ".quiz-fact{flex:1 1 120px;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-row);padding:10px 12px;text-align:center;}" +
     ".quiz-fact b{display:block;font-size:17px;font-weight:800;color:var(--accent-deep);font-variant-numeric:tabular-nums;}" +
-    "@media (prefers-color-scheme: dark){.quiz-fact b{color:var(--accent-bright);}}" +
+    ":where(:root[data-mode='dark']) .quiz-fact b{color:var(--accent-bright);}" +
     ".quiz-fact span{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}" +
     ".quiz-segs{display:flex;gap:3px;margin-top:16px;}" +
     ".quiz-seg{flex:1 1 0;height:7px;border-radius:4px;background:var(--surface-2);border:1px solid var(--line);}" +
@@ -476,7 +476,7 @@ DRIVE_QUIZ.push(
     ".quiz-opt.wrong{border-color:var(--bad);color:var(--bad);}" +
     ".quiz-opt.wrong .quiz-letter{background:var(--bad);border-color:var(--bad);color:#ffffff;}" +
     ".quiz-opt.faded{opacity:.55;}" +
-    "@media (prefers-color-scheme: dark){.quiz-opt.right{color:var(--accent-bright);}}" +
+    ":where(:root[data-mode='dark']) .quiz-opt.right{color:var(--accent-bright);}" +
     ".quiz-q{font-size:19px;font-weight:800;line-height:1.45;margin:16px 0 0;}" +
     ".quiz-why{margin-top:16px;font-size:14.5px;line-height:1.6;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-row);padding:12px 14px;}" +
     ".quiz-why .quiz-why-tag{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;border-radius:6px;padding:2px 8px;margin-right:8px;background:var(--accent);color:var(--on-accent);vertical-align:2px;}" +
@@ -497,12 +497,12 @@ DRIVE_QUIZ.push(
     ".quiz-miss .miss-q{font-weight:700;}" +
     ".quiz-miss .miss-a{margin-top:5px;}" +
     ".quiz-miss .miss-a b{color:var(--accent-deep);}" +
-    "@media (prefers-color-scheme: dark){.quiz-miss .miss-a b{color:var(--accent-bright);}}" +
+    ":where(:root[data-mode='dark']) .quiz-miss .miss-a b{color:var(--accent-bright);}" +
     ".quiz-miss .miss-why{margin-top:5px;color:var(--muted);font-size:13.5px;}" +
     ".quiz-stamp{display:inline-block;font-size:15px;font-weight:800;letter-spacing:.06em;border-radius:var(--r-row);padding:8px 16px;margin-top:6px;}" +
     ".quiz-stamp.pass{background:var(--good-soft);color:var(--accent-deep);border:1.5px solid var(--accent);}" +
     ".quiz-stamp.fail{background:var(--surface-2);color:var(--bad);border:1.5px solid var(--bad);}" +
-    "@media (prefers-color-scheme: dark){.quiz-stamp.pass{color:var(--accent-bright);}}" +
+    ":where(:root[data-mode='dark']) .quiz-stamp.pass{color:var(--accent-bright);}" +
     "@media (prefers-reduced-motion: reduce){.quiz-seg.now{animation:none;}.quiz-ring .ring-arc{transition:none;}.quiz-opt{transition:none;}}";
   document.head.appendChild(style);
 

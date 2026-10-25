@@ -6,7 +6,8 @@
   "scripts": {
     "test": "node --test --test-concurrency=2 tests/*.test.js",
     "test:content": "node tests/content/run-all.js",
-    "build:single": "node tools/build-single-file.js"
+    "build:single": "node tools/build-single-file.js",
+    "build:themes": "node tools/build-themes.js"
   },
   "devDependencies": {
     "acorn": "8.12.1",
