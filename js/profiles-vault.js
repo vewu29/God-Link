@@ -751,6 +751,10 @@ window.cbRenderVault = function () {
      say which drill this is before the first letter. */
   if (window.cbAnnounce) window.cbAnnounce("Drill " + (vaultDrill + 1) + " of 100, pack " + (vaultPack + 1) + " — " + cbPackName(vaultPack) + ". Type the line to bank it.");
   var echoBanked = false;
+  /* Typing FX: the Vault console gets the same stats strip, sounds
+     and sparks as the Sandbox drill. */
+  var fxCard = target.closest(".type-card"), fxPrev = 0;
+  if (window.CBFX) window.CBFX.begin(fxCard, { line: drill.line, key: "vault:" + CB_META.id + ":" + gIdx });
   input.addEventListener("input", function () {
     /* Loop 54 — the same space fold as the Sandbox drill: a
        pasted, dictated or assistive-typed line can carry
@@ -761,7 +765,8 @@ window.cbRenderVault = function () {
     if (folded !== input.value) input.value = folded;
     var val = input.value, i = 0;
     while (i < val.length && i < drill.line.length && val.charAt(i) === drill.line.charAt(i)) i++;
-    if (val.length > i) {
+    var refused = val.length > i;
+    if (refused) {
       input.value = drill.line.slice(0, i);
       /* Loop 32: a refused letter dips the music, gently. */
       if (window.__musicEcho) window.__musicEcho("slip");
@@ -770,9 +775,18 @@ window.cbRenderVault = function () {
       if (window.__musicEcho) window.__musicEcho("key");
     }
     paint();
+    if (window.CBFX) {
+      if (refused) window.CBFX.slip(fxCard, target, i, drill.line.charAt(i), val.charAt(i));
+      else window.CBFX.correct(fxCard, target, input.value.length - fxPrev, input.value.length);
+    }
+    fxPrev = input.value.length;
     if (input.value === drill.line) {
       /* Loop 32: banking a drill answers like a perfect rep. */
-      if (!echoBanked) { echoBanked = true; if (window.__musicEcho) window.__musicEcho("rep"); }
+      if (!echoBanked) {
+        echoBanked = true;
+        if (window.__musicEcho) window.__musicEcho("rep");
+        if (window.CBFX) window.CBFX.finish(fxCard, target, { kind: "bank", line: drill.line, track: CB_META.id, block: gIdx });
+      }
       var profNow = cbProfile();
       if (profNow) {
         var vk = CB_VAULT_KEY;

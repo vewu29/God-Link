@@ -199,6 +199,8 @@ function refreshProgress() {
     if (open >= 0) continueBtn.textContent = (done > 0 ? "Continue — " : "Start — ") + BLOCKS[open].name;
   }
   if (window.__refreshWorld) window.__refreshWorld();
+  /* Typing FX keeps XP per profile: a profile switch repaints it. */
+  if (window.CBFX) window.CBFX.repaint();
 }
 if (continueBtn) continueBtn.addEventListener("click", function () {
   var o = firstOpen();
@@ -377,6 +379,8 @@ function openBlock(i) {
   freshTake = true; lastRepShown = -1;
   lastKeyT = 0; paceMs = 0; targetLine.style.removeProperty("--pulse-dur");
   renderTarget(); renderReps();
+  /* Typing FX: the stats strip, sounds and sparks meet the new line. */
+  if (window.CBFX) window.CBFX.begin(typeCard, { line: b.line, key: CB_META.id + ":" + i });
   /* Loop 47 — the pick-up: from the hub, the world gets one
      beat (380ms) to lean in and lift the block before the
      console rises over it. The delayed swap is tokened and
@@ -439,6 +443,7 @@ typeInput.addEventListener("input", function () {
   if (current < 0) return;
   if (holdActive) { holdActive = false; clearTimeout(holdTimer); }
   var b = BLOCKS[current];
+  var prevOk = lastOkLen;
   /* Loop 54 — regression sweep find: renderTarget draws the
      line's spaces as U+00A0 so the letter spans hold their
      width, which means any text that arrives by paste,
@@ -465,6 +470,7 @@ typeInput.addEventListener("input", function () {
     setStatus("Not quite — watch the glowing letter and try again.", "bad");
     if (window.__musicEcho) window.__musicEcho("slip");
     renderTarget();
+    if (window.CBFX) window.CBFX.slip(typeCard, targetLine, bad, b.line[bad], v[bad]);
     clearTimeout(errTimer);
     /* Loop 46 — when the refusal clears, the line forgives:
        the next render answers with one gentle brighten. */
@@ -475,6 +481,7 @@ typeInput.addEventListener("input", function () {
   notePace();
   if (v === b.line) {
     renderTarget();
+    if (window.CBFX) window.CBFX.correct(typeCard, targetLine, b.line.length - prevOk, b.line.length);
     var wasDone = isDone(current);
     if (!wasDone) {
       state.reps[current] = repsOf(current) + 1;
@@ -510,9 +517,13 @@ typeInput.addEventListener("input", function () {
       if (window.__shimmerAt) window.__shimmerAt(current);
       else if (window.__burstAt) window.__burstAt(current, false);
     }
+    if (window.CBFX) window.CBFX.finish(typeCard, targetLine, { kind: nowDone && !wasDone ? "master" : "rep", line: b.line, track: CB_META.id, block: current, rep: repsOf(current) });
     /* Hold the all-blue line on screen briefly, but clear the input
-       right away so a fast typist's next rep is never swallowed. */
+       right away so a fast typist's next rep is never swallowed. The
+       letter count starts over with it, so the first letter of the
+       next rep pops (and plays) even inside the hold. */
     typeInput.value = "";
+    lastOkLen = 0;
     holdActive = true;
     /* Loop 46 — the reset line arrives as a fresh take. */
     holdTimer = setTimeout(function () { holdActive = false; freshTake = true; renderTarget(); }, 480);
@@ -520,6 +531,7 @@ typeInput.addEventListener("input", function () {
     if (drillStatus.classList.contains("bad")) setStatus("", "");
     if (window.__musicEcho) window.__musicEcho("key");
     renderTarget();
+    if (window.CBFX) window.CBFX.correct(typeCard, targetLine, lastOkLen - prevOk, v.length);
   }
 });
 /* Keep the hidden input focused while drilling on desktop too */

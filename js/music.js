@@ -935,6 +935,9 @@
     if (kind === "master") { flow = 1; answerNote(true); streak++; }
   }
   window.__musicEcho = musicEcho;
+  /* Typing FX asks before it plays a rep chord: while the music
+     is on, the engine answers reps itself and key clicks go softer. */
+  window.__musicIsOn = function () { return on; };
   btn.addEventListener("click", function () {
     on = !on;
     btn.classList.toggle("on", on);
