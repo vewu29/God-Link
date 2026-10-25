@@ -59,6 +59,8 @@ Run `npm run test:content` to reproduce these numbers.
 | Kotlin | 54/54 (kotlinc 2.1, warnings are errors) | 10,030/10,030 | 45/45 |
 | Lua | 54/54 (Lua 5.4) | 10,030/10,030 | 45/45 |
 | Bash | 54/54 (ShellCheck with every check on, then Bash 5) | 10,030/10,030 (`bash -n`, then ShellCheck) | 45/45 |
+| Haskell | 54/54 (GHC 9.4 `runghc -Wall`, every warning fails) | 10,030/10,030 (GHC's parser) | 45/45 |
+| R | 54/54 (`Rscript`, any error or warning output fails) | 10,030/10,030 (R's parser) | 45/45 |
 | Unity | 36/36 (engine stand-in) | 10,030/10,030 | 47/47 |
 | Unreal | 36/36 (engine stand-in) | 10,030/10,030 | 47/47 |
 
@@ -84,8 +86,8 @@ These are known and not yet done. They need the owner's decision, or more work t
 1. **Driving content needs a full fact review.** Only the two items above were checked against current Minnesota law. The whole Drive track should be reviewed against the current *Minnesota Driver's Manual* before it's promoted as test prep. One specific item: a secondary source reports that Laws 2026, ch. 41 amended § 169.444, subd. 1 (effective March 28, 2026) so that the duty to stop no longer depends on the stop arm being *fully extended*; the $500 minimum fine is unchanged. The revisor's site couldn't be reached from the build environment, so confirm this there. If it's confirmed, reword the School Bus block to say you stop for flashing red lights, whether or not the arm is all the way out.
 2. **Editorial review of the original C++ and C# text.** Their code is now compile- and parse-checked, but the explanations (including a 309-term C++ glossary) haven't had a line-by-line accuracy review.
 3. **Licensing.** No license has been chosen, so the code and content are currently all rights reserved. See [LICENSING.md](LICENSING.md).
-4. **Donations.** Not set up. This needs the owner's accounts (for example GitHub Sponsors, Open Collective or Ko-fi). No payment links exist on the site.
-5. **Hosting.** The site is ready for GitHub Pages or any static host (see the README), but it hasn't been published from this repository yet.
+4. **Donations.** Done: a Donate with PayPal button on every room goes to the creator's PayPal.
+5. **Hosting.** Done: the site runs on Wasmer Edge with its Python server and MySQL (see [DEPLOY.md](DEPLOY.md)); any static host still works without accounts.
 6. **Third-party CDNs.** three.js (r128, 2021) and pdf.js load from cdnjs, and the fonts from Google Fonts. The app works without them, but self-hosting them would remove the dependency and the font requests to Google.
-7. **Progress lives in one browser.** There is no sync between devices. That's by design for privacy, but worth stating on the site.
-8. **More tracks.** PHP, Ruby, Kotlin, Lua, Bash and HTML & CSS are in. Swift is next; it needs a Swift toolchain in the test setup before its content can be verified like the others.
+7. **Progress across devices.** Done where the server runs: free online accounts save progress and merge it on every device. Without an account, progress stays in one browser.
+8. **Leaderboard fairness.** XP is reported by the browser and capped (80 a line, 5,000 a day). Fine for a friendly board; not a basis for prizes.
