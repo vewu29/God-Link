@@ -116,3 +116,16 @@ test("track picker: choosing a track switches to it and keeps the old track's pr
   assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem("code-block-progress-v1")).reps[0]), 8);
   await ctx.close();
 });
+
+test("PC: every project can be chosen by name", async () => {
+  const { ctx, page } = await newPage(env);
+  await page.click("#menuPc");
+  const names = await page.evaluate(() => PROJECTS.map((p) => p.name));
+  const options = await page.$$eval("#pcPick option", (o) => o.map((x) => x.textContent));
+  assert.deepEqual(options, names.map((n, i) => `${i + 1}. ${n}`));
+  await page.selectOption("#pcPick", "2");
+  assert.equal(await page.textContent("#pcProjectName"), names[2]);
+  await page.click("#randomBtn");
+  assert.equal(await page.inputValue("#pcPick"), String(await page.evaluate(() => pcIndex)));
+  await ctx.close();
+});

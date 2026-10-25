@@ -1077,6 +1077,7 @@ function renderPc(resetScreen) {
      (Star Steps rows = 8 dealt the Star Pyramid at rows = 7)
      instead of the defaults its code and About describe. */
   var p = PROJECTS[pcIndex];
+  $("pcPick").value = String(pcIndex);
   $("pcFileName").textContent = p.file;
   $("pcProjectName").textContent = p.name;
   $("pcProjectAbout").textContent = p.about;
@@ -1231,6 +1232,18 @@ $("compileBtn").addEventListener("click", function () {
       }
     }, s.t));
   });
+});
+/* Every project by name, so a learner can return to one they liked
+   instead of waiting for Surprise me to deal it again. */
+PROJECTS.forEach(function (p, i) {
+  var o = document.createElement("option");
+  o.value = String(i); o.textContent = (i + 1) + ". " + p.name;
+  $("pcPick").appendChild(o);
+});
+$("pcPick").addEventListener("change", function () {
+  pcStop(true);
+  pcIndex = Number(this.value);
+  renderPc(true);
 });
 $("randomBtn").addEventListener("click", function () {
   pcStop(true);

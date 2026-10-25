@@ -532,6 +532,19 @@
         font-size: 15px; font-weight: 800; cursor: pointer;
       }
       .stop-btn:disabled { opacity: 0.35; cursor: default; }
+      /* Choosing a project by name; 16px text keeps iPhones from
+         zooming in when the list opens. */
+      .pc-pick { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+      .pc-pick label {
+        flex: none; font-size: 12px; font-weight: 800; letter-spacing: 0.12em;
+        text-transform: uppercase; color: var(--muted);
+      }
+      .pc-pick select {
+        flex: 1; min-width: 0; min-height: 44px; padding: 0 12px; border-radius: var(--r-row);
+        background: var(--surface-2); border: 1px solid var(--line); color: var(--ink);
+        font: inherit; font-size: 16px; font-weight: 700; cursor: pointer;
+      }
+      .pc-pick select:focus-visible { outline: 3px solid var(--accent-bright); outline-offset: 2px; }
       .random-btn {
         width: 100%; margin-top: 10px; min-height: 46px; border-radius: var(--r-row);
         background: var(--surface-2); border: 1px solid var(--line); color: var(--ink);
