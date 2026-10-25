@@ -1,0 +1,17 @@
+{
+  "name": "code-block",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Code Block — a free learning site: syntax drills, a plain-words library, practice programs and permit study.",
+  "scripts": {
+    "test": "node --test --test-concurrency=1 tests/*.test.js",
+    "test:content": "node tests/content/run-all.js",
+    "build:single": "node tools/build-single-file.js"
+  },
+  "devDependencies": {
+    "axe-core": "4.10.2",
+    "pdfjs-dist": "3.11.174",
+    "playwright": "1.63.0",
+    "three": "0.128.0"
+  }
+}
