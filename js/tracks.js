@@ -79,6 +79,10 @@
     blurb: "Ask databases questions: the language behind almost every app, website and spreadsheet of data.",
     keywords: "database databases query queries data sqlite postgres postgresql mysql analytics tables",
     file: "main.sql", run: "sqlite3 game.db < main.sql", comment: "--", vaultFile: "vault.sql", varPrefix: ":" });
+  addTrack({ id: "php", name: "PHP", badge: "PHP", group: "web", color: "#4f5b93", blocks: 30,
+    blurb: "The server language behind WordPress and much of the web: pages, forms, databases and more.",
+    keywords: "web server backend wordpress laravel websites forms mysql",
+    file: "main.php", run: "php main.php", comment: "//", vaultFile: "vault.php", varPrefix: "$" });
   addTrack({ id: "unity", name: "Unity", badge: "Unity", group: "engine", color: "#1f2937", blocks: 30,
     blurb: "Make 2D and 3D games with Unity and C#: scripts, physics, input, UI and more.",
     keywords: "game engine games 3d 2d c# csharp unity3d gamedev",

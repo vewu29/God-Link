@@ -579,3 +579,66 @@ module.exports.cpp.checkExamples = async (dir, examples) => {
   });
   return errs;
 };
+
+// ---------- PHP ----------
+// Programs and examples run with every error, warning, notice and
+// deprecation switched on, and any of them fails the check. Lines and
+// snippets are linted by PHP's own parser (php -l), trying each shape
+// a line can sit in until one parses.
+const PHP_RUN = ["-d", "error_reporting=-1", "-d", "display_errors=stderr", "-d", "log_errors=0", "main.php"];
+function phpRun(dir, code) {
+  fs.rmSync(dir, { recursive: true, force: true });
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, "main.php"), code.replace(/\n*$/, "\n"));
+  const r = sh("php", PHP_RUN, { cwd: dir, timeout: 10000 });
+  return r.status === 0 && !r.stderr ? { ok: true, stdout: r.stdout } : { ok: false, error: r.stderr || `exit ${r.status}` };
+}
+const PHP_SHAPES = [
+  (c) => (c.startsWith("<?php") ? c : `<?php\n${c}`),
+  (c) => `<?php\n${c}\n}`,
+  (c) => `<?php\nfunction __f() {\n${c}\n}`,
+  (c) => `<?php\nfunction __f() {\n${c}\n}\n}`,
+  (c) => `<?php\nclass __C {\n${c}\n}`,
+  (c) => `<?php\nclass __C {\n${c}\n}\n}`,
+  (c) => `<?php\nswitch ($x) {\n${c}\n}`,
+  (c) => `<?php\nif ($x) {\n${c}\n}`,
+  (c) => `<?php\ntry {\n}\n${c}`,
+  (c) => `<?php\nenum __E {\n${c}\n}`,
+  (c) => `<?php\n$x = match ($y) {\n${c}\n};`,
+];
+function phpLint(dir, items) {
+  let pending = items.map((_, i) => i);
+  const why = {};
+  PHP_SHAPES.forEach((shape, k) => {
+    if (!pending.length) return;
+    const d = path.join(dir, "lint" + k);
+    fs.rmSync(d, { recursive: true, force: true });
+    fs.mkdirSync(d, { recursive: true });
+    const failing = new Set();
+    for (let s = 0; s < pending.length; s += 400) {
+      const chunk = pending.slice(s, s + 400);
+      chunk.forEach((i) => fs.writeFileSync(path.join(d, i + ".php"), shape(items[i]) + "\n"));
+      const r = sh("php", ["-l", ...chunk.map((i) => i + ".php")], { cwd: d });
+      for (const m of (r.stdout + r.stderr).matchAll(/Parse error:\s*(.*?) in (\d+)\.php/g)) { failing.add(Number(m[2])); if (k === 0) why[m[2]] = m[1]; }
+      for (const m of (r.stdout + r.stderr).matchAll(/Errors parsing (\d+)\.php/g)) failing.add(Number(m[1]));
+    }
+    pending = pending.filter((i) => failing.has(i));
+  });
+  return pending.map((i) => ({ i, err: why[i] || "does not parse as PHP" }));
+}
+module.exports.php = {
+  needs: ["php"],
+  build: (dir, code) => phpRun(path.join(dir, "run"), code),
+  checkLines: (dir, lines) => phpLint(dir, lines),
+  checkExamples: (dir, examples) => {
+    const errs = [];
+    const snippets = [];
+    examples.forEach((ex, i) => {
+      if (ex.run === undefined) { snippets.push(i); return; }
+      const r = phpRun(path.join(dir, "ex" + i), ex.code);
+      if (!r.ok) errs.push({ i, err: r.error });
+    });
+    phpLint(dir, snippets.map((i) => examples[i].code)).forEach((e) => errs.push({ i: snippets[e.i], err: e.err }));
+    return errs;
+  },
+};
