@@ -782,3 +782,103 @@ module.exports.lua = {
     return errs;
   },
 };
+
+// ---------- Bash ----------
+// Programs and examples run with bash, and must pass ShellCheck with
+// every check on. Lines and snippets are parsed by bash -n in a few
+// shapes (alone, inside an if, closing a block it opens, in a case),
+// then ShellCheck reads each one inside a function. Only the checks
+// that need the rest of a program are off: SC2034 (set but unused
+// here), SC2154 (used but set elsewhere), SC2120/SC2119 (a $1 in the
+// wrapper function that nothing calls) and SC2317 (a function the
+// line defines is never called). Any message ShellCheck gives outside
+// an item, such as a parse error, fails the whole batch.
+const BASH_SHAPES = [
+  (c) => c,
+  (c) => "if true; then\n:\n" + c + "\n:\nfi",
+  (c) => c + "\n:\nfi",
+  (c) => c + "\n:\ndone",
+  (c) => c + "\n:\n}",
+  (c) => "case $__cb in\n" + c + "\nesac",
+  (c) => c + "\n*) :\n;;\nesac",
+];
+function bashCheck(code) {
+  return new Promise((resolve) => {
+    const p = require("child_process").spawn("bash", ["-n"], { stdio: ["pipe", "ignore", "pipe"] });
+    let err = "";
+    p.stderr.on("data", (d) => { err += d; });
+    p.on("close", (status) => resolve(status === 0 ? null : err.trim() || `exit ${status}`));
+    p.stdin.end(code + "\n");
+  });
+}
+async function bashParseErrors(dir, items) {
+  const uniq = [...new Set(items)];
+  const shaped = new Map();
+  const errs = new Map();
+  let next = 0;
+  async function worker() {
+    while (next < uniq.length) {
+      const code = uniq[next++];
+      let first = null;
+      for (const shape of BASH_SHAPES) {
+        const e = await bashCheck(shape(code));
+        if (!e) { shaped.set(code, shape(code)); first = null; break; }
+        first = first || e;
+      }
+      if (first) errs.set(code, first);
+    }
+  }
+  await Promise.all(Array.from({ length: 8 }, worker));
+  // ShellCheck reads each item that parsed as its own file, inside a
+  // function so local and return are allowed; one call checks many files.
+  const box = path.join(dir, `bash-items-${items.length}`);
+  fs.rmSync(box, { recursive: true, force: true });
+  fs.mkdirSync(box, { recursive: true });
+  const files = [];
+  for (const [code, s] of shaped) {
+    // A comment on its own (the shebang) has nothing for ShellCheck to read.
+    if (code.split("\n").every((l) => /^\s*(#.*)?$/.test(l))) continue;
+    const f = `i${files.length}.sh`;
+    fs.writeFileSync(path.join(box, f), "#!/usr/bin/env bash\n__cb() {\n:\n" + s + "\n}\n");
+    files.push({ f, code });
+  }
+  const byFile = new Map(files.map((x) => [x.f, x.code]));
+  for (let k = 0; k < files.length; k += 2000) {
+    const chunk = files.slice(k, k + 2000).map((x) => x.f);
+    const r = sh("shellcheck", ["-s", "bash", "-f", "gcc", "-e", "SC2034,SC2154,SC2120,SC2119,SC2317", ...chunk], { cwd: box, timeout: 300000, maxBuffer: 1 << 28 });
+    if (r.status !== 0 && r.status !== 1) return [{ i: 0, err: "shellcheck failed: " + r.stderr }];
+    for (const l of r.stdout.split("\n").filter(Boolean)) {
+      const m = l.match(/^(i\d+\.sh):\d+:\d+: (.*)$/);
+      if (!m || !byFile.has(m[1])) return [{ i: 0, err: "shellcheck said something unexpected: " + l }];
+      if (!errs.has(byFile.get(m[1]))) errs.set(byFile.get(m[1]), "shellcheck: " + m[2]);
+    }
+  }
+  const out = [];
+  items.forEach((c, i) => { if (errs.has(c)) out.push({ i, err: errs.get(c) }); });
+  return out;
+}
+function bashRun(dir, code) {
+  fs.rmSync(dir, { recursive: true, force: true });
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, "main.sh"), code.replace(/\n*$/, "\n"));
+  const lint = sh("shellcheck", ["-s", "bash", "-f", "gcc", "main.sh"], { cwd: dir });
+  if (lint.status !== 0) return { ok: false, error: "shellcheck: " + (lint.stdout || lint.stderr) };
+  const r = sh("bash", ["main.sh"], { cwd: dir, timeout: 10000, env: { PATH: process.env.PATH, HOME: dir, LC_ALL: "C" } });
+  return r.status === 0 && !r.stderr ? { ok: true, stdout: r.stdout } : { ok: false, error: r.stderr || `exit ${r.status}` };
+}
+module.exports.bash = {
+  needs: ["bash", "shellcheck"],
+  build: (dir, code) => bashRun(path.join(dir, "run"), code),
+  checkLines: (dir, lines) => bashParseErrors(dir, lines),
+  checkExamples: async (dir, examples) => {
+    const errs = [];
+    const snippets = [];
+    examples.forEach((ex, i) => {
+      if (ex.run === undefined) { snippets.push(i); return; }
+      const r = bashRun(path.join(dir, "ex" + i), ex.code);
+      if (!r.ok) errs.push({ i, err: r.error });
+    });
+    (await bashParseErrors(dir, snippets.map((i) => examples[i].code))).forEach((e) => errs.push({ i: snippets[e.i], err: e.err }));
+    return errs;
+  },
+};

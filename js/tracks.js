@@ -95,6 +95,10 @@
     blurb: "A small, fast scripting language behind LÖVE games, Roblox's Luau and Neovim.",
     keywords: "games scripting roblox luau love2d neovim embedded beginner",
     file: "main.lua", run: "lua main.lua", comment: "--", vaultFile: "vault.lua", varPrefix: "" });
+  addTrack({ id: "bash", name: "Bash", badge: "sh", group: "lang", color: "#357a24", blocks: 30,
+    blurb: "The command line's own language: automate files, servers and everyday chores.",
+    keywords: "shell terminal command line linux mac unix scripting automation devops servers sh zsh",
+    file: "main.sh", run: "bash main.sh", comment: "#", vaultFile: "vault.sh", varPrefix: "" });
   addTrack({ id: "unity", name: "Unity", badge: "Unity", group: "engine", color: "#1f2937", blocks: 30,
     blurb: "Make 2D and 3D games with Unity and C#: scripts, physics, input, UI and more.",
     keywords: "game engine games 3d 2d c# csharp unity3d gamedev",
