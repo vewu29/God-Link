@@ -83,6 +83,10 @@
     blurb: "The server language behind WordPress and much of the web: pages, forms, databases and more.",
     keywords: "web server backend wordpress laravel websites forms mysql",
     file: "main.php", run: "php main.php", comment: "//", vaultFile: "vault.php", varPrefix: "$" });
+  addTrack({ id: "ruby", name: "Ruby", badge: "Rb", group: "lang", color: "#a8231c", blocks: 30,
+    blurb: "A friendly language that reads like English, behind Ruby on Rails and countless startups.",
+    keywords: "rails web backend scripting beginner friendly startups shopify",
+    file: "main.rb", run: "ruby main.rb", comment: "#", vaultFile: "vault.rb", varPrefix: "" });
   addTrack({ id: "unity", name: "Unity", badge: "Unity", group: "engine", color: "#1f2937", blocks: 30,
     blurb: "Make 2D and 3D games with Unity and C#: scripts, physics, input, UI and more.",
     keywords: "game engine games 3d 2d c# csharp unity3d gamedev",
