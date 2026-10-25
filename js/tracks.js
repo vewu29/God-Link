@@ -66,6 +66,10 @@
     blurb: "Simple, fast and built for the cloud: servers, tools and code that does many things at once.",
     keywords: "golang backend cloud servers docker kubernetes concurrency web api",
     file: "main.go", run: "go run main.go", comment: "//", vaultFile: "vault.go", varPrefix: "" });
+  addTrack({ id: "rust", name: "Rust", badge: "Rust", group: "lang", color: "#a7400f", blocks: 30,
+    blurb: "Fast and famously safe: catch memory bugs before they happen, in tools, games and systems.",
+    keywords: "systems performance safe memory cargo crates webassembly wasm cli",
+    file: "main.rs", run: "cargo run", comment: "//", vaultFile: "vault.rs", varPrefix: "" });
   addTrack({ id: "unity", name: "Unity", badge: "Unity", group: "engine", color: "#1f2937", blocks: 30,
     blurb: "Make 2D and 3D games with Unity and C#: scripts, physics, input, UI and more.",
     keywords: "game engine games 3d 2d c# csharp unity3d gamedev",

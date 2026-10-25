@@ -431,3 +431,50 @@ module.exports.go = {
     return errs;
   },
 };
+
+// ---------- Rust ----------
+// Programs and examples must be rustfmt-formatted and build with clippy
+// treating every warning as an error (edition 2024), then run; testing
+// lessons are built with --test and their tests must pass. Lines and
+// snippets are parsed with syn (tests/content/rsparse).
+const RSPARSE = path.join(__dirname, "rsparse");
+let rsparseBin = null;
+function rustRun(dir, code, test) {
+  fs.rmSync(dir, { recursive: true, force: true });
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, "main.rs"), code.replace(/\n*$/, "\n"));
+  const fmt = sh("rustfmt", ["--edition", "2024", "--check", "main.rs"], { cwd: dir });
+  if (fmt.status !== 0) return { ok: false, error: "not rustfmt-formatted:\n" + fmt.stdout.split("\n").slice(0, 14).join("\n") };
+  const c = sh("clippy-driver", ["--edition", "2024", "-D", "warnings", "-C", "debuginfo=0", ...(test ? ["--test"] : []), "main.rs", "-o", "app"], { cwd: dir });
+  if (c.status !== 0) return { ok: false, error: c.stderr };
+  const r = sh("./app", [], { cwd: dir, timeout: 10000 });
+  return r.status === 0 ? { ok: true, stdout: r.stdout } : { ok: false, error: `exit ${r.status}: ${r.stderr}${r.stdout}` };
+}
+function rustParseErrors(dir, items) {
+  if (!rsparseBin) {
+    const b = sh("cargo", ["build", "--release", "-q", "--target-dir", path.join(dir, "rsparse-target")], { cwd: RSPARSE, timeout: 600000 });
+    if (b.status !== 0) throw new Error("rsparse build failed: " + b.stderr);
+    rsparseBin = path.join(dir, "rsparse-target", "release", "rsparse");
+  }
+  const file = path.join(dir, "items.txt");
+  fs.writeFileSync(file, items.join("\0"));
+  const r = sh(rsparseBin, [file]);
+  if (r.status !== 0) return [{ i: 0, err: r.stderr }];
+  return r.stdout.split("\n").filter(Boolean).map((l) => { const t = l.indexOf("\t"); return { i: Number(l.slice(0, t)), err: l.slice(t + 1) }; });
+}
+module.exports.rust = {
+  needs: ["rustc", "rustfmt", "clippy-driver", "cargo"],
+  build: (dir, code) => rustRun(path.join(dir, "run"), code),
+  checkLines: (dir, lines) => rustParseErrors(dir, lines),
+  checkExamples: (dir, examples) => {
+    const errs = [];
+    const snippets = [];
+    examples.forEach((ex, i) => {
+      if (ex.run === undefined) { snippets.push(i); return; }
+      const r = rustRun(path.join(dir, "ex" + i), ex.code, ex.test);
+      if (!r.ok) errs.push({ i, err: r.error });
+    });
+    rustParseErrors(dir, snippets.map((i) => examples[i].code)).forEach((e) => errs.push({ i: snippets[e.i], err: e.err }));
+    return errs;
+  },
+};
