@@ -13,6 +13,7 @@
   "devDependencies": {
     "acorn": "8.12.1",
     "axe-core": "4.10.2",
+    "babylonjs": "9.30.0",
     "pdfjs-dist": "3.11.174",
     "playwright": "1.63.0",
     "three": "0.128.0",
