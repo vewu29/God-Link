@@ -1,9 +1,9 @@
 // Shared Playwright helpers for the Code Block test suite.
 //
 // Serves the repository over a throwaway local HTTP server, routes the
-// cdnjs scripts (three.js, pdf.js) to the identical npm copies in
-// node_modules so tests run offline, and blocks web fonts so layout
-// measurements do not depend on the network.
+// CDN scripts (three.js and pdf.js from cdnjs, Babylon.js from jsDelivr)
+// to the identical npm copies in node_modules so tests run offline, and
+// blocks web fonts so layout measurements do not depend on the network.
 "use strict";
 const http = require("http");
 const fs = require("fs");
@@ -18,6 +18,7 @@ const CDN_MAP = {
   "pdf.js/3.11.174/pdf.min.js": path.join(NM, "pdfjs-dist/build/pdf.min.js"),
   "pdf.js/3.11.174/pdf.worker.min.js": path.join(NM, "pdfjs-dist/build/pdf.worker.min.js"),
 };
+const BABYLON = path.join(NM, "babylonjs/babylon.js");
 const TYPES = { ".html": "text/html; charset=utf-8", ".js": "application/javascript", ".css": "text/css", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".pdf": "application/pdf" };
 
 function serve() {
@@ -45,6 +46,7 @@ async function newPage(env, opts = {}) {
   const {
     viewport = { width: 390, height: 844 }, mobile = true, track = "cpp", bootSeen = true,
     storage = {}, cdn = true, reducedMotion = "reduce", colorScheme = "light", world = false, setup = null,
+    path: url = null,
   } = opts;
   const ctx = await env.browser.newContext({ viewport, isMobile: mobile, hasTouch: mobile, deviceScaleFactor: mobile ? 2 : 1, reducedMotion, colorScheme });
   const log = { console: [], pageErrors: [] };
@@ -56,6 +58,10 @@ async function newPage(env, opts = {}) {
     // false); the smoke test builds the real world for every track.
     if (!cdn || !key || !fs.existsSync(CDN_MAP[key]) || (!world && key.startsWith("three"))) return route.abort();
     route.fulfill({ status: 200, contentType: "application/javascript", body: fs.readFileSync(CDN_MAP[key]) });
+  });
+  await ctx.route("https://cdn.jsdelivr.net/npm/babylonjs@*/babylon.js", (route) => {
+    if (!cdn || !fs.existsSync(BABYLON)) return route.abort();
+    route.fulfill({ status: 200, contentType: "application/javascript", body: fs.readFileSync(BABYLON) });
   });
   await ctx.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
   const init = { ...storage };
@@ -74,7 +80,8 @@ async function newPage(env, opts = {}) {
   const page = await ctx.newPage();
   page.on("console", (m) => { if (m.type() === "error") log.console.push(m.text()); });
   page.on("pageerror", (e) => log.pageErrors.push(String((e && e.stack) || e)));
-  await page.goto(env.base, { waitUntil: "load" });
+  // path: "studio.html" opens another page of the site instead of the app.
+  await page.goto(url ? new URL(url, env.base).href : env.base, { waitUntil: "load" });
   await page.waitForTimeout(300);
   return { ctx, page, log };
 }

@@ -481,6 +481,7 @@
     for (var k in DEFAULT_WORLD) world[k] = w[k] !== undefined && typeof w[k] === typeof DEFAULT_WORLD[k] ? w[k] : DEFAULT_WORLD[k];
     if (!isColor(world.sky)) world.sky = DEFAULT_WORLD.sky;
     if (CAMERA_MODES.indexOf(world.camera) < 0) world.camera = "follow";
+    world.light = Math.max(0.2, Math.min(2, isFinite(world.light) ? world.light : 1));
     var vars = [], vnames = {};
     (Array.isArray(p.variables) ? p.variables : []).forEach(function (v) {
       if (!v || typeof v.name !== "string" || !/^[A-Za-z_][A-Za-z0-9_ ]{0,30}$/.test(v.name) || vnames[v.name]) return;
@@ -912,10 +913,102 @@
     return this;
   };
 
+  /* ---------- tidy layout ----------
+     Lays a graph out left to right along its wires, the way Blueprints
+     read: each node sits one column right of everything that feeds it,
+     a value node sits just left of the first node that uses it, and
+     nodes line up with what feeds them. Unconnected groups stack
+     downwards in the order they were. size(node) gives {w, h} in graph
+     pixels (the editor measures the drawn nodes). Moves nodes in place. */
+  function tidy(g, size, opts) {
+    opts = opts || {};
+    var GX = opts.gapX || 70, GY = opts.gapY || 26, GROUP = opts.gapGroup || 60, LEFT = opts.left || 40, TOP = opts.top || 40;
+    var byId = {}, ins = {}, outs = {}, dim = {};
+    g.nodes.forEach(function (n) { byId[n.id] = n; ins[n.id] = []; outs[n.id] = []; var d = size(n) || {}; dim[n.id] = { w: d.w || 170, h: d.h || 60 }; });
+    g.links.forEach(function (l) {
+      if (!byId[l.from.node] || !byId[l.to.node] || l.from.node === l.to.node) return;
+      ins[l.to.node].push(l.from.node); outs[l.from.node].push(l.to.node);
+    });
+    // a depth-first order that ignores wires looping back, then the
+    // longest path from the left gives each node its column
+    var order = [], state = {};
+    function visit(root) {
+      // iterative, so a very long imported graph can't overflow the stack
+      var stack = [[root, 0]];
+      state[root] = 1;
+      while (stack.length) {
+        var top = stack[stack.length - 1], kids = outs[top[0]];
+        if (top[1] < kids.length) {
+          var o = kids[top[1]++];
+          if (!state[o]) { state[o] = 1; stack.push([o, 0]); }
+        } else { stack.pop(); state[top[0]] = 2; order.push(top[0]); }
+      }
+    }
+    var start = g.nodes.slice().sort(function (a, b) { return a.y - b.y || a.x - b.x; });
+    start.forEach(function (n) { if (!ins[n.id].length && !state[n.id]) visit(n.id); });
+    start.forEach(function (n) { if (!state[n.id]) visit(n.id); });
+    order.reverse();
+    var pos = {}, rank = {};
+    order.forEach(function (id, i) { pos[id] = i; });
+    function fwd(a, b) { return pos[a] < pos[b]; }
+    order.forEach(function (id) {
+      rank[id] = 0;
+      ins[id].forEach(function (p) { if (fwd(p, id)) rank[id] = Math.max(rank[id], rank[p] + 1); });
+    });
+    for (var i = order.length - 1; i >= 0; i--) {
+      var id = order[i], n = byId[id];
+      if (!NODES[n.type] || NODES[n.type].kind !== "pure") continue;
+      var next = outs[id].filter(function (o) { return fwd(id, o); }).map(function (o) { return rank[o] - 1; });
+      if (next.length) rank[id] = Math.max(rank[id], Math.min.apply(null, next));
+    }
+    // groups of nodes joined by wires
+    var group = {};
+    function mark(root, k) {
+      var stack = [root];
+      group[root] = k;
+      while (stack.length) {
+        var id = stack.pop();
+        ins[id].concat(outs[id]).forEach(function (o) { if (group[o] === undefined) { group[o] = k; stack.push(o); } });
+      }
+    }
+    var groups = [];
+    start.forEach(function (n) { if (group[n.id] === undefined) { mark(n.id, groups.length); groups.push([]); } groups[group[n.id]].push(n); });
+    var top = TOP;
+    groups.forEach(function (members) {
+      var cols = [];
+      members.forEach(function (n) { (cols[rank[n.id]] = cols[rank[n.id]] || []).push(n); });
+      var x = LEFT, bottom = top;
+      cols.forEach(function (col) {
+        if (!col) return;
+        var w = 0;
+        col.forEach(function (n) {
+          var feeds = ins[n.id].filter(function (p) { return rank[p] < rank[n.id] && group[p] === group[n.id]; });
+          n._want = feeds.length ? feeds.reduce(function (s, p) { return s + byId[p].y; }, 0) / feeds.length : NaN;
+          w = Math.max(w, dim[n.id].w);
+        });
+        col.sort(function (a, b) {
+          var ka = isNaN(a._want) ? Infinity : a._want, kb = isNaN(b._want) ? Infinity : b._want;
+          return ka - kb || a.y - b.y || a.x - b.x;
+        });
+        var y = top;
+        col.forEach(function (n) {
+          var want = isNaN(n._want) ? y : Math.max(y, n._want);
+          n.x = Math.round(x); n.y = Math.round(want);
+          y = want + dim[n.id].h + GY;
+          bottom = Math.max(bottom, y - GY);
+          delete n._want;
+        });
+        x += w + GX;
+      });
+      top = bottom + GROUP;
+    });
+    return g;
+  }
+
   return {
     VERSION: VERSION, TYPES: TYPES, NODES: NODES, CATEGORIES: CATEGORIES, SHAPES: SHAPES, BODIES: BODIES, VAR_TYPES: VAR_TYPES, KEYS: KEYS,
     SOUNDS: SOUNDS, PARTICLES: PARTICLES, CAMERA_MODES: CAMERA_MODES, DEFAULT_WORLD: DEFAULT_WORLD,
     Game: Game, Builder: Builder, cleanProject: cleanProject, cleanGraph: cleanGraph, canLink: canLink, compatible: compatible,
-    pinOf: pinOf, pinType: pinType, toText: toText, coerce: coerce, V: V, half: half
+    pinOf: pinOf, pinType: pinType, toText: toText, coerce: coerce, V: V, half: half, tidy: tidy
   };
 });

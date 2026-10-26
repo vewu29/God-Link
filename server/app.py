@@ -110,6 +110,13 @@ async def index():
     return page()
 
 
+# Code Block Studio, the no-code game engine: a page of its own that keeps
+# its games on the visitor's device, so it needs no API line.
+@app.api_route("/studio.html", methods=["GET", "HEAD"])
+async def studio():
+    return HTMLResponse((ROOT / "studio.html").read_text(encoding="utf-8"), headers={"Cache-Control": "no-cache"})
+
+
 # Only the folders the page loads are served — never the server's own code,
 # the tests or the repository's other files.
 for folder in ("css", "js", "tracks"):

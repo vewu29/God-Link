@@ -11,7 +11,7 @@ The page decides by itself: the servers add a `<meta name="cb-api">` line when t
 
 The app on Wasmer is connected to this GitHub repository and uses the **Python** preset with a **MySQL** database.
 
-1. **What runs.** Wasmer installs `requirements.txt` (FastAPI, Uvicorn and PyMySQL, all without compiled parts except FastAPI's own) and runs `main:app`. That one app serves the page, its `css/`, `js/` and `tracks/` folders, and the API at `/api/index.php`. Nothing else in the repository is served.
+1. **What runs.** Wasmer installs `requirements.txt` (FastAPI, Uvicorn and PyMySQL, all without compiled parts except FastAPI's own) and runs `main:app`. That one app serves the page, the Studio page (`/studio.html`), the `css/`, `js/` and `tracks/` folders, and the API at `/api/index.php`. Nothing else in the repository is served.
 2. **The database.** The MySQL database enabled for the app gives it its settings as environment variables: `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USERNAME` and `DB_PASSWORD`. The server reads only those. **No password goes in the code or the repository.** The tables are made on the first request (`db/schema.sql`); there is nothing to run by hand.
 3. **Deploy.** Push to the branch the app is connected to (or use Wasmer's redeploy button).
 4. **Check it.** Open `https://<your-app>/api/index.php?r=health`. It should say:
@@ -42,6 +42,10 @@ The same API is written in PHP (`api/`), rule for rule, against the same tables,
 - `index.php` serves the page (with the API line); `api/index.php` is the API; `api/_lib/` holds its rules and refuses direct requests (`api/_lib/.htaccess` adds a second lock on Apache).
 - Give it the same `DB_*` environment variables.
 - Check `https://<your-site>/api/index.php?r=health`, which says `"server":"php"`.
+
+## Code Block Studio
+
+`studio.html` (the no-code game engine) is a plain page: it keeps its games on the visitor's device and never calls the API, so it works the same on a static host. It loads Babylon.js 9.30.0 from jsDelivr (`cdn.jsdelivr.net/npm/babylonjs@9.30.0/babylon.js`); a host that wants to serve its own copy can set `window.CB_BABYLON_URL` before `js/studio-view.js` loads. Without WebGL or that script, the editor and its Blueprints still work and the 3D view explains what's missing.
 
 ## Settings
 

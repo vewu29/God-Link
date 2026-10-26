@@ -28,6 +28,10 @@ html = html.replace(/<script src="([^"]+)"><\/script>/g, (m, src) => {
   return "<script>window.__cbBundled = true;</script>\n    " + inline(src) + "\n    " + tracks.map((f) => inline("tracks/" + f)).join("\n    ");
 });
 
+// Studio is a page of its own (studio.html) that a lone file can't link
+// to, so the single file leaves out the card that opens it.
+html = html.replace(/\s*<!-- Code Block Studio:[\s\S]*?<\/a>\n/, "\n");
+
 fs.mkdirSync(path.dirname(out), { recursive: true });
 fs.writeFileSync(out, html);
 console.log(`wrote ${path.relative(ROOT, out)} (${(fs.statSync(out).size / 1024).toFixed(0)} KB)`);

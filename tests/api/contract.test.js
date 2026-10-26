@@ -543,6 +543,11 @@ for (const server of SERVERS) {
       assert.match(page.headers.get("content-type"), /text\/html/);
       assert.match(await page.text(), /<head>\s*<meta name="cb-api" content="api\/index.php">/, "the page says the API is here");
       assert.equal((await fetch(base + "/api/_lib/core.php")).status, 404);
+      const studio = await fetch(base + "/studio.html");
+      assert.equal(studio.status, 200, "the Studio page is served");
+      assert.match(studio.headers.get("content-type"), /text\/html/);
+      assert.match(await studio.text(), /<title>[^<]*Studio/);
+      assert.equal((await fetch(base + "/studio.html", { method: "HEAD" })).status, 200);
       if (server.name === "python") {
         for (const p of ["/server/core.py", "/main.py", "/db/schema.sql", "/requirements.txt", "/tests/api/contract.test.js", "/.git/config"]) {
           assert.equal((await fetch(base + p)).status, 404, p);

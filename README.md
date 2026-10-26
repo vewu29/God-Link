@@ -32,6 +32,19 @@ Across every room:
 - **Eleven colour themes**, from Sky (which follows the device's light or dark setting) to Forest, Ocean, Sunset, Galaxy, Terminal, Paper and High Contrast. Every theme is contrast-checked when it's built and scanned for accessibility in every room.
 - **Online accounts** (where the server runs): sign up with a username and password, no email. A one-time recovery code stands in for "forgot password". Your blocks, Vault drills, XP, streak and trophies are saved to the account and merged on every device you log in on. A leaderboard (this week and all time) and a live count of lines typed today make it a shared place to practise.
 
+## Make games: Code Block Studio
+
+**Studio** (`studio.html`, linked from the home page) is a 3D game engine you use without writing code. It runs on [Babylon.js](https://www.babylonjs.com/) and is scripted the way Unreal Engine's Blueprints are: you place nodes and wire them together.
+
+- **The level**: add actors (box, sphere, cylinder, cone, capsule, ring or sign), then move, turn and scale them with the gizmos or type exact numbers. Each actor has a colour, tags, and physics: *none*, *solid* (walls and floors) or *dynamic* (falls, collides, can be pushed). The World sets the sky, gravity, brightness, fog and the camera (follow, top-down, side-on or fixed).
+- **Blueprints**: every actor has its own graph, and the Level has one for the whole game. White wires carry the order things happen in; coloured wires carry values (true/false, numbers, text, vectors, actors, colours). Drag from a pin to a pin, or tap one pin and then another on a phone. Dropping a wire on empty space opens the node menu showing only nodes that fit, as in Unreal. **Tidy up** lines a graph up along its wires.
+- **140 nodes in 14 groups**: events (BeginPlay, Tick, key presses, clicks, overlaps, hits, custom events); flow control (Branch, Sequence, loops, Do Once, Do N, Gate, Flip Flop, Delay, timers, Switch, broadcasts); variables, plus values saved on the device; maths, logic, text and vectors; actors (find, move, turn, spawn, destroy, tag, recolour); physics (velocity, impulses, jumping, gravity, line traces); input; camera (mode, distance, shake); HUD (on-screen text, messages, progress bars); sounds, notes, particle effects and sky colour; and the game itself (time, pause, restart, quit).
+- **Play** runs the game full screen, with the keyboard or an on-screen pad on phones. Escape or Stop goes back to the editor, and the level is never changed by playing it.
+- **Four starter games**, each made only of nodes, to play and then read: an Empty level, Coin Run, Dodge the Rocks and Target Practice.
+- Games save on the device (with undo and redo), and the Games menu exports and imports them as `.codeblock.json` files.
+
+The engine itself (`js/studio-core.js`) runs without a browser, so its tests play every starter game with simulated keys and clicks.
+
 ## How the content is checked
 
 The PC does not compile anything in your browser. Each practice program's output is worked out in JavaScript, and **the test suite proves that output is right** by running every program with the real toolchain and comparing the two, character for character. It checks the default, minimum and maximum settings, and as many extra random settings as you like.
@@ -104,6 +117,8 @@ DB_NAME=cb_test npm run test:api   # both servers against a MySQL test database 
 
 The browser suite covers mastery after 8 reps, wrong-letter handling, saving, every drill line in every track, PC output, the Library, the driving test, profiles and the Vault, My Book, the offline fallback, phone layouts at 320 and 390 px, the track picker, every Vault placeholder being filled (no pack falls back to filler lines), the typing effects, every theme, the account screens (against a stand-in API), and an axe-core accessibility scan in light and dark mode and in every theme.
 
+The Studio suite builds Blueprints in a real browser (the node menu, wiring by dragging and by tapping, undo and redo, Tidy up), plays Coin Run on a desktop and a phone, saves, reloads and imports games, and scans the editor for accessibility. The engine's own suite checks every node's definition, flow control, the maths, physics and collisions, and plays all four starter games.
+
 The API suite runs one set of tests against the Python and the PHP server alike: sign-up rules, sessions, recovery, rate limits, the request checks, progress, XP caps, streaks, the leaderboard, an account made on one server used on the other, and the page itself signing up in a real browser.
 
 ## How it's organized
@@ -121,6 +136,12 @@ js/profiles-vault.js  profiles, the Vault and its generator
 js/typing-fx.js       sounds, sparks, combos, XP, streaks and trophies
 js/theme.js           the theme picker
 js/account.js         online accounts, sync, the leaderboard and live count
+studio.html           Code Block Studio, the no-code game engine
+css/studio.css        its styles
+js/studio-core.js     the engine: 140 Blueprint nodes, the interpreter and the game world (runs in Node too)
+js/studio-samples.js  the four starter games, made of nodes
+js/studio-view.js     the Babylon.js 3D view: meshes, gizmos, shadows, particles and sounds
+js/studio.js          the editor: outliner, details, the Blueprint graph, the node menu, Play
 js/…                  book reader, ceremony, keyboard and focus helpers
 tracks/<id>.js        one file per track: all of its content
 main.py, server/      the Python server (FastAPI): the page and the API

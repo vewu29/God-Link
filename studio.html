@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Code Block Studio — make 3D games without code</title>
+    <meta name="description" content="Make 3D games in your browser with Blueprint-style visual scripting: place actors, wire up events and actions, and press Play. Free, no coding." />
+    <meta name="theme-color" content="#14161b" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231e3a8a'/%3E%3Cg fill='none' stroke='%23fff' stroke-width='4' stroke-linecap='round'%3E%3Ccircle cx='18' cy='22' r='6'/%3E%3Ccircle cx='46' cy='42' r='6'/%3E%3Cpath d='M24 22c14 0 8 20 16 20'/%3E%3C/g%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="css/studio.css" />
+  </head>
+  <body>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+      <symbol id="s-back" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></symbol>
+      <symbol id="s-play" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M7 4.5v15l13-7.5z"/></symbol>
+      <symbol id="s-stop" viewBox="0 0 24 24"><rect fill="currentColor" stroke="none" x="6" y="6" width="12" height="12" rx="2"/></symbol>
+      <symbol id="s-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="s-undo" viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></symbol>
+      <symbol id="s-redo" viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></symbol>
+      <symbol id="s-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></symbol>
+      <symbol id="s-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></symbol>
+      <symbol id="s-move" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/></symbol>
+      <symbol id="s-rotate" viewBox="0 0 24 24"><path d="M20.5 12a8.5 8.5 0 1 1-2.5-6.1"/><path d="M21 3.5V8h-4.5"/></symbol>
+      <symbol id="s-scale" viewBox="0 0 24 24"><rect x="4" y="10" width="10" height="10" rx="1"/><path d="M13 4h7v7M20 4l-8 8"/></symbol>
+      <symbol id="s-fit" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+      <symbol id="s-tidy" viewBox="0 0 24 24"><rect x="3" y="4" width="6" height="5" rx="1"/><rect x="15" y="4" width="6" height="5" rx="1"/><rect x="15" y="15" width="6" height="5" rx="1"/><path d="M9 6.5h6M12 6.5v11h3"/></symbol>
+      <symbol id="s-zoom-in" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/></symbol>
+      <symbol id="s-zoom-out" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M8 11h6"/></symbol>
+      <symbol id="s-save" viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/></symbol>
+      <symbol id="s-folder" viewBox="0 0 24 24"><path d="M3 7.5A2.5 2.5 0 0 1 5.5 5h4l2 2.5h7A2.5 2.5 0 0 1 21 10v7.5a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z"/></symbol>
+      <symbol id="s-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.4 9.2A2.7 2.7 0 1 1 12 12.6v1.2M12 17h.01"/></symbol>
+      <symbol id="s-x" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol>
+      <symbol id="s-cube" viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/></symbol>
+      <symbol id="s-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></symbol>
+      <symbol id="s-graph" viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="6" rx="1.5"/><rect x="14" y="14" width="7" height="6" rx="1.5"/><path d="M10 7c5 0 0 10 4 10"/></symbol>
+      <symbol id="s-sliders" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></symbol>
+      <symbol id="s-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></symbol>
+      <symbol id="s-upload" viewBox="0 0 24 24"><path d="M12 20V9M7 14l5-5 5 5M5 4h14"/></symbol>
+    </defs></svg>
+
+    <header class="st-top">
+      <a class="st-back" href="./" aria-label="Back to Code Block"><svg class="si"><use href="#s-back"/></svg><span>Code Block</span></a>
+      <span class="st-brand" aria-hidden="true">Studio</span>
+      <label class="st-name"><span class="sr-only">Game name</span><input id="stName" type="text" maxlength="60" spellcheck="false" /></label>
+      <div class="st-tools" role="toolbar" aria-label="Game">
+        <button type="button" class="st-btn" id="stUndo" aria-label="Undo" title="Undo (Ctrl+Z)"><svg class="si"><use href="#s-undo"/></svg></button>
+        <button type="button" class="st-btn" id="stRedo" aria-label="Redo" title="Redo (Ctrl+Y)"><svg class="si"><use href="#s-redo"/></svg></button>
+        <button type="button" class="st-btn st-wide" id="stGames" aria-haspopup="dialog"><svg class="si"><use href="#s-folder"/></svg><span>Games</span></button>
+        <button type="button" class="st-btn st-wide" id="stHelp" aria-haspopup="dialog"><svg class="si"><use href="#s-help"/></svg><span>How it works</span></button>
+        <button type="button" class="st-play" id="stPlay"><svg class="si"><use href="#s-play"/></svg><span>Play</span></button>
+      </div>
+    </header>
+
+    <nav class="st-tabs" aria-label="Studio panels">
+      <button type="button" data-tab="scene" aria-pressed="true"><svg class="si"><use href="#s-cube"/></svg>Scene</button>
+      <button type="button" data-tab="graph" aria-pressed="false"><svg class="si"><use href="#s-graph"/></svg>Blueprint</button>
+      <button type="button" data-tab="details" aria-pressed="false"><svg class="si"><use href="#s-sliders"/></svg>Details</button>
+    </nav>
+
+    <main class="st-main" id="stMain" data-tab="scene">
+      <aside class="st-panel st-outliner" aria-labelledby="stOutTitle">
+        <div class="st-panel-head"><h2 id="stOutTitle">Outliner</h2>
+          <button type="button" class="st-mini" id="stAddActor" aria-haspopup="menu"><svg class="si"><use href="#s-plus"/></svg>Add actor</button></div>
+        <ul class="st-list" id="stActors" role="listbox" aria-label="Actors in the level"></ul>
+        <div class="st-panel-head"><h2 id="stVarTitle">Variables</h2>
+          <button type="button" class="st-mini" id="stAddVar"><svg class="si"><use href="#s-plus"/></svg>Variable</button></div>
+        <ul class="st-vars" id="stVars" aria-labelledby="stVarTitle"></ul>
+      </aside>
+
+      <section class="st-center">
+        <div class="st-view" id="stView" aria-label="Level view">
+          <canvas id="stCanvas" tabindex="0" aria-label="3D view of the level. Tap an actor to select it."></canvas>
+          <div class="st-view-tools" role="toolbar" aria-label="Transform">
+            <button type="button" class="st-tool" data-gizmo="move" aria-pressed="true" title="Move (W)"><svg class="si"><use href="#s-move"/></svg><span class="sr-only">Move</span></button>
+            <button type="button" class="st-tool" data-gizmo="rotate" aria-pressed="false" title="Rotate (E)"><svg class="si"><use href="#s-rotate"/></svg><span class="sr-only">Rotate</span></button>
+            <button type="button" class="st-tool" data-gizmo="scale" aria-pressed="false" title="Scale (R)"><svg class="si"><use href="#s-scale"/></svg><span class="sr-only">Scale</span></button>
+            <button type="button" class="st-tool" id="stFocus" title="Frame the selection (F)"><svg class="si"><use href="#s-fit"/></svg><span class="sr-only">Frame selection</span></button>
+          </div>
+          <p class="st-view-note hidden" id="stViewNote"></p>
+        </div>
+        <div class="st-graph-wrap">
+          <div class="st-graph-head">
+            <h2 class="st-graph-title" id="stGraphTitle">Blueprint</h2>
+            <div class="st-graph-tools" role="toolbar" aria-label="Blueprint">
+              <button type="button" class="st-mini st-accent" id="stAddNode" aria-haspopup="dialog"><svg class="si"><use href="#s-plus"/></svg>Add node</button>
+              <button type="button" class="st-icon" id="stDup" aria-label="Duplicate the selected node" title="Duplicate (Ctrl+D)"><svg class="si"><use href="#s-copy"/></svg></button>
+              <button type="button" class="st-icon" id="stDel" aria-label="Delete the selection" title="Delete (Del)"><svg class="si"><use href="#s-trash"/></svg></button>
+              <button type="button" class="st-icon" id="stTidy" aria-label="Tidy up: line the nodes up along their wires" title="Tidy up"><svg class="si"><use href="#s-tidy"/></svg></button>
+              <button type="button" class="st-icon" id="stZoomOut" aria-label="Zoom out"><svg class="si"><use href="#s-zoom-out"/></svg></button>
+              <button type="button" class="st-icon" id="stZoomIn" aria-label="Zoom in"><svg class="si"><use href="#s-zoom-in"/></svg></button>
+              <button type="button" class="st-icon" id="stFit" aria-label="Show the whole Blueprint"><svg class="si"><use href="#s-fit"/></svg></button>
+            </div>
+          </div>
+          <div class="bp" id="bp" tabindex="0" aria-label="Blueprint graph. Drag the background to pan, pinch or scroll to zoom. Tap a pin, then another, to wire them.">
+            <div class="bp-world" id="bpWorld"><svg class="bp-wires" id="bpWires" aria-hidden="true"></svg></div>
+            <p class="bp-empty hidden" id="bpEmpty"></p>
+          </div>
+        </div>
+      </section>
+
+      <aside class="st-panel st-details" aria-labelledby="stDetTitle">
+        <div class="st-panel-head"><h2 id="stDetTitle">Details</h2></div>
+        <div id="stDetails"></div>
+      </aside>
+    </main>
+
+    <!-- Play mode: the game fills the screen. -->
+    <div class="st-game hidden" id="stGame" role="dialog" aria-modal="true" aria-label="Playing your game">
+      <div class="st-hud" id="stHud" aria-live="polite"></div>
+      <div class="st-msg hidden" id="stMsg" aria-live="assertive"></div>
+      <div class="st-prints" id="stPrints" aria-live="polite"></div>
+      <button type="button" class="st-stop" id="stStop"><svg class="si"><use href="#s-stop"/></svg><span>Stop</span></button>
+      <div class="st-pad" id="stPad" aria-hidden="true">
+        <div class="st-dpad">
+          <button type="button" data-key="Up" class="up">▲</button><button type="button" data-key="Left" class="left">◀</button>
+          <button type="button" data-key="Right" class="right">▶</button><button type="button" data-key="Down" class="down">▼</button>
+        </div>
+        <div class="st-acts"><button type="button" data-key="E" class="act2">E</button><button type="button" data-key="Space" class="act1">Jump</button></div>
+      </div>
+    </div>
+
+    <div class="st-sheet hidden" id="stSheet" role="dialog" aria-modal="true" aria-labelledby="stSheetTitle">
+      <div class="st-sheet-card">
+        <div class="st-sheet-head"><h2 id="stSheetTitle"></h2><button type="button" class="st-icon" id="stSheetClose" aria-label="Close"><svg class="si"><use href="#s-x"/></svg></button></div>
+        <div class="st-sheet-body" id="stSheetBody"></div>
+      </div>
+    </div>
+
+    <div class="st-palette hidden" id="stPalette" role="dialog" aria-modal="true" aria-label="Add a node">
+      <div class="st-pal-head"><input id="stPalSearch" type="search" placeholder="Search nodes… (try: jump, timer, score)" autocomplete="off" spellcheck="false" aria-label="Search nodes" />
+        <button type="button" class="st-icon" id="stPalClose" aria-label="Close"><svg class="si"><use href="#s-x"/></svg></button></div>
+      <p class="st-pal-hint" id="stPalHint"></p>
+      <div class="st-pal-list" id="stPalList" role="listbox" aria-label="Nodes"></div>
+    </div>
+
+    <div class="st-menu hidden" id="stActorMenu" role="menu" aria-label="Add an actor"></div>
+    <p class="sr-only" id="stSay" aria-live="polite"></p>
+    <input type="file" id="stFile" accept=".json,application/json" class="sr-only" tabindex="-1" aria-hidden="true" />
+
+    <script src="js/studio-core.js"></script>
+    <script src="js/studio-samples.js"></script>
+    <script src="js/studio-view.js"></script>
+    <script src="js/studio.js"></script>
+  </body>
+</html>

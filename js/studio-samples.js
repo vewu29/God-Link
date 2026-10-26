@@ -19,8 +19,8 @@
   /* Tick → move with the arrow keys / WASD, at `speed` units a second. */
   function walk(b, speed, x, y) {
     var tick = b.node("Tick", x, y);
-    var h = b.node("GetAxis", x, y + 140, { axis: "Horizontal" });
-    var v = b.node("GetAxis", x, y + 220, { axis: "Vertical" });
+    var h = b.node("GetAxis", x, y + 120, { axis: "Horizontal" });
+    var v = b.node("GetAxis", x, y + 235, { axis: "Vertical" });
     var mk = b.node("MakeVector", x + 230, y + 150);
     var sp = b.node("Multiply", x + 230, y + 300, { in: { A: speed } });
     var sc = b.node("VecScale", x + 460, y + 150);

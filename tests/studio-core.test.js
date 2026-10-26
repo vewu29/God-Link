@@ -296,3 +296,30 @@ test("Studio: loading a project cleans out anything broken", () => {
   assert.deepEqual([p.actors[0].name, p.actors[0].shape, p.actors[0].body, p.actors[0].color, p.actors[0].tags], ["Actor", "box", "none", "#9ca3af", ["player"]]);
   assert.deepEqual(p.actors[0].pos, V(1, 2, 3));
 });
+
+test("Studio: Tidy up lays every starter's Blueprints out left to right with nothing overlapping", () => {
+  // sizes stand in for the editor's measured nodes: some wide, some tall
+  const size = (n) => ({ w: 150 + 30 * (n.type.length % 4), h: 50 + 24 * (S.NODES[n.type].in.length + (S.NODES[n.type].settings.length ? 1 : 0)) });
+  for (const sample of SAMPLES) {
+    const p = sample.make();
+    for (const g of [p.level].concat(p.actors.map((a) => a.graph))) {
+      S.tidy(g, size);
+      const r = g.nodes.map((n) => Object.assign({ id: n.id, x: n.x, y: n.y }, size(n)));
+      for (let i = 0; i < r.length; i++) for (let j = i + 1; j < r.length; j++) {
+        const a = r[i], b = r[j];
+        assert.ok(!(a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h), `${sample.id}: ${a.id} overlaps ${b.id}`);
+      }
+      const at = {};
+      g.nodes.forEach((n) => { at[n.id] = n; });
+      g.links.forEach((l) => {
+        if (l.from.node === l.to.node) return;
+        assert.ok(at[l.from.node].x < at[l.to.node].x, `${sample.id}: wire ${l.from.node} → ${l.to.node} runs left to right`);
+      });
+    }
+  }
+  // a wire looping back and a lone node don't break it
+  const g = { nodes: [{ id: "a", type: "Tick", x: 0, y: 0 }, { id: "b", type: "PrintString", x: 0, y: 0 }, { id: "c", type: "PrintString", x: 0, y: 0 }, { id: "d", type: "Number", x: 0, y: 0 }],
+    links: [{ from: { node: "a", pin: "Then" }, to: { node: "b", pin: "In" } }, { from: { node: "b", pin: "Then" }, to: { node: "c", pin: "In" } }, { from: { node: "c", pin: "Then" }, to: { node: "b", pin: "In" } }] };
+  S.tidy(g, () => ({ w: 100, h: 40 }));
+  assert.deepEqual(g.nodes.map((n) => [n.id, n.x, n.y]), [["a", 40, 40], ["b", 210, 40], ["c", 380, 40], ["d", 40, 140]]);
+});
