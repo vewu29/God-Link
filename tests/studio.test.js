@@ -16,18 +16,23 @@ let env;
 before(async () => { env = await launch(); });
 after(async () => { await env.close(); });
 
-// Opens the Studio and waits for the 3D view; the first visit shows a
-// welcome sheet, closed here unless keepWelcome.
+// Opens the Studio and waits for the 3D view. Every test starts on a
+// fresh device, so the welcome sheet always comes; it's closed here
+// unless keepWelcome. Software WebGL is slow on a busy machine, so the
+// waits below are for conditions, never for fixed times.
+const SLOW = { timeout: 30000 };
 async function openStudio(opts = {}) {
   const { keepWelcome, ...rest } = opts;
   const s = await newPage(env, { ...DESK, ...rest });
-  await s.page.waitForFunction(() => window.CBStudioEditor && window.BABYLON && document.querySelector("#stCanvas").width > 0, null, { timeout: 20000 });
+  await s.page.waitForFunction(() => window.CBStudioEditor && window.BABYLON && document.querySelector("#stCanvas").width > 0, null, SLOW);
+  await s.page.locator("#stSheet").waitFor({ state: "visible", ...SLOW });
   if (!keepWelcome) {
-    const close = s.page.locator("#stSheetClose");
-    await close.waitFor({ state: "visible", timeout: 3000 }).then(() => close.click(), () => {});
+    await s.page.click("#stSheetClose");
+    await s.page.locator("#stSheet").waitFor({ state: "hidden", ...SLOW });
   }
   return s;
 }
+const playerX = (page) => page.evaluate(() => window.CBStudioEditor.game().byName("Player").pos.x);
 const links = (page) => page.evaluate(() => window.CBStudioEditor.graph().links.map((l) => `${l.from.node}.${l.from.pin}>${l.to.node}.${l.to.pin}`).sort());
 const nodeIds = (page, type) => page.evaluate((t) => window.CBStudioEditor.graph().nodes.filter((n) => n.type === t).map((n) => n.id), type);
 function pin(page, node, name, side) { return page.locator(`.bp-pin[data-node="${node}"][data-pin="${name}"][data-side="${side}"]`); }
@@ -155,16 +160,18 @@ test("a typed value on a node and Tidy up are each one undo step", async () => {
 test("Play runs Coin Run: the HUD counts coins, keys move the player, Escape goes back", async () => {
   const { ctx, page, log } = await openStudio();
   await page.click("#stPlay");
-  await page.waitForFunction(() => document.querySelector("#stHud").textContent.includes("0 / 5"));
+  await page.waitForFunction(() => document.querySelector("#stHud").textContent.includes("0 / 5"), null, SLOW);
   assert.ok(await page.evaluate(() => document.body.classList.contains("playing")));
-  const x0 = await page.evaluate(() => window.CBStudioEditor.game().byName("Player").pos.x);
+  const x0 = await playerX(page);
   await page.keyboard.down("ArrowRight");
-  await page.waitForTimeout(700);
+  await page.waitForFunction((x) => window.CBStudioEditor.game().byName("Player").pos.x > x + 1, x0, SLOW);
   await page.keyboard.up("ArrowRight");
-  assert.ok(await page.evaluate(() => window.CBStudioEditor.game().byName("Player").pos.x) > x0 + 1, "the right arrow walks the player right");
+  const x1 = await playerX(page);
+  await page.waitForTimeout(300);
+  assert.ok(Math.abs(await playerX(page) - x1) < 0.5, "letting go of the arrow stops the player");
   // stand the player on a coin: the overlap event, the broadcast and the HUD all run
   await page.evaluate(() => { const g = window.CBStudioEditor.game(), c = g.withTag("coin")[0], p = g.byName("Player"); p.pos = { x: c.pos.x, y: c.pos.y, z: c.pos.z }; p.vel = { x: 0, y: 0, z: 0 }; });
-  await page.waitForFunction(() => document.querySelector("#stHud").textContent.includes("1 / 5"), null, { timeout: 5000 });
+  await page.waitForFunction(() => document.querySelector("#stHud").textContent.includes("1 / 5"), null, SLOW);
   await page.keyboard.press("Escape");
   assert.equal(await page.evaluate(() => document.body.classList.contains("playing")), false);
   assert.equal(await page.evaluate(() => window.CBStudioEditor.project().actors.filter((a) => a.tags.includes("coin")).length), 5, "playing never changes the level being edited");
@@ -186,15 +193,15 @@ test("phone: tabs switch panels, the Blueprint opens readable, and Play shows th
   assert.ok(await page.locator("#stDetails").isVisible());
   assert.equal(await page.locator("#stView").isVisible(), false);
   await page.click("#stPlay");
-  await page.waitForFunction(() => document.querySelector("#stHud").textContent.includes("0 / 5"));
+  await page.waitForFunction(() => document.querySelector("#stHud").textContent.includes("0 / 5"), null, SLOW);
   const canvas = await page.locator("#stCanvas").boundingBox();
   assert.ok(canvas.width >= 380 && canvas.height >= 800, "the game fills the screen");
   assert.ok(await page.locator('#stPad [data-key="Space"]').isVisible(), "the touch pad shows");
-  const x0 = await page.evaluate(() => window.CBStudioEditor.game().byName("Player").pos.x);
+  // holding the pad's right arrow walks right
+  const x0 = await playerX(page);
   await page.dispatchEvent('#stPad [data-key="Right"]', "pointerdown", { pointerId: 7, pointerType: "touch" });
-  await page.waitForTimeout(500);
+  await page.waitForFunction((x) => window.CBStudioEditor.game().byName("Player").pos.x > x + 0.5, x0, SLOW);
   await page.dispatchEvent('#stPad [data-key="Right"]', "pointerup", { pointerId: 7, pointerType: "touch" });
-  assert.ok(await page.evaluate(() => window.CBStudioEditor.game().byName("Player").pos.x) > x0, "holding the pad's right arrow walks right");
   await page.click("#stStop");
   assert.equal(await page.evaluate(() => document.body.classList.contains("playing")), false);
   assert.deepEqual(log.pageErrors, []);
@@ -203,11 +210,11 @@ test("phone: tabs switch panels, the Blueprint opens readable, and Play shows th
 
 test("games save on this device, reopen after a reload, and import from a file", async () => {
   const { ctx, page } = await openStudio();
+  // reloading straight after a change still keeps it
   await page.fill("#stName", "My Coin Game");
   await page.press("#stName", "Enter");
-  await page.waitForTimeout(500);
   await page.reload();
-  await page.waitForFunction(() => window.CBStudioEditor && document.querySelector("#stName").value);
+  await page.waitForFunction(() => window.CBStudioEditor && document.querySelector("#stName").value, null, SLOW);
   assert.equal(await page.inputValue("#stName"), "My Coin Game");
   assert.equal(await page.locator("#stSheet:not(.hidden)").count(), 0, "the welcome sheet is only for the first visit");
 
@@ -242,7 +249,7 @@ test("no serious or critical accessibility problems in the editor, the palette a
   (await scan()).forEach((x) => problems.push(`palette: ${x}`));
   await page.keyboard.press("Escape");
   await page.click("#stPlay");
-  await page.waitForFunction(() => document.querySelector("#stHud").textContent.includes("0 / 5"));
+  await page.waitForFunction(() => document.querySelector("#stHud").textContent.includes("0 / 5"), null, SLOW);
   (await scan()).forEach((x) => problems.push(`play: ${x}`));
   assert.deepEqual(problems, []);
   await ctx.close();

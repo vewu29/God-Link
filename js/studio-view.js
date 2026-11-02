@@ -81,7 +81,9 @@
 
   window.CBStudioView = function (canvas) {
     var view = { onPickFn: null, onTransformFn: null, mode: "move" };
-    var B = null, engine = null, scene = null, editCam = null, playCam = null, sun = null, hemi = null, shadows = null, glow = null, highlight = null, gizmos = null, particleTex = null;
+    var B = null, engine = null, scene = null, editCam = null, playCam = null, sun = null, hemi = null, shadows = null, highlight = null, gizmos = null, particleTex = null;
+    var still = 0; // frames the editor's view has gone unchanged
+    function wake() { still = 0; }
     var editMeshes = {}, playMeshes = {}, selected = null, game = null, onFrame = null, acc = 0, last = 0, shake = { t: 0, s: 0 }, camPos = null;
 
     view.sound = playSound;
@@ -89,7 +91,11 @@
       B = BAB;
       engine = new B.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true, antialias: true }, true);
       engine.canvasTabIndex = 0; // Babylon's default (1) would jump the canvas ahead in the Tab order
-      engine.setHardwareScalingLevel(1 / Math.min(2, window.devicePixelRatio || 1));
+      // A device drawing 3D without a graphics chip (software WebGL) gets
+      // fewer pixels, cheaper shadows and no glow, so it stays usable.
+      var gl = engine.getGlInfo ? engine.getGlInfo() : {};
+      var soft = /swiftshader|llvmpipe|softpipe|software/i.test((gl.renderer || "") + " " + (gl.vendor || ""));
+      engine.setHardwareScalingLevel(soft ? 1.25 : 1 / Math.min(2, window.devicePixelRatio || 1));
       scene = new B.Scene(engine);
       scene.clearColor = B.Color4.FromHexString("#8ec5ffff");
       scene.ambientColor = new B.Color3(0.3, 0.3, 0.35);
@@ -103,9 +109,9 @@
       hemi.groundColor = new B.Color3(0.22, 0.24, 0.3);
       sun = new B.DirectionalLight("sun", new B.Vector3(-0.45, -1, 0.35), scene);
       sun.position = new B.Vector3(18, 30, -14);
-      shadows = new B.ShadowGenerator(1024, sun);
-      shadows.usePercentageCloserFiltering = true; shadows.bias = 0.0008; shadows.normalBias = 0.02;
-      glow = new B.GlowLayer("glow", scene, { blurKernelSize: 24 }); glow.intensity = 0.35;
+      shadows = new B.ShadowGenerator(soft ? 512 : 1024, sun);
+      shadows.usePercentageCloserFiltering = !soft; shadows.bias = 0.0008; shadows.normalBias = 0.02;
+      if (!soft) new B.GlowLayer("glow", scene, { blurKernelSize: 24 }).intensity = 0.35;
       highlight = new B.HighlightLayer("hl", scene, { isStroke: true });
       highlight.innerGlow = false; highlight.outerGlow = true; highlight.blurHorizontalSize = 0.6; highlight.blurVerticalSize = 0.6;
       gizmos = new B.GizmoManager(scene);
@@ -126,8 +132,9 @@
         if (game) { if (id) game.click(id); return; }
         if (view.onPickFn) view.onPickFn(id);
       });
+      ["pointerdown", "pointermove", "pointerup", "wheel", "keydown", "touchmove"].forEach(function (t) { canvas.addEventListener(t, wake, { passive: true }); });
       engine.runRenderLoop(loop);
-      window.addEventListener("resize", function () { engine.resize(); });
+      window.addEventListener("resize", function () { engine.resize(); wake(); });
       return view;
     });
 
@@ -214,6 +221,7 @@
 
     view.showProject = function (p, sel) {
       if (!scene) return;
+      wake();
       atmosphere(p.world);
       var seen = {};
       p.actors.forEach(function (a) {
@@ -230,6 +238,7 @@
     view.select = function (id) {
       selected = id && editMeshes[id] ? id : null;
       if (!scene) return;
+      wake();
       highlight.removeAllMeshes();
       var m = selected ? editMeshes[selected] : null;
       if (m && !game) {
@@ -251,12 +260,13 @@
     view.frame = function (id) {
       var m = id && editMeshes[id];
       if (!m || !editCam) return;
+      wake();
       editCam.setTarget(m.position.clone());
       editCam.radius = Math.max(4, Math.max(m.scaling.x, m.scaling.y, m.scaling.z) * 3.2);
     };
     view.onPick = function (fn) { view.onPickFn = fn; };
     view.onTransform = function (fn) { view.onTransformFn = fn; };
-    view.resize = function () { if (engine) engine.resize(); };
+    view.resize = function () { if (engine) { engine.resize(); wake(); } };
     view.playing = function () { return !!game; };
 
     /* ---------- play ---------- */
@@ -355,6 +365,14 @@
     }
     function loop() {
       if (game) { step(); if (game) syncGame(); }
+      else {
+        // The editor's view only changes when something happens to it, so
+        // once it has sat still for a second it stops drawing (sparing the
+        // battery) until it's touched, scrolled or changed again.
+        var c = editCam;
+        if (c.inertialAlphaOffset || c.inertialBetaOffset || c.inertialRadiusOffset || c.inertialPanningX || c.inertialPanningY) still = 0;
+        if (++still > 60) return;
+      }
       scene.render();
     }
     return view;

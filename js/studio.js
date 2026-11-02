@@ -62,12 +62,16 @@
   }
   function saveSoon() {
     clearTimeout(saveTimer);
-    saveTimer = setTimeout(function () {
-      if (!gameId) return;
-      store.games[gameId] = { project: project, updated: Date.now() };
-      persist();
-    }, 300);
+    saveTimer = setTimeout(saveNow, 300);
   }
+  function saveNow() {
+    clearTimeout(saveTimer); saveTimer = 0;
+    if (!gameId) return;
+    store.games[gameId] = { project: project, updated: Date.now() };
+    persist();
+  }
+  // closing or reloading the tab straight after a change still keeps it
+  window.addEventListener("pagehide", function () { if (saveTimer) saveNow(); });
   /* commit(): the change just made becomes one undo step. */
   function commit(what) {
     var now = JSON.stringify(project);
