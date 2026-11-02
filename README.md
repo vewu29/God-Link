@@ -10,7 +10,7 @@ It's free to use, supported by voluntary donations (the **Donate with PayPal** b
 
 | Group | Tracks |
 | --- | --- |
-| Programming languages | C++ · C# · Python · JavaScript · Java · TypeScript · Go · Rust · C · Ruby · Kotlin · Lua · Bash · Haskell |
+| Programming languages | C++ · C# · Python · JavaScript · Java · TypeScript · Go · Rust · C · Ruby · Kotlin · Lua · Bash · Haskell · English++ |
 | Web & data | HTML & CSS · SQL · PHP |
 | Science & math | R |
 | Game engines | Unity (C#) · Unreal Engine 5 (C++) |
@@ -69,10 +69,11 @@ The PC does not compile anything in your browser. Each practice program's output
 | Bash | must pass ShellCheck with every check on, then run with Bash 5; any error output fails | `bash -n`, then ShellCheck |
 | Haskell | run with GHC 9.4's `runghc` and `-Wall`; any warning fails (type defaulting and missing signatures aside) | GHC's own parser, through the GHC API |
 | R | run with `Rscript` (R 4.3); any error or warning output fails | R's own parser |
+| English++ | run by a stand-in interpreter written from *The English++ Book* (English++ Studio is a Windows program); it refuses anything whose printed form the book doesn't show | the stand-in's reader, with each line placed in the program shape it belongs in |
 | Unity | compiled against a stand-in copy of the Unity API and played frame by frame | Roslyn |
 | Unreal | compiled with g++ against a stand-in copy of the UE5 API and played frame by frame | tree-sitter (reflection macros removed) |
 
-The Unity and Unreal tracks say plainly in the app that their PC is a simulation: no game engine runs in a browser. Chapter and shelf examples must also build and run (browser-only examples are type-checked or parsed). Cheat cards and key lines must parse.
+The Unity and Unreal tracks say plainly in the app that their PC is a simulation: no game engine runs in a browser. The English++ track says the same about its stand-in, which is itself tested against the book's own examples and outputs (`tests/englishpp-standin.test.js`). Chapter and shelf examples must also build and run (browser-only examples are type-checked or parsed). Cheat cards and key lines must parse.
 
 ## Run it
 

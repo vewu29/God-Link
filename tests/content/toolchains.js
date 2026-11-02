@@ -1116,3 +1116,22 @@ module.exports.haskell = {
     return errs;
   },
 };
+
+// ---------- English++ (the stand-in in englishpp.js) ----------
+// English++ Studio is a Windows program that can't run here, so the
+// track is checked by a stand-in interpreter written from "The English++
+// Book". It runs every program and whole example, reads every drill and
+// Vault line inside the program shape it belongs in, and refuses
+// anything the book doesn't settle, such as how a yes or no prints.
+const EPP = require("./englishpp");
+module.exports.englishpp = {
+  needs: ["node"],
+  build: (dir, code) => EPP.run(code),
+  checkLines: (dir, lines) => lines.map((l, i) => ({ i, err: EPP.checkLine(l) })).filter((e) => e.err),
+  checkExamples: (dir, examples) => examples.map((ex, i) => {
+    if (ex.line) return { i, err: ex.code.split("\n").map(EPP.checkLine).filter(Boolean)[0] || "" };
+    if (!ex.run) return { i, err: EPP.check(ex.code) };
+    const r = EPP.run(ex.code, { input: ex.answers });
+    return { i, err: r.ok ? "" : r.error };
+  }).filter((e) => e.err),
+};

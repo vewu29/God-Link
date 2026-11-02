@@ -110,6 +110,10 @@
     blurb: "Pure functions, strong types and lazy lists: the language that changes how you think about code.",
     keywords: "functional programming fp ghc ghci types lambda pure lazy monads recursion cabal stack",
     file: "main.hs", run: "runghc main.hs", comment: "--", vaultFile: "vault.hs", varPrefix: "" });
+  addTrack({ id: "englishpp", name: "English++", badge: "E++", group: "lang", color: "#a21caf", blocks: 30,
+    blurb: "Programming in plain English, for kids and for everyone: write it like a story, and it becomes real C++.",
+    keywords: "english plain english kids children beginner first language englishpp english plus plus studio blueprint c++ no symbols",
+    file: "main.englishpp", run: "\u25B6 English++ Studio · Run (F5)", comment: "note", vaultFile: "vault.englishpp", varPrefix: "" });
   addTrack({ id: "r", name: "R", badge: "R", group: "sci", color: "#276dc3", blocks: 30,
     blurb: "The language of statistics and data science: vectors, tables, charts and answers.",
     keywords: "data science statistics analysis analytics research charts tidyverse ggplot rstudio math",

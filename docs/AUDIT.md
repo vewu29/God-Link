@@ -13,7 +13,7 @@ This report records what the first review of the original Muse-built app found, 
 
 **No, and now the app says so.** The original PC printed "Compiling… OK — no errors" for every run, but nothing is compiled in the browser. Each program's output is calculated in JavaScript. That text was removed (`b03c0d5`). The screen now says whether the learner's typed program matches the one shown, then shows its output.
 
-The output itself is trustworthy because the content tests run every practice program with the real toolchain and compare. They check default, minimum and maximum settings, plus any number of seeded random settings (`CB_EXTRA_CASES`). The Unity and Unreal tracks run against stand-in copies of the engine APIs and say plainly in the app that their PC is a simulation.
+The output itself is trustworthy because the content tests run every practice program with the real toolchain and compare. They check default, minimum and maximum settings, plus any number of seeded random settings (`CB_EXTRA_CASES`). The Unity and Unreal tracks run against stand-in copies of the engine APIs and say plainly in the app that their PC is a simulation. English++ Studio is a Windows program, so the English++ track runs on a stand-in interpreter written from *The English++ Book*, which is checked against the book's own examples and refuses anything the book leaves open.
 
 ## Findings and fixes
 
@@ -61,6 +61,7 @@ Run `npm run test:content` to reproduce these numbers.
 | Bash | 54/54 (ShellCheck with every check on, then Bash 5) | 10,030/10,030 (`bash -n`, then ShellCheck) | 45/45 |
 | Haskell | 54/54 (GHC 9.4 `runghc -Wall`, every warning fails) | 10,030/10,030 (GHC's parser) | 45/45 |
 | R | 54/54 (`Rscript`, any error or warning output fails) | 10,030/10,030 (R's parser) | 45/45 |
+| English++ | 66/66 (stand-in interpreter written from *The English++ Book*) | 10,030/10,030 (the stand-in's reader) | 53/53 |
 | Unity | 36/36 (engine stand-in) | 10,030/10,030 | 47/47 |
 | Unreal | 36/36 (engine stand-in) | 10,030/10,030 | 47/47 |
 
