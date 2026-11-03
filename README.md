@@ -220,6 +220,12 @@ Do not represent practice questions as official examination questions unless the
 
 ---
 
+## 3.7 English++ learning
+
+English++ is the creator's own beginner language: every line is exactly three words (who, the root, and what), and each program turns into C++. Its full reference is *The English++ Book*, kept in this repository at `english-plus-plus/English_Book.docx`.
+
+English++ is a fourth track in the switcher at the top of the page, next to C++, C# and Drive. It has 30 Sandbox blocks taken from the book's chapters, drilled eight times each like every other track, and its own glossary, root-family field guide and cheat cards in the Library. Its progress is saved under its own keys (`code-block-progress-epp-v1`, and `progressEPP` in a profile). The track's data lives in the inline `ENGLISH++ MODE` script in `Code Block (6).html`. For now the Library chapters, PC, Book and Vault still show C++ content in this track.
+
 # 4. Content Expansion
 
 The creator wants to expand an already content-rich application with potentially hundreds of additional educational items.
