@@ -1124,12 +1124,20 @@ module.exports.haskell = {
 // Vault line inside the program shape it belongs in, and refuses
 // anything the book doesn't settle, such as how a yes or no prints.
 const EPP = require("./englishpp");
+// Sandbox drills use the book's main three-words-a-line form; the
+// Library, PC and Vault use the sentence form the stand-in reads.
+const EPP3 = require("./englishpp3");
 module.exports.englishpp = {
   needs: ["node"],
   build: (dir, code) => EPP.run(code),
-  checkLines: (dir, lines) => lines.map((l, i) => ({ i, err: EPP.checkLine(l) })).filter((e) => e.err),
+  checkLines: (dir, lines) => lines.map((l, i) => ({ i, err: EPP3.looksThreeWord(l) ? EPP3.check(l) : EPP.checkLine(l) })).filter((e) => e.err),
   checkExamples: (dir, examples) => examples.map((ex, i) => {
-    if (ex.line) return { i, err: ex.code.split("\n").map(EPP.checkLine).filter(Boolean)[0] || "" };
+    if (ex.line) return { i, err: ex.code.split("\n").map((l) => EPP3.looksThreeWord(l) ? EPP3.check(l) : EPP.checkLine(l)).filter(Boolean)[0] || "" };
+    const rows = ex.code.split("\n").filter((l) => l.trim());
+    if (!ex.run && rows.some((l) => EPP3.looksThreeWord(l.trim())) && rows.every((l) => /^note /.test(l.trim()) || EPP3.looksThreeWord(l.trim()))) {
+      const bad = rows.map((l, n) => /^( {2})*\S/.test(l) ? (/^note /.test(l.trim()) ? "" : EPP3.check(l.trim())) && `line ${n + 1}: ${EPP3.check(l.trim())}` : `line ${n + 1}: move lines in by two spaces`).filter(Boolean)[0];
+      return { i, err: bad || "" };
+    }
     if (!ex.run) return { i, err: EPP.check(ex.code) };
     const r = EPP.run(ex.code, { input: ex.answers });
     return { i, err: r.ok ? "" : r.error };
