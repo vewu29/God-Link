@@ -277,5 +277,9 @@
   window.CB_T = null;
   /* Parser-blocking on purpose: the data must exist before the drill,
      library and vault scripts below declare their arrays from it. */
-  if (meta.src && !window.__cbBundled) document.write('<script src="' + meta.src + '"><\/script>');
+  /* The server names its deploy in <meta name="cb-v">; asking for the
+     track file with it means a browser never runs an older copy. */
+  var ver = document.querySelector('meta[name="cb-v"]');
+  var src = meta.src && ver ? meta.src + "?v=" + encodeURIComponent(ver.getAttribute("content")) : meta.src;
+  if (meta.src && !window.__cbBundled) document.write('<script src="' + src + '"><\/script>');
 })();

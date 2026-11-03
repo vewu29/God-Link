@@ -9,6 +9,8 @@ answers at the same address, so the page works unchanged on either.
 Without DB_* settings the site still runs; the API reports that
 accounts are off and the page keeps progress on the device.
 """
+import hashlib
+import re
 from pathlib import Path
 
 from fastapi import FastAPI, Request
@@ -94,9 +96,34 @@ async def api(request: Request):
 # (a static copy of the site, without this line, never asks).
 API_META = '<head>\n    <meta name="cb-api" content="api/index.php">'
 
+# Every deploy gets a version made from the contents of the files the
+# page loads. The pages link css/ and js/ files with ?v=<version>, and
+# js/tracks.js adds it to the track file it loads, so a browser that
+# kept an older copy fetches the new one as soon as a deploy changes it.
+ASSET_FOLDERS = ("css", "js", "tracks")
+
+
+def asset_version():
+    digest = hashlib.sha256()
+    for folder in ASSET_FOLDERS:
+        for f in sorted((ROOT / folder).rglob("*")):
+            if f.is_file():
+                digest.update(f.relative_to(ROOT).as_posix().encode())
+                digest.update(f.read_bytes())
+    return digest.hexdigest()[:12]
+
+
+ASSET_V = asset_version()
+ASSET_LINK = re.compile(r'((?:src|href)="(?:css|js)/[^"?#]+)"')
+
+
+def versioned(html):
+    html = ASSET_LINK.sub(lambda m: m.group(1) + "?v=" + ASSET_V + '"', html)
+    return html.replace("<head>", '<head>\n    <meta name="cb-v" content="' + ASSET_V + '">', 1)
+
 
 def page():
-    html = (ROOT / "index.html").read_text(encoding="utf-8").replace("<head>", API_META, 1)
+    html = versioned((ROOT / "index.html").read_text(encoding="utf-8")).replace("<head>", API_META, 1)
     return HTMLResponse(html, headers={"Cache-Control": "no-cache"})
 
 
@@ -114,10 +141,19 @@ async def index():
 # its games on the visitor's device, so it needs no API line.
 @app.api_route("/studio.html", methods=["GET", "HEAD"])
 async def studio():
-    return HTMLResponse((ROOT / "studio.html").read_text(encoding="utf-8"), headers={"Cache-Control": "no-cache"})
+    return HTMLResponse(versioned((ROOT / "studio.html").read_text(encoding="utf-8")), headers={"Cache-Control": "no-cache"})
 
 
 # Only the folders the page loads are served — never the server's own code,
 # the tests or the repository's other files.
-for folder in ("css", "js", "tracks"):
-    app.mount("/" + folder, StaticFiles(directory=ROOT / folder), name=folder)
+# They are sent with no-cache, so a browser checks for a newer copy on
+# every visit (an unchanged file answers 304 and isn't downloaded again).
+class FreshStaticFiles(StaticFiles):
+    def file_response(self, *args, **kwargs):
+        response = super().file_response(*args, **kwargs)
+        response.headers["Cache-Control"] = "no-cache"
+        return response
+
+
+for folder in ASSET_FOLDERS:
+    app.mount("/" + folder, FreshStaticFiles(directory=ROOT / folder), name=folder)
