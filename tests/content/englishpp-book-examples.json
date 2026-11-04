@@ -1,0 +1,1407 @@
+[
+ {
+  "chapter": "1. How to Read This Book",
+  "code": "name get \"What is your name? \"\nout prn \"Hello, @name!\"",
+  "output": "What is your name? Ada\nHello, Ada!"
+ },
+ {
+  "chapter": "2. Hello!",
+  "code": "out prn \"Hello, V!\"",
+  "output": "Hello, V!"
+ },
+ {
+  "chapter": "2. Hello!",
+  "code": "x is 6\nx add 1\nout prn x",
+  "output": "7"
+ },
+ {
+  "chapter": "3. Your First Program",
+  "code": "out prn \"One\"\nout prn \"Two\"\nout prn \"Three\"",
+  "output": "One\nTwo\nThree"
+ },
+ {
+  "chapter": "3. Your First Program",
+  "code": "note This program counts to two.\nout prn 1\nnote Now the second one.\nout prn 2",
+  "output": "1\n2"
+ },
+ {
+  "chapter": "4. The Three Words",
+  "code": "a is 2\nb is 3\nc is a+b\nout prn c",
+  "output": "5"
+ },
+ {
+  "chapter": "4. The Three Words",
+  "code": "n is 0\nnow wfv now\n  n add 1\n  now ebk n==3\nout prn n",
+  "output": "3"
+ },
+ {
+  "chapter": "4. The Three Words",
+  "code": "x is 6\nx igt 3\n  out prn \"big\"\n  out prn \"wow\"\nout prn \"done\"",
+  "output": "big\nwow\ndone"
+ },
+ {
+  "chapter": "4. The Three Words",
+  "code": "scores is 90&72&85\nout prn scores@0\nout prn nsq&16",
+  "output": "90\n4"
+ },
+ {
+  "chapter": "6. Names and Values",
+  "code": "score is 7\npet is \"Rex\"\nhappy is yes\nout prn score\nout prn pet\nout prn happy",
+  "output": "7\nRex\nyes"
+ },
+ {
+  "chapter": "6. Names and Values",
+  "code": "score is 7\nout prn score\nout prn \"score\"",
+  "output": "7\nscore"
+ },
+ {
+  "chapter": "6. Names and Values",
+  "code": "x is 6\nout prn x\nx is 7\nout prn x",
+  "output": "6\n7"
+ },
+ {
+  "chapter": "6. Names and Values",
+  "code": "apples is 3\npears is apples+2\nout prn pears",
+  "output": "5"
+ },
+ {
+  "chapter": "6. Names and Values",
+  "code": "age is 7\nprice is 2.5\nname is \"Ada\"\nfirst is 'A'\nready is yes\nout prn age\nout prn price\nout prn name\nout prn first\nout prn ready",
+  "output": "7\n2.5\nAda\nA\nyes"
+ },
+ {
+  "chapter": "6. Names and Values",
+  "code": "x is 6.0\nx is 2.5\nout prn x",
+  "output": "2.5"
+ },
+ {
+  "chapter": "6. Names and Values",
+  "code": "score mak num\nname mak txt\nready mak yno\nout prn score\nout prn \"[@name]\"\nout prn ready",
+  "output": "0\n[]\nnay"
+ },
+ {
+  "chapter": "6. Names and Values",
+  "code": "stars mak big\nstars is 9000000000\ntiny mak sml\ntiny is 30000\ncount mak pos\ncount is 12\nlevel mak byt\nlevel is 200\nhalf mak flo\nhalf is 0.5\nout prn stars\nout prn tiny\nout prn count\nout prn level\nout prn half",
+  "output": "9000000000\n30000\n12\n200\n0.5"
+ },
+ {
+  "chapter": "6. Names and Values",
+  "code": "out prn num&2.9\nout prn dec&3\nout prn txt&42\nout prn ltr&65\nout prn yno&0\nout prn big&5\nout prn flo&0.5",
+  "output": "2\n3\n42\nA\nnay\n5\n0.5"
+ },
+ {
+  "chapter": "6. Names and Values",
+  "code": "DAYS mkn 7\nout prn DAYS",
+  "output": "7"
+ },
+ {
+  "chapter": "7. Printing",
+  "code": "out put \"one \"\nout put \"two \"\nout prn \"three\"\nout prn \"four\"",
+  "output": "one two three\nfour"
+ },
+ {
+  "chapter": "7. Printing",
+  "code": "name is \"Ada\"\nage is 36\nout prn \"@name is @age years old.\"",
+  "output": "Ada is 36 years old."
+ },
+ {
+  "chapter": "7. Printing",
+  "code": "scores is 90&72\nout prn \"The first score is @scores@0.\"\nout prn \"All of them: @scores\"",
+  "output": "The first score is 90.\nAll of them: [90, 72]"
+ },
+ {
+  "chapter": "7. Printing",
+  "code": "out prn \"Mail me @@ home.\"",
+  "output": "Mail me @ home."
+ },
+ {
+  "chapter": "7. Printing",
+  "code": "name is \"Ada\"\nage is 36\nout prn name&age\nout prn name&age&\"years\"",
+  "output": "Ada 36\nAda 36 years"
+ },
+ {
+  "chapter": "7. Printing",
+  "code": "out prn \"She said \\\"hello\\\".\"\nout prn \"line one\\nline two\"\nout prn \"a\\tb\"\nout prn \"C:\\\\games\"",
+  "output": "She said \"hello\".\nline one\nline two\na\tb\nC:\\games"
+ },
+ {
+  "chapter": "7. Printing",
+  "code": "err prn \"That file is missing.\"",
+  "output": "That file is missing."
+ },
+ {
+  "chapter": "7. Printing",
+  "code": "price is 2.5\nout prn tfx&price&2\nname is tpa&\"Ada\"&6\nout prn \"[@name]\"",
+  "output": "2.50\n[Ada   ]"
+ },
+ {
+  "chapter": "8. Math",
+  "code": "x is 10\nx add 5\nout prn x\nx asb 3\nout prn x\nx aml 2\nout prn x\nx adv 4\nout prn x",
+  "output": "15\n12\n24\n6"
+ },
+ {
+  "chapter": "8. Math",
+  "code": "x is 17\nx amd 5\nout prn x\ny is 2.0\ny apw 10\nout prn y",
+  "output": "2\n1024"
+ },
+ {
+  "chapter": "8. Math",
+  "code": "a is 2\nb is 3\ntotal is a+b\nout prn total\nout prn a*b\nout prn 10-a",
+  "output": "5\n6\n8"
+ },
+ {
+  "chapter": "8. Math",
+  "code": "y is 1+2*3\nout prn y",
+  "output": "7"
+ },
+ {
+  "chapter": "8. Math",
+  "code": "sum is 1+2\narea is sum*4\nout prn area",
+  "output": "12"
+ },
+ {
+  "chapter": "8. Math",
+  "code": "out prn 7/2\nout prn 7.0/2\nout prn 7%2",
+  "output": "3\n3.5\n1"
+ },
+ {
+  "chapter": "8. Math",
+  "code": "out prn nsq&16\nout prn npw&2&10\nout prn nab&-5\nout prn nmx&3&8\nout prn nmn&3&8",
+  "output": "4\n1024\n5\n8\n3"
+ },
+ {
+  "chapter": "8. Math",
+  "code": "out prn nro&2.5\nout prn ndn&2.9\nout prn nup&2.1\nout prn nwh&-2.9",
+  "output": "3\n2\n3\n-2"
+ },
+ {
+  "chapter": "8. Math",
+  "code": "out prn nkb&5&0&10\nout prn nkb&50&0&10\nout prn nkb&-2&0&10",
+  "output": "5\n10\n0"
+ },
+ {
+  "chapter": "8. Math",
+  "code": "out prn ngd&12&18\nout prn nmu&4&6\nout prn nfc&5\nout prn npe&7\nout prn nhi",
+  "output": "6\n12\n120\nyes\n2147483647"
+ },
+ {
+  "chapter": "8. Math",
+  "code": "out prn npi\nout prn ncr&27\nout prn nhy&3&4\nout prn nsn&0\nout prn nco&0\nout prn ntn&0\nout prn nas&0\nout prn nac&1\nout prn nat&0\nout prn nep&0\nout prn nlg&1\nout prn nlx&100",
+  "output": "3.14159\n3\n5\n0\n1\n0\n0\n0\n0\n1\n0\n2"
+ },
+ {
+  "chapter": "8. Math",
+  "code": "now rsd 7\nfirst is nra&1&100\nnow rsd 7\nsecond is nra&1&100\nfirst seq second\nout prn \"They match!\"",
+  "output": "They match!"
+ },
+ {
+  "chapter": "8. Math",
+  "code": "x is 6\nx and 3\nout prn x\nx is 6\nx aor 3\nout prn x\nx is 6\nx axr 3\nout prn x\nx is 6\nx asl 2\nout prn x\nx is 6\nx asr 1\nout prn x\nx ant 0\nout prn x",
+  "output": "2\n7\n5\n24\n3\n-1"
+ },
+ {
+  "chapter": "9. Text",
+  "code": "first is \"Ada\"\nlast is \"Lovelace\"\nwhole is first+\" \"+last\nout prn whole",
+  "output": "Ada Lovelace"
+ },
+ {
+  "chapter": "9. Text",
+  "code": "n is 42\nline is \"n is \"+txt&n\nout prn line",
+  "output": "n is 42"
+ },
+ {
+  "chapter": "9. Text",
+  "code": "back is tnm&\"7\"\nout prn back+1\nhalf is tdc&\"2.5\"\nout prn half*2\nout prn tfx&3.14159&2",
+  "output": "8\n5\n3.14"
+ },
+ {
+  "chapter": "9. Text",
+  "code": "word is \"Hello\"\nout prn tsz&word\nout prn word@0\nout prn word@4",
+  "output": "5\nH\no"
+ },
+ {
+  "chapter": "9. Text",
+  "code": "t is \"Hi there\"\nout prn tuc&t\nout prn tlc&t\nout prn ttc&\"hi there\"\nout prn tti&\"  hi  \"\nout prn trv&\"abc\"\npad is tpa&\"hi\"&5\nout prn \"[@pad]\"",
+  "output": "HI THERE\nhi there\nHi There\nhi\ncba\n[hi   ]"
+ },
+ {
+  "chapter": "9. Text",
+  "code": "t is \"Hello\"\nout prn ths&t&\"lo\"\nout prn tbg&t&\"He\"\nout prn ted&t&\"x\"\nout prn tps&t&\"l\"\nout prn tps&t&\"z\"",
+  "output": "yes\nyes\nnay\n2\n-1"
+ },
+ {
+  "chapter": "9. Text",
+  "code": "t is \"Hello World\"\nout prn tcu&t&0&5\nout prn trp&t&\"World\"&\"You\"\nout prn twd&t\nout prn tsp&\"a,b,c\"&\",\"\nout prn tln&\"one\\ntwo\"",
+  "output": "Hello\nHello You\n[Hello, World]\n[a, b, c]\n[one, two]"
+ },
+ {
+  "chapter": "9. Text",
+  "code": "out prn tmt&\"a2\"&\"[0-9]+\"\nout prn tmt&\"ab\"&\"[0-9]+\"\nout prn tmt&\"a2\"&\"^[0-9]+$\"\nt is \"I have 2 cats and 10 fish\"\nout prn tma&t&\"[0-9]+\"\nout prn trx&t&\"[0-9]+\"&\"some\"",
+  "output": "yes\nnay\nnay\n[2, 10]\nI have some cats and some fish"
+ },
+ {
+  "chapter": "10. Yes, No and Tests",
+  "code": "age is 7\nold_enough is age>=6\nout prn old_enough\nout prn age==8",
+  "output": "yes\nnay"
+ },
+ {
+  "chapter": "10. Yes, No and Tests",
+  "code": "name is \"Ada\"\nout prn name==\"Ada\"\nout prn name!=\"Bob\"\nout prn \"apple\"<\"pear\"",
+  "output": "yes\nyes\nyes"
+ },
+ {
+  "chapter": "10. Yes, No and Tests",
+  "code": "age is 7\ntall is yes\nout prn age>5&&tall\nout prn age>9||tall\nout prn !tall",
+  "output": "yes\nyes\nnay"
+ },
+ {
+  "chapter": "10. Yes, No and Tests",
+  "code": "door_open is nay\nout prn door_open\nout prn !door_open\nout prn yno&5\nout prn yno&0",
+  "output": "nay\nyes\nyes\nnay"
+ },
+ {
+  "chapter": "11. If and Otherwise",
+  "code": "x is 6\nx igt 3\n  out prn \"big\"\nout prn \"done\"",
+  "output": "big\ndone"
+ },
+ {
+  "chapter": "11. If and Otherwise",
+  "code": "x is 2\nx igt 3\n  out prn \"big\"\nout prn \"done\"",
+  "output": "done"
+ },
+ {
+  "chapter": "11. If and Otherwise",
+  "code": "x is 3\nx ieq 3\n  out prn \"equal\"\nx ine 3\n  out prn \"not equal\"\nx ile 3\n  out prn \"less or equal\"\nx ige 3\n  out prn \"greater or equal\"",
+  "output": "equal\nless or equal\ngreater or equal"
+ },
+ {
+  "chapter": "11. If and Otherwise",
+  "code": "name is \"Ada\"\nname ieq \"Ada\"\n  out prn \"Hi, Ada!\"",
+  "output": "Hi, Ada!"
+ },
+ {
+  "chapter": "11. If and Otherwise",
+  "code": "x is 2\nx igt 3\n  out prn \"big\"\nnow oth now\n  out prn \"small\"",
+  "output": "small"
+ },
+ {
+  "chapter": "11. If and Otherwise",
+  "code": "x is 4\nx ilt 2\n  out prn \"small\"\nx olt 5\n  out prn \"medium\"\nnow oth now\n  out prn \"large\"",
+  "output": "medium"
+ },
+ {
+  "chapter": "11. If and Otherwise",
+  "code": "age is 13\nage ilt 13\n  out prn \"a child\"\nage oeq 13\n  out prn \"just turned teen\"\nage ole 19\n  out prn \"a teen\"\nage oge 100\n  out prn \"wow\"\nage ogt 60\n  out prn \"over sixty\"\nage one 50\n  out prn \"a grown-up\"\nnow oth now\n  out prn \"exactly fifty\"",
+  "output": "just turned teen"
+ },
+ {
+  "chapter": "11. If and Otherwise",
+  "code": "sunny is yes\nwarm is nay\nsunny ieq yes\n  warm ieq yes\n    out prn \"Go swimming!\"\n  now oth now\n    out prn \"Bring a coat.\"\nnow oth now\n  out prn \"Stay in and code.\"",
+  "output": "Bring a coat."
+ },
+ {
+  "chapter": "11. If and Otherwise",
+  "code": "x is 6\nname is \"Ada\"\nx>3&&name==\"Ada\" ieq yes\n  out prn \"both\"\nx%2 ieq 0\n  out prn \"even\"",
+  "output": "both\neven"
+ },
+ {
+  "chapter": "11. If and Otherwise",
+  "code": "x is 6\nsize is iff&x>3&\"big\"&\"small\"\nout prn size",
+  "output": "big"
+ },
+ {
+  "chapter": "11. If and Otherwise",
+  "code": "day is 6\nday bsw now\n  now bcs 6&7\n    out prn \"the weekend\"\n  now bcs 1\n    out prn \"Monday\"\n  now bdf now\n    out prn \"a work day\"",
+  "output": "the weekend"
+ },
+ {
+  "chapter": "12. Loops",
+  "code": "i flt 3\n  out prn i",
+  "output": "0\n1\n2"
+ },
+ {
+  "chapter": "12. Loops",
+  "code": "i fle 3\n  out prn i",
+  "output": "0\n1\n2\n3"
+ },
+ {
+  "chapter": "12. Loops",
+  "code": "i fne 2\n  out prn i",
+  "output": "0\n1"
+ },
+ {
+  "chapter": "12. Loops",
+  "code": "k is 1\nk fle 3\n  out prn k",
+  "output": "1\n2\n3"
+ },
+ {
+  "chapter": "12. Loops",
+  "code": "count is 3\ncount fgt 0\n  out prn count\nout prn \"Blast off!\"\nd is 2\nd fge 0\n  out prn d",
+  "output": "3\n2\n1\nBlast off!\n2\n1\n0"
+ },
+ {
+  "chapter": "12. Loops",
+  "code": "n is 1\nn wlt 100\n  n aml 2\nout prn n",
+  "output": "128"
+ },
+ {
+  "chapter": "12. Loops",
+  "code": "a is 0\na weq 0\n  a is 1\nb is 0\nb wne 2\n  b add 1\nc is 0\nc wle 2\n  c add 1\nd is 5\nd wgt 2\n  d asb 1\ne is 5\ne wge 2\n  e asb 1\nout prn a&b&c&d&e",
+  "output": "1 2 3 2 1"
+ },
+ {
+  "chapter": "12. Loops",
+  "code": "n is 0\nnow wfv now\n  n add 1\n  n ieq 3\n    now ebk now\nout prn n",
+  "output": "3"
+ },
+ {
+  "chapter": "12. Loops",
+  "code": "n is 0\nnow wfv now\n  n add 1\n  now ebk n==3\nout prn n",
+  "output": "3"
+ },
+ {
+  "chapter": "12. Loops",
+  "code": "i flt 5\n  i enx i==1\n  now ebk i==3\n  out prn i",
+  "output": "0\n2"
+ },
+ {
+  "chapter": "12. Loops",
+  "code": "row flt 2\n  seat flt 3\n    out put \"*\"\n  out prn \"\"",
+  "output": "***\n***"
+ },
+ {
+  "chapter": "12. Loops",
+  "code": "a flt 3\n  b flt 3\n    a*b ieq 2\n      a ebk now\n    out prn a*10+b\nout prn \"done\"",
+  "output": "0\n1\n2\n10\n11\ndone"
+ },
+ {
+  "chapter": "12. Loops",
+  "code": "scores is 90&72&85\ns fea scores\n  out prn s",
+  "output": "90\n72\n85"
+ },
+ {
+  "chapter": "12. Loops",
+  "code": "letter fea \"abc\"\n  out prn letter",
+  "output": "a\nb\nc"
+ },
+ {
+  "chapter": "12. Loops",
+  "code": "n is 0\nnow bdo now\n  n add 2\nn uge 6\nout prn n",
+  "output": "6"
+ },
+ {
+  "chapter": "12. Loops",
+  "code": "a is 0\nnow bdo now\n  a add 1\na ueq 2\nb is 0\nnow bdo now\n  b add 1\nb une 0\nc is 3\nnow bdo now\n  c asb 1\nc ult 2\nd is 3\nnow bdo now\n  d asb 1\nd ule 2\ne is 0\nnow bdo now\n  e add 1\ne ugt 1\nout prn a&b&c&d&e",
+  "output": "2 1 1 2 2"
+ },
+ {
+  "chapter": "13. Lists",
+  "code": "scores is 90&72&85\nout prn scores",
+  "output": "[90, 72, 85]"
+ },
+ {
+  "chapter": "13. Lists",
+  "code": "scores is 90&72&85\nout prn scores@0\nout prn scores@2\nscores@1 is 75\nout prn scores",
+  "output": "90\n85\n[90, 75, 85]"
+ },
+ {
+  "chapter": "13. Lists",
+  "code": "scores is 90&72&85\nout prn scores@0\nout prn scores@9",
+  "output": "90\n\nThe program stopped on line 3:\n    out prn scores@9\nIt used a position that is not in the collection or text."
+ },
+ {
+  "chapter": "13. Lists",
+  "code": "scores is 90&72&85\ni is 1\nout prn scores@i",
+  "output": "72"
+ },
+ {
+  "chapter": "13. Lists",
+  "code": "scores is 90&72&85\nout prn cct&scores\nlast is cct&scores\nlast asb 1\nout prn scores@last",
+  "output": "3\n85"
+ },
+ {
+  "chapter": "13. Lists",
+  "code": "scores mak vec@num\nnames mak vec@txt\nout prn scores\nout prn names\nscores add 90\nscores add 72\nnames add \"Ada\"\nout prn scores\nout prn names",
+  "output": "[]\n[]\n[90, 72]\n[Ada]"
+ },
+ {
+  "chapter": "13. Lists",
+  "code": "v is 5&3&9\nv add 4\nout prn v\nv lin 0&8\nout prn v\nv lrm 3\nout prn v\nv ldx 0\nout prn v\nv lpl now\nout prn v",
+  "output": "[5, 3, 9, 4]\n[8, 5, 3, 9, 4]\n[8, 5, 9, 4]\n[5, 9, 4]\n[5, 9]"
+ },
+ {
+  "chapter": "13. Lists",
+  "code": "v is 5&3&9&3\nv lso now\nout prn v\nv lrv now\nout prn v\nv luq now\nout prn v",
+  "output": "[3, 3, 5, 9]\n[9, 5, 3, 3]\n[3, 5, 9]"
+ },
+ {
+  "chapter": "13. Lists",
+  "code": "v is 1&2&3\nv lfl 7\nout prn v\nv lrs 5\nout prn v\nv lrs 2\nout prn v\nv lwp now\nout prn v",
+  "output": "[7, 7, 7]\n[7, 7, 7, 0, 0]\n[7, 7]\n[]"
+ },
+ {
+  "chapter": "13. Lists",
+  "code": "names is \"Ada\"&\"Bob\"&\"Cy\"\nname fea names\n  out prn \"Hello, @name!\"",
+  "output": "Hello, Ada!\nHello, Bob!\nHello, Cy!"
+ },
+ {
+  "chapter": "13. Lists",
+  "code": "names is \"Ada\"&\"Bob\"\ni flt cct&names\n  out prn \"@i: @names@i\"",
+  "output": "0: Ada\n1: Bob"
+ },
+ {
+  "chapter": "13. Lists",
+  "code": "scores is 1&2&3\ns fea scores\n  s aml 10\nout prn scores",
+  "output": "[10, 20, 30]"
+ },
+ {
+  "chapter": "13. Lists",
+  "code": "grid mak vec@vec@num\ngrid add 1&2\ngrid add 3&4\nout prn grid\nout prn grid@1@0\ngrid@1@0 is 9\nout prn grid",
+  "output": "[[1, 2], [3, 4]]\n3\n[[1, 2], [9, 4]]"
+ },
+ {
+  "chapter": "14. Asking a List",
+  "code": "v is 2&4&6\nout prn cct&v\nout prn csm&v\nout prn cpd&v\nout prn cmx&v\nout prn cmn&v",
+  "output": "3\n12\n48\n6\n2"
+ },
+ {
+  "chapter": "14. Asking a List",
+  "code": "v is 2&4&9\nout prn cav&v\nout prn cme&v\nw is 2&4&6\nout prn cde&w",
+  "output": "5\n4\n1.63299"
+ },
+ {
+  "chapter": "14. Asking a List",
+  "code": "v is 5&9&2&9\nout prn chs&v&9\nout prn chs&v&7\nout prn chm&v&9\nout prn cps&v&9\nout prn cps&v&7\nout prn cfr&v\nout prn cla&v",
+  "output": "yes\nnay\n2\n1\n-1\n5\n9"
+ },
+ {
+  "chapter": "14. Asking a List",
+  "code": "v is 3&1&2\nout prn cso&v\nout prn crv&v\nout prn v\nnames is \"Ada\"&\"Bob\"&\"Cy\"\nout prn ctx&names&\", \"",
+  "output": "[1, 2, 3]\n[2, 1, 3]\n[3, 1, 2]\nAda, Bob, Cy"
+ },
+ {
+  "chapter": "15. Maps",
+  "code": "ages mak map@txt@num\nages@\"Ada\" is 36\nages@\"Bob\" is 41\nout prn ages\nout prn ages@\"Ada\"",
+  "output": "{Ada: 36, Bob: 41}\n36"
+ },
+ {
+  "chapter": "15. Maps",
+  "code": "ages is map&\"Ada\"&36\nages add \"Bob\"&41\nout prn ages",
+  "output": "{Ada: 36, Bob: 41}"
+ },
+ {
+  "chapter": "15. Maps",
+  "code": "ages mak map@txt@num\nages@\"Ada\" is 36\nout prn chs&ages&\"Ada\"\nout prn chs&ages&\"Zed\"",
+  "output": "yes\nnay"
+ },
+ {
+  "chapter": "15. Maps",
+  "code": "ages mak map@txt@num\nout prn ages@\"Zed\"\nout prn ages",
+  "output": "0\n{Zed: 0}"
+ },
+ {
+  "chapter": "15. Maps",
+  "code": "counts mak map@txt@num\ntext is \"the cat and the dog and the fish\"\nword fea twd&text\n  counts@word add 1\nout prn counts",
+  "output": "{and: 2, cat: 1, dog: 1, fish: 1, the: 3}"
+ },
+ {
+  "chapter": "15. Maps",
+  "code": "ages is map&\"Ada\"&36\nages add \"Bob\"&41\nages lrm \"Ada\"\nout prn ages\nout prn cct&ages\nages lwp now\nout prn ages",
+  "output": "{Bob: 41}\n1\n{}"
+ },
+ {
+  "chapter": "15. Maps",
+  "code": "ages mak map@txt@num\nages@\"Bob\" is 41\nages@\"Ada\" is 36\nname&age fea ages\n  out prn \"@name is @age\"",
+  "output": "Ada is 36\nBob is 41"
+ },
+ {
+  "chapter": "15. Maps",
+  "code": "ages mak map@txt@num\nages@\"Ada\" is 36\nages@\"Bob\" is 41\nout prn cky&ages\nout prn cvl&ages",
+  "output": "[Ada, Bob]\n[36, 41]"
+ },
+ {
+  "chapter": "15. Maps",
+  "code": "ages mak hsh@txt@num\nages@\"Ada\" is 36\nout prn ages@\"Ada\"\nout prn chs&ages&\"Ada\"",
+  "output": "36\nyes"
+ },
+ {
+  "chapter": "16. Other Collections",
+  "code": "seen mak set@txt\nseen add \"cat\"\nseen add \"dog\"\nseen add \"cat\"\nout prn seen\nout prn cct&seen\nout prn chs&seen&\"dog\"\nseen lrm \"cat\"\nout prn seen",
+  "output": "{cat, dog}\n2\nyes\n{dog}"
+ },
+ {
+  "chapter": "16. Other Collections",
+  "code": "seen mak bag@num\nseen add 5\nseen add 5\nout prn cct&seen",
+  "output": "1"
+ },
+ {
+  "chapter": "16. Other Collections",
+  "code": "plates mak stk@num\nplates add 1\nplates add 2\nplates add 3\nout prn plates@top\nplates lpl now\nout prn plates@top\nout prn cct&plates",
+  "output": "3\n2\n2"
+ },
+ {
+  "chapter": "16. Other Collections",
+  "code": "line mak que@txt\nline add \"Ada\"\nline add \"Bob\"\nout prn line@front\nline lpl now\nout prn line@front",
+  "output": "Ada\nBob"
+ },
+ {
+  "chapter": "16. Other Collections",
+  "code": "jobs mak hep@num\njobs add 3\njobs add 9\njobs add 5\nout prn jobs@top\njobs lpl now\nout prn jobs@top",
+  "output": "9\n5"
+ },
+ {
+  "chapter": "16. Other Collections",
+  "code": "line mak dqu@num\nline add 2\nline add 3\nline lin 0&1\nout prn line\nline lpf now\nout prn line\nout prn line@0",
+  "output": "[1, 2, 3]\n[2, 3]\n2"
+ },
+ {
+  "chapter": "16. Other Collections",
+  "code": "line mak lst@num\nline add 2\nline add 3\nline lpf now\nout prn line",
+  "output": "[3]"
+ },
+ {
+  "chapter": "16. Other Collections",
+  "code": "days mak arr@num@7\ndays@0 is 5\nout prn days\nout prn cct&days",
+  "output": "[5, 0, 0, 0, 0, 0, 0]\n7"
+ },
+ {
+  "chapter": "16. Other Collections",
+  "code": "spot is par&3&4\nout prn spot\nout prn spot@first\nout prn spot@second\nnamed mak par@txt@num\nnamed@first is \"Ada\"\nnamed@second is 36\nout prn named",
+  "output": "(3, 4)\n3\n4\n(Ada, 36)"
+ },
+ {
+  "chapter": "16. Other Collections",
+  "code": "person is tup&\"Ada\"&36&yes\nname&age&ok is person\nout prn name\nout prn age\nout prn ok",
+  "output": "Ada\n36\nyes"
+ },
+ {
+  "chapter": "16. Other Collections",
+  "code": "found mak opt@num\nfound ieq nil\n  out prn \"nothing yet\"\nout prn found@value_or&0\nfound is 7\nfound ine nil\n  out prn found@value",
+  "output": "nothing yet\n0\n7"
+ },
+ {
+  "chapter": "16. Other Collections",
+  "code": "thing mak alt@num@txt\nthing is 5\nout prn thing\nthing is \"five\"\nout prn thing\nout prn thing@txt",
+  "output": "5\nfive\nfive"
+ },
+ {
+  "chapter": "17. Functions",
+  "code": "out prn add_up&1&2\n\nadd_up dfn num\n  a dpm num\n  b dpm num\n  add_up ert a+b",
+  "output": "3"
+ },
+ {
+  "chapter": "17. Functions",
+  "code": "x is add_up&1&2\ny is add_up&x&10\nout prn y\n\nadd_up dfn num\n  a dpm num\n  b dpm num\n  add_up ert a+b",
+  "output": "13"
+ },
+ {
+  "chapter": "17. Functions",
+  "code": "now hello \"Ada\"\nnow hello \"Bob\"\n\nhello dfn now\n  who dpm txt\n  out prn \"Hello, @who!\"",
+  "output": "Hello, Ada!\nHello, Bob!"
+ },
+ {
+  "chapter": "17. Functions",
+  "code": "now greet \"Ada\"&3\nnow beep now\n\ngreet dfn now\n  who dpm txt\n  times dpm num\n  i flt times\n    out prn \"Hi, @who!\"\n\nbeep dfn now\n  out prn \"Beep!\"",
+  "output": "Hi, Ada!\nHi, Ada!\nHi, Ada!\nBeep!"
+ },
+ {
+  "chapter": "17. Functions",
+  "code": "now check_age 5\nnow check_age 20\n\ncheck_age dfn now\n  age dpm num\n  age ilt 13\n    out prn \"Too young.\"\n    check_age ert now\n  out prn \"Welcome!\"",
+  "output": "Too young.\nWelcome!"
+ },
+ {
+  "chapter": "17. Functions",
+  "code": "now hello \"Ada\"\nnow hello \"Bob\"&\"Hi\"\n\nhello dfn now\n  who dpm txt\n  word dpm \"Hello\"\n  out prn \"@word @who\"",
+  "output": "Hello Ada\nHi Bob"
+ },
+ {
+  "chapter": "17. Functions",
+  "code": "x is 1\nnow bbl now\n  y is 2\n  out prn x+y\nout prn x",
+  "output": "3\n1"
+ },
+ {
+  "chapter": "17. Functions",
+  "code": "now score_up 2\nnow score_up 3\nout prn score\n\nscore mgl 0\n\nscore_up dfn now\n  n dpm num\n  score add n",
+  "output": "5"
+ },
+ {
+  "chapter": "17. Functions",
+  "code": "x is 1\nnow try_copy x\nout prn x\nnow try_ref x\nout prn x\n\ntry_copy dfn now\n  n dpm num\n  n add 1\n\ntry_ref dfn now\n  n dpm ref@num\n  n add 1",
+  "output": "1\n2"
+ },
+ {
+  "chapter": "17. Functions",
+  "code": "scores is 1&2&3\nout prn top_of&scores\n\ntop_of dfn num\n  v dpm see@vec@num\n  top_of ert cmx&v",
+  "output": "3"
+ },
+ {
+  "chapter": "17. Functions",
+  "code": "x is 1\nalso mrf x\nalso add 1\nout prn x\npeek mlo x\nx add 1\nout prn peek",
+  "output": "2\n3"
+ },
+ {
+  "chapter": "17. Functions",
+  "code": "q&r is divide&17&5\nout prn \"@q, with @r left over\"\n\ndivide dfn tup@num@num\n  a dpm num\n  b dpm num\n  whole is a/b\n  rest is a%b\n  divide ert whole&rest",
+  "output": "3, with 2 left over"
+ },
+ {
+  "chapter": "17. Functions",
+  "code": "out prn factorial&5\n\nfactorial dfn num\n  n dpm num\n  n ile 1\n    factorial ert 1\n  smaller is factorial&n-1\n  factorial ert n*smaller",
+  "output": "120"
+ },
+ {
+  "chapter": "18. Functions in a Name",
+  "code": "twice dlm num\n  n dpm num\n  twice ert n*2\nout prn twice&21",
+  "output": "42"
+ },
+ {
+  "chapter": "18. Functions in a Name",
+  "code": "bonus is 100\nplus_bonus dlm num\n  n dpm num\n  plus_bonus ert n+bonus\nout prn plus_bonus&5",
+  "output": "105"
+ },
+ {
+  "chapter": "18. Functions in a Name",
+  "code": "v is 1&5&2&8\nbig dlm yno\n  n dpm num\n  big ert n>2\nout prn cft&v&big",
+  "output": "[5, 8]"
+ },
+ {
+  "chapter": "18. Functions in a Name",
+  "code": "v is 1&2&3\nsquare dlm num\n  n dpm num\n  square ert n*n\nout prn cmp&v&square",
+  "output": "[1, 4, 9]"
+ },
+ {
+  "chapter": "18. Functions in a Name",
+  "code": "v is 3&1&2\nbigger_first dlm yno\n  a dpm num\n  b dpm num\n  bigger_first ert a>b\nv lso bigger_first\nout prn v",
+  "output": "[3, 2, 1]"
+ },
+ {
+  "chapter": "18. Functions in a Name",
+  "code": "say_size mak fun@num@txt\nsizer dlm num\n  s dpm txt\n  sizer ert tsz&s\nsay_size is sizer\nout prn say_size&\"hello\"\nout prn run_twice&sizer\n\nrun_twice dfn num\n  f dpm fun@num@txt\n  a is f&\"one\"\n  b is f&\"three\"\n  run_twice ert a+b",
+  "output": "5\n8"
+ },
+ {
+  "chapter": "19. Any Kind",
+  "code": "out prn biggest&3&9\nout prn biggest&2.5&1.5\nout prn biggest&\"apple\"&\"pear\"\n\nT dtp now\nbiggest dfn T\n  x dpm T\n  y dpm T\n  x igt y\n    biggest ert x\n  biggest ert y",
+  "output": "9\n2.5\npear"
+ },
+ {
+  "chapter": "19. Any Kind",
+  "code": "n mak Box@num\nn@item is 7\nout prn n@item\ns mak Box@txt\ns@item is \"hello\"\nout prn s@item\n\nT dtp now\nBox dst now\n  item dfd T",
+  "output": "7\nhello"
+ },
+ {
+  "chapter": "19. Any Kind",
+  "code": "now show 5\nnow show \"five\"\n\nshow dfn now\n  x dpm any\n  out prn \"It is: @x\"",
+  "output": "It is: 5\nIt is: five"
+ },
+ {
+  "chapter": "20. Your Own Kinds of Things",
+  "code": "rex mak Dog\nrex@name is \"Rex\"\nrex bark now\nout prn rex\n\nDog dcl now\n  name dfd txt\n  age dfd 3\n  bark dfn now\n    out prn \"@name says woof!\"",
+  "output": "Rex says woof!\nDog(name: Rex, age: 3)"
+ },
+ {
+  "chapter": "20. Your Own Kinds of Things",
+  "code": "rex mak Dog\ntom mak Dog\nrex@name is \"Rex\"\ntom@name is \"Tom\"\nrex@age is 9\nout prn rex\nout prn tom\n\nDog dcl now\n  name dfd txt\n  age dfd 3",
+  "output": "Dog(name: Rex, age: 9)\nDog(name: Tom, age: 3)"
+ },
+ {
+  "chapter": "20. Your Own Kinds of Things",
+  "code": "rex mak Dog\nout prn rex@dog_years\nrex grow 2\nout prn rex@dog_years\n\nDog dcl now\n  age dfd 3\n  grow dfn now\n    more dpm num\n    age add more\n  dog_years dfn num\n    dog_years ert age*7",
+  "output": "21\n35"
+ },
+ {
+  "chapter": "20. Your Own Kinds of Things",
+  "code": "a mak Dog&\"Rex\"\nb mak Dog&\"Tom\"&5\nout prn a\nout prn b\n\nDog dcl now\n  name dfd txt\n  age dfd 1\n  Dog dmk now\n    n dpm txt\n    y dpm 1\n    name is n\n    age is y",
+  "output": "Dog(name: Rex, age: 1)\nDog(name: Tom, age: 5)"
+ },
+ {
+  "chapter": "20. Your Own Kinds of Things",
+  "code": "rex is Dog&\"Rex\"\nout prn rex\n\nDog dcl now\n  name dfd txt\n  Dog dmk now\n    n dpm txt\n    name is n",
+  "output": "Dog(name: Rex)"
+ },
+ {
+  "chapter": "20. Your Own Kinds of Things",
+  "code": "s mak Spot&3\nout prn s@x\n\nSpot dcl now\n  x dfd 0\n  Spot dmk now\n    x dpm num\n    slf@x is x",
+  "output": "3"
+ },
+ {
+  "chapter": "20. Your Own Kinds of Things",
+  "code": "acct mak Bank\nacct pay_in 50\nout prn acct@balance\nout prn acct\n\nBank dcl now\n  owner dfd \"Ada\"\n  money dsc 0\n  pay_in dfn now\n    n dpm num\n    n igt 0\n      money add n\n  balance dfn num\n    balance ert money",
+  "output": "50\nBank(owner: Ada)"
+ },
+ {
+  "chapter": "20. Your Own Kinds of Things",
+  "code": "r mak Robot\nr start now\n\nRobot dcl now\n  start dfn now\n    now warm_up now\n    out prn \"Ready!\"\n  warm_up dhd now\n    out prn \"Warming up...\"",
+  "output": "Warming up...\nReady!"
+ },
+ {
+  "chapter": "20. Your Own Kinds of Things",
+  "code": "b mak Box\nout prn b@area\n\nBox dcl now\n  w dfd 2\n  h dfd 3\n  area dkn num\n    area ert w*h",
+  "output": "6"
+ },
+ {
+  "chapter": "20. Your Own Kinds of Things",
+  "code": "a mak Dog\nb mak Dog\nout prn Dog@made\nout prn Dog@report&\n\nDog dcl now\n  made dsh 0\n  Dog dmk now\n    made add 1\n  report dsf txt\n    report ert \"Dogs so far: \"+txt&made",
+  "output": "2\nDogs so far: 2"
+ },
+ {
+  "chapter": "20. Your Own Kinds of Things",
+  "code": "now bbl now\n  t mak Torch\n  out prn \"using it\"\nout prn \"done\"\n\nTorch dcl now\n  Torch dmk now\n    out prn \"on\"\n  Torch dds now\n    out prn \"off\"",
+  "output": "on\nusing it\noff\ndone"
+ },
+ {
+  "chapter": "20. Your Own Kinds of Things",
+  "code": "a mak Dog\nb mak Dog\nout prn a==b\nb@age is 9\nout prn a==b\n\nDog dcl now\n  age dfd 3",
+  "output": "yes\nnay"
+ },
+ {
+  "chapter": "21. Children",
+  "code": "d mak Dog\nd@name is \"Rex\"\nd eat now\nd bark now\nout prn d\n\nAnimal dcl now\n  name dfd \"?\"\n  eat dfn now\n    out prn \"@name is eating.\"\n\nDog dcl Animal\n  tricks dfd 2\n  bark dfn now\n    out prn \"@name says woof!\"",
+  "output": "Rex is eating.\nRex says woof!\nDog(name: Rex, tricks: 2)"
+ },
+ {
+  "chapter": "21. Children",
+  "code": "d mak Dog\nout prn d@report\n\nAnimal dcl now\n  energy dfm 5\n  rest dfy now\n    energy add 1\n\nDog dcl Animal\n  report dfn num\n    now rest now\n    report ert energy",
+  "output": "6"
+ },
+ {
+  "chapter": "21. Children",
+  "code": "d mak Dog&\"Rex\"\nout prn d\n\nAnimal dcl now\n  name dfd txt\n  Animal dmk now\n    n dpm txt\n    name is n\n    out prn \"An animal is made.\"\n\nDog dcl Animal\n  tricks dfd 0\n  Dog dmk now\n    given dpm txt\n    now dbs given\n    out prn \"A dog is made.\"",
+  "output": "An animal is made.\nA dog is made.\nDog(name: Rex, tricks: 0)"
+ },
+ {
+  "chapter": "21. Children",
+  "code": "d mak Dog&\"Rex\"\nout prn d@name\nout prn d@hugs\n\nAnimal dcl now\n  name dfd txt\n  Animal dmk now\n    n dpm txt\n    name is n\n\nFriend dcl now\n  hugs dfd 3\n\nDog dcl Animal&Friend\n  Dog dmk now\n    given dpm txt\n    Animal dbs given",
+  "output": "Rex\n3"
+ },
+ {
+  "chapter": "21. Children",
+  "code": "a mak Animal\nd mak Dog\nout prn a@sound\nout prn d@sound\n\nAnimal dcl now\n  sound dvr txt\n    sound ert \"...\"\n\nDog dcl Animal\n  sound dov txt\n    sound ert \"Woof\"",
+  "output": "...\nWoof"
+ },
+ {
+  "chapter": "21. Children",
+  "code": "c mak Circle\nout prn c@area\n\nShape dcl now\n  area dmb dec\n\nCircle dcl Shape\n  r dfd 2.0\n  area dov dec\n    area ert npi*r*r",
+  "output": "12.5664"
+ },
+ {
+  "chapter": "21. Children",
+  "code": "pets mak vec@own@Animal\nd mwn Dog\npets add d\nc mwn Cat\npets add c\np fea pets\n  out prn p@sound\n\nAnimal dcl now\n  sound dmb txt\n\nDog dcl Animal\n  sound dov txt\n    sound ert \"Woof\"\n\nCat dcl Animal\n  sound dov txt\n    sound ert \"Meow\"",
+  "output": "Woof\nMeow"
+ },
+ {
+  "chapter": "22. More Kinds of Your Own",
+  "code": "Mood den happy&sad&sleepy\nm is Mood@happy\nout prn m\nm ieq Mood@happy\n  out prn \"Smile!\"\nm is Mood@sleepy\nm bsw now\n  now bcs happy\n    out prn \"Yay\"\n  now bcs sad\n    out prn \"Oh no\"\n  now bcs sleepy\n    out prn \"Zzz\"",
+  "output": "happy\nSmile!\nZzz"
+ },
+ {
+  "chapter": "22. More Kinds of Your Own",
+  "code": "a is Spot&1&2\nout prn a\nout prn a@y\n\nSpot dst now\n  x dfd 0\n  y dfd 0",
+  "output": "Spot(x: 1, y: 2)\n2"
+ },
+ {
+  "chapter": "22. More Kinds of Your Own",
+  "code": "a is Spot&1&2\nb is Spot&3&4\nc is a+b\nout prn c\n\nSpot dst now\n  x dfd 0\n  y dfd 0\n  + dop Spot\n    o dpm see@Spot\n    r is Spot&x+o@x&y+o@y\n    + ert r",
+  "output": "Spot(x: 4, y: 6)"
+ },
+ {
+  "chapter": "22. More Kinds of Your Own",
+  "code": "v mak vec@Card\nv add Card&7\nv add Card&2\nv lso now\nout prn v\n\nCard dst now\n  rank dfd 0\n  < dop yno\n    o dpm see@Card\n    < ert rank<o@rank",
+  "output": "[Card(rank: 2), Card(rank: 7)]"
+ },
+ {
+  "chapter": "22. More Kinds of Your Own",
+  "code": "Row dal vec@num\nGrid dal vec@Row\ng mak Grid\ng add 1&2\nout prn g",
+  "output": "[[1, 2]]"
+ },
+ {
+  "chapter": "22. More Kinds of Your Own",
+  "code": "b mak Both\nb@whole is 65\nout prn b@whole\n\nBoth dun now\n  whole dfd num\n  part dfd dec",
+  "output": "65"
+ },
+ {
+  "chapter": "23. Pointers",
+  "code": "x is 5\np mpt x\nout prn *p\n*p is 7\nout prn x",
+  "output": "5\n7"
+ },
+ {
+  "chapter": "23. Pointers",
+  "code": "a is 1\nb is 2\np mpt a\nout prn *p\np mpt b\nout prn *p",
+  "output": "1\n2"
+ },
+ {
+  "chapter": "23. Pointers",
+  "code": "rex mak Dog\np mpt rex\np@age is 5\nout prn rex@age\n\nDog dst now\n  age dfd 3",
+  "output": "5"
+ },
+ {
+  "chapter": "23. Pointers",
+  "code": "q mak ptr@num\nq ieq nil\n  out prn \"q points at nothing\"\nx is 5\nq mpt x\nq ine nil\n  out prn *q",
+  "output": "q points at nothing\n5"
+ },
+ {
+  "chapter": "23. Pointers",
+  "code": "q mak ptr@num\nout prn \"before\"\nout prn *q",
+  "output": "before\n\nThe program stopped on line 3:\n    out prn *q\nIt tried to use something that is not there: a pointer to nothing, or a position far outside a collection."
+ },
+ {
+  "chapter": "23. Pointers",
+  "code": "now bbl now\n  t mwn Torch\n  t@name is \"big\"\n  out prn t@name\nout prn \"the block is over\"\n\nTorch dcl now\n  name dfd txt\n  Torch dds now\n    out prn \"cleaned up\"",
+  "output": "big\ncleaned up\nthe block is over"
+ },
+ {
+  "chapter": "23. Pointers",
+  "code": "a mwn Torch\na@name is \"big\"\nb mmv a\nout prn b@name\na ieq nil\n  out prn \"a holds nothing now\"\n\nTorch dcl now\n  name dfd txt",
+  "output": "big\na holds nothing now"
+ },
+ {
+  "chapter": "23. Pointers",
+  "code": "v is 1&2&3\nw mmv v\nout prn w",
+  "output": "[1, 2, 3]"
+ },
+ {
+  "chapter": "23. Pointers",
+  "code": "a msh Torch\nout prn a@use_count\nb is a\nout prn a@use_count\nb@name is \"shared\"\nout prn a@name\n\nTorch dcl now\n  name dfd txt",
+  "output": "1\n2\nshared"
+ },
+ {
+  "chapter": "23. Pointers",
+  "code": "a msh Torch\na@name is \"big\"\nnow show_it a\nout prn a@use_count\n\nshow_it dfn now\n  t dpm shr@Torch\n  out prn t@name\n  out prn t@use_count\n\nTorch dcl now\n  name dfd txt",
+  "output": "big\n2\n1"
+ },
+ {
+  "chapter": "23. Pointers",
+  "code": "p mnw Torch\np@name is \"hand made\"\nout prn p@name\nnow edl p\np ieq nil\n  out prn \"p is nil now\"\n\nTorch dcl now\n  name dfd txt",
+  "output": "hand made\np is nil now"
+ },
+ {
+  "chapter": "24. When Things Go Wrong",
+  "code": "v is 1&2&3\ni is 5\nout prn v@i",
+  "output": "The program stopped on line 3:\n    out prn v@i\nIt used a position that is not in the collection or text."
+ },
+ {
+  "chapter": "24. When Things Go Wrong",
+  "code": "n is 0\nout prn 10/n",
+  "output": "The program stopped on line 2:\n    out prn 10/n\nIt divided a whole number by zero."
+ },
+ {
+  "chapter": "24. When Things Go Wrong",
+  "code": "out prn forever&1\n\nforever dfn num\n  n dpm num\n  next is forever&n+1\n  forever ert next+1",
+  "output": "The program stopped on line 5:\n    next is forever&n+1\nA function kept calling itself and never stopped."
+ },
+ {
+  "chapter": "24. When Things Go Wrong",
+  "code": "now btr now\n  out prn \"one\"\n  n is tnm&\"not a number\"\n  out prn \"two\"\ne bch now\n  out prn \"That was not a number.\"\nout prn \"three\"",
+  "output": "one\nThat was not a number.\nthree"
+ },
+ {
+  "chapter": "24. When Things Go Wrong",
+  "code": "now btr now\n  v is 1&2\n  out prn tnm&\"oops\"\ne bch now\n  out prn \"caught: @e\"",
+  "output": "caught: invalid stoi argument"
+ },
+ {
+  "chapter": "24. When Things Go Wrong",
+  "code": "now btr now\n  now set_age -3\n  out prn \"not reached\"\ne bch now\n  out prn \"caught: @e\"\n\nset_age dfn now\n  age dpm num\n  age ilt 0\n    now etw \"An age can't be below zero.\"\n  out prn \"Age set.\"",
+  "output": "caught: An age can't be below zero."
+ },
+ {
+  "chapter": "24. When Things Go Wrong",
+  "code": "now etw \"something went wrong\"",
+  "output": "The program stopped on line 1:\n    now etw \"something went wrong\"\nThe problem: something went wrong"
+ },
+ {
+  "chapter": "24. When Things Go Wrong",
+  "code": "now btr now\n  now etw Late&5\ne bch Late\n  out prn \"Late by @e@mins minutes\"\n\nLate dst now\n  mins dfd 0",
+  "output": "Late by 5 minutes"
+ },
+ {
+  "chapter": "24. When Things Go Wrong",
+  "code": "now btr now\n  now etw \"plain\"\nx bch Late\n  out prn \"it was late\"\nnow bch now\n  out prn \"something else went wrong\"\n\nLate dst now\n  mins dfd 0",
+  "output": "something else went wrong"
+ },
+ {
+  "chapter": "24. When Things Go Wrong",
+  "code": "now btr now\n  now btr now\n    now etw \"bad\"\n  e bch now\n    out prn \"I saw it first.\"\n    now etw now\ne bch now\n  out prn \"Then me: @e\"",
+  "output": "I saw it first.\nThen me: bad"
+ },
+ {
+  "chapter": "24. When Things Go Wrong",
+  "code": "out prn \"Bye.\"\nnow ext 0\nout prn \"not reached\"",
+  "output": "Bye."
+ },
+ {
+  "chapter": "24. When Things Go Wrong",
+  "code": "out prn \"All done.\"\nmain ert 0",
+  "output": "All done."
+ },
+ {
+  "chapter": "25. Checks and Tests",
+  "code": "x is 3\nx seq 3\nx sgt 2\nout prn \"All the checks passed.\"",
+  "output": "All the checks passed."
+ },
+ {
+  "chapter": "25. Checks and Tests",
+  "code": "x is 3\nx seq 4\nout prn \"not reached\"",
+  "output": "Line 2: x seq 4 is not right: the first is 3, and the second is 4."
+ },
+ {
+  "chapter": "25. Checks and Tests",
+  "code": "a is 2\na sne 3\na slt 3\na sle 2\na sge 2\nout prn \"Fine.\"",
+  "output": "Fine."
+ },
+ {
+  "chapter": "25. Checks and Tests",
+  "code": "out prn add_up&1&2\n\nnow bts \"adding small numbers\"\n  a is add_up&1&2\n  a seq 3\n\nadd_up dfn num\n  a dpm num\n  b dpm num\n  add_up ert a+b",
+  "output": "3"
+ },
+ {
+  "chapter": "26. Talking With Your Program",
+  "code": "name get \"What is your name? \"\nout prn \"Hello, @name!\"",
+  "output": "What is your name? Ada\nHello, Ada!"
+ },
+ {
+  "chapter": "26. Talking With Your Program",
+  "code": "age mak num\nage get \"How old are you? \"\nnext is age+1\nout prn \"Next year you will be @next.\"",
+  "output": "How old are you? 9\nNext year you will be 10."
+ },
+ {
+  "chapter": "26. Talking With Your Program",
+  "code": "age mak num\nage get \"How old are you? \"\nout prn \"You are @age.\"",
+  "output": "How old are you? nine\nPlease type a number.\nHow old are you? 9\nYou are 9."
+ },
+ {
+  "chapter": "26. Talking With Your Program",
+  "code": "ready mak yno\nready get \"Are you ready? \"\nout prn ready",
+  "output": "Are you ready? maybe\nPlease answer yes or no.\nAre you ready? yes\nyes"
+ },
+ {
+  "chapter": "26. Talking With Your Program",
+  "code": "story gln \"Tell me something: \"\nout prn \"You said: @story\"",
+  "output": "Tell me something: I like cats a lot\nYou said: I like cats a lot"
+ },
+ {
+  "chapter": "26. Talking With Your Program",
+  "code": "out prn \"Type two numbers.\"\na mak num\nb mak num\na get inp\nb get inp\nout prn a+b",
+  "output": "Type two numbers.\n3\n4\n7"
+ },
+ {
+  "chapter": "26. Talking With Your Program",
+  "code": "line wln inp\n  out prn tuc&line",
+  "output": "one\nONE\ntwo\nTWO"
+ },
+ {
+  "chapter": "26. Talking With Your Program",
+  "code": "name get \"What is your name? \"\nage mak num\nage get \"How old are you? \"\nage ilt 13\n  out prn \"Hi, @name! You're still a kid.\"\nnow oth now\n  years is age-13\n  out prn \"Hi, @name! You stopped being a kid @years years ago.\"",
+  "output": "What is your name? Ada\nHow old are you? 36\nHi, Ada! You stopped being a kid 23 years ago."
+ },
+ {
+  "chapter": "27. Files",
+  "code": "\"notes.txt\" hwr \"Remember the milk.\\n\"\nout prn hrd&\"notes.txt\"\n\"notes.txt\" hrm now",
+  "output": "Remember the milk."
+ },
+ {
+  "chapter": "27. Files",
+  "code": "name is \"notes.txt\"\nname hwr \"one\\n\"\nname hap \"two\\n\"\nout prn hln&name\nname hrm now",
+  "output": "[one, two]"
+ },
+ {
+  "chapter": "27. Files",
+  "code": "name is \"notes.txt\"\nout prn hex&name\nname hwr \"hello\"\nout prn hex&name\nout prn hsz&name\nname hrm now\nout prn hex&name",
+  "output": "nay\nyes\n5\nnay"
+ },
+ {
+  "chapter": "27. Files",
+  "code": "now btr now\n  out prn hrd&\"missing.txt\"\ne bch now\n  out prn \"I can't read that file.\"",
+  "output": "I can't read that file."
+ },
+ {
+  "chapter": "27. Files",
+  "code": "\"box\" hmk now\n\"box/a.txt\" hwr \"hi\"\n\"box/a.txt\" hcp \"box/b.txt\"\n\"box/b.txt\" hmv \"box/c.txt\"\nout prn hls&\"box\"\n\"box\" hrm now\nout prn hex&\"box\"",
+  "output": "[a.txt, c.txt]\nnay"
+ },
+ {
+  "chapter": "27. Files",
+  "code": "f mfo \"notes.txt\"\nf prn \"alpha\"\nf prn \"beta\"\nf put \"gam\"\nf prn \"ma\"\nf close now\nout prn hln&\"notes.txt\"\n\"notes.txt\" hrm now",
+  "output": "[alpha, beta, gamma]"
+ },
+ {
+  "chapter": "27. Files",
+  "code": "\"notes.txt\" hwr \"first line\\n7 8\\nlast line\\n\"\nf mfi \"notes.txt\"\ntop gln f\nout prn top\na mak num\nb mak num\na get f\nb get f\nout prn a+b\nrest gln f\nline wln f\n  out prn line\nf close now\n\"notes.txt\" hrm now",
+  "output": "first line\n15\nlast line"
+ },
+ {
+  "chapter": "27. Files",
+  "code": "f mfo \"log.txt\"\nnow note_it f&\"started\"\nnow note_it f&\"finished\"\nf close now\ng mfi \"log.txt\"\nnow show_all g\ng close now\n\"log.txt\" hrm now\n\nnote_it dfn now\n  file dpm ref@ofs\n  what dpm txt\n  file prn \"- @what\"\n\nshow_all dfn now\n  file dpm ref@ifs\n  line wln file\n    out prn line",
+  "output": "- started\n- finished"
+ },
+ {
+  "chapter": "27. Files",
+  "code": "f mak ofs\nf open \"later.txt\"\nf prn \"hi\"\nf close now\nout prn hrd&\"later.txt\"\n\"later.txt\" hrm now",
+  "output": "hi"
+ },
+ {
+  "chapter": "28. The Clock",
+  "code": "start is kms\nnow rwt 50\ntook is kms-start\ntook sge 40\nout prn \"That took a moment.\"\nout prn kel>0",
+  "output": "That took a moment.\nyes"
+ },
+ {
+  "chapter": "28. The Clock",
+  "code": "n is 3\nn fgt 0\n  out prn n\n  now rwt 100\nout prn \"Go!\"",
+  "output": "3\n2\n1\nGo!"
+ },
+ {
+  "chapter": "29. At the Same Time",
+  "code": "t mtd count_to&3\nt rjn now\nout prn \"All done.\"\n\ncount_to dfn now\n  n dpm num\n  i flt n\n    out prn i",
+  "output": "0\n1\n2\nAll done."
+ },
+ {
+  "chapter": "29. At the Same Time",
+  "code": "t mtd say_hi&\"there\"\nt rdt now\nnow rwt 300\nout prn \"bye\"\n\nsay_hi dfn now\n  who dpm txt\n  out prn \"hi @who\"",
+  "output": "hi there\nbye"
+ },
+ {
+  "chapter": "29. At the Same Time",
+  "code": "workers mak vec@thd\ni flt 3\n  t mtd do_nothing&i\n  workers add t\nw fea workers\n  w rjn now\nout prn cct&workers\n\ndo_nothing dfn now\n  n dpm num",
+  "output": "3"
+ },
+ {
+  "chapter": "29. At the Same Time",
+  "code": "total mak atm@num\nt1 mtd count_up&total\nt2 mtd count_up&total\nt1 rjn now\nt2 rjn now\nout prn total@load\n\ncount_up dfn now\n  c dpm ref@atm@num\n  i flt 1000\n    c add 1",
+  "output": "2000"
+ },
+ {
+  "chapter": "29. At the Same Time",
+  "code": "names mak vec@txt\nguard mak mtx\nt1 mtd add_name&names&guard&\"Ada\"\nt2 mtd add_name&names&guard&\"Bob\"\nt1 rjn now\nt2 rjn now\nout prn cct&names\n\nadd_name dfn now\n  list dpm ref@vec@txt\n  m dpm ref@mtx\n  who dpm txt\n  m blk now\n    list add who",
+  "output": "2"
+ },
+ {
+  "chapter": "29. At the Same Time",
+  "code": "answer msy slow_add&1&2\nout prn \"I can do other things now.\"\nout prn answer@get\n\nslow_add dfn num\n  a dpm num\n  b dpm num\n  now rwt 20\n  slow_add ert a+b",
+  "output": "I can do other things now.\n3"
+ },
+ {
+  "chapter": "29. At the Same Time",
+  "code": "results mak vec@fut@num\ni flt 3\n  r msy square&i\n  results add r\nr fea results\n  out prn r@get\n\nsquare dfn num\n  n dpm num\n  square ert n*n",
+  "output": "0\n1\n4"
+ },
+ {
+  "chapter": "29. At the Same Time",
+  "code": "v is 1&2&3&4\nsum mak atm@num\nn fpr v\n  sum add n\nout prn sum@load",
+  "output": "10"
+ },
+ {
+  "chapter": "29. At the Same Time",
+  "code": "v is 1&2&3&4\nn fpr v\n  n aml 10\nout prn v",
+  "output": "[10, 20, 30, 40]"
+ },
+ {
+  "chapter": "30. Groups and Other Files",
+  "code": "out prn geo@area&3\nout prn cash@area&3\n\ngeo dgr now\n  area dfn num\n    side dpm num\n    area ert side*side\n\ncash dgr now\n  area dfn txt\n    code dpm num\n    area ert \"region @code\"",
+  "output": "9\nregion 3"
+ },
+ {
+  "chapter": "30. Groups and Other Files",
+  "code": "b mak zoo@Bear\nout prn b@name\nm is zoo@Mood@calm\nout prn m\nout prn zoo@open_at&8\n\nzoo dgr now\n  Mood den calm&wild\n  Bear dcl now\n    name dfd \"Ted\"\n  open_at dfn txt\n    hour dpm num\n    open_at ert \"Open at @hour\"",
+  "output": "Ted\ncalm\nOpen at 8"
+ },
+ {
+  "chapter": "30. Groups and Other Files",
+  "code": "now xim \"tools.epp\"\nout prn twice&21\np mak Pet\nout prn p",
+  "output": "42\nPet(name: ?)"
+ },
+ {
+  "chapter": "31. The World Outside",
+  "code": "now rcm \"echo Hello from Windows\"",
+  "output": "Hello from Windows"
+ },
+ {
+  "chapter": "31. The World Outside",
+  "code": "said is xcm&\"echo hello\"\nout prn tuc&said\nout prn xcd&\"exit 3\"",
+  "output": "HELLO\n3"
+ },
+ {
+  "chapter": "31. The World Outside",
+  "code": "out prn cct&xag\nw fea xag\n  out prn w",
+  "output": "0"
+ },
+ {
+  "chapter": "31. The World Outside",
+  "code": "out prn xev&\"SURELY_NOT_SET\"\nwhere is xev&\"USERPROFILE\"\nsize is tsz&where\nout prn size>0",
+  "output": "\nyes"
+ },
+ {
+  "chapter": "31. The World Outside",
+  "code": "online is nay\nonline ieq yes\n  page is xwb&\"http://example.com\"\n  out prn tsz&page\nout prn \"Done.\"",
+  "output": "Done."
+ },
+ {
+  "chapter": "32. Any C++, Any Library",
+  "code": "now xic \"<vector>\"\nv mak std@vector@int\nv push_back 3\nv push_back 4\nout prn v@size&\nn is std@stoi&\"12\"\nout prn n+1",
+  "output": "2\n13"
+ },
+ {
+  "chapter": "32. Any C++, Any Library",
+  "code": "now xgl \"int fromCpp = 5;\"\nnow xpp \"fromCpp = fromCpp * 2;\"\nnow xpp \"std::cout << fromCpp << std::endl;\"",
+  "output": "10"
+ },
+ {
+  "chapter": "32. Any C++, Any Library",
+  "code": "now xic \"<vector>\"\nnow xus std\nnow xpp \"vector<int> v = {7, 8};\"\nnow xpp \"cout << v.back() << endl;\"",
+  "output": "8"
+ },
+ {
+  "chapter": "32. Any C++, Any Library",
+  "code": "now xic \"shop.h\"\nb mak Bag\nb fill 5\nout prn b@total&\nb@open is 9\nout prn b@open\nc mak Bag&10\nout prn c@total&\nt mak shop@Till\nt ring 4\nout prn t@money\nout prn shop@tax&50\nbags mak vec@Bag\nbags add b\nbags add c\nx fea bags\n  out prn x@total&\nnow show_it c\n\nshow_it dfn now\n  g dpm Bag\n  out prn g@total&",
+  "output": "5\n9\n10\n4\n5\n5\n10\n10"
+ },
+ {
+  "chapter": "32. Any C++, Any Library",
+  "code": "now xgl \"class Bag { public: virtual int weight() const { return 1; } virtual ~Bag() = default; int open = 1; };\"\ns mak Sack\nout prn s@weight&\nout prn s@open\n\nSack dcl Bag\n  weight dkn num\n    weight ert 5",
+  "output": "5\n1"
+ },
+ {
+  "chapter": "33. Project: Guess the Number",
+  "code": "secret is nra&1&100\nguess mak num\nguess get \"Your guess? \"\nout prn \"You said @guess.\"",
+  "output": "Your guess? 50\nYou said 50."
+ },
+ {
+  "chapter": "33. Project: Guess the Number",
+  "code": "secret is 42\nguess mak num\nguess get \"Your guess? \"\nguess ilt secret\n  out prn \"Too low\"\nguess ogt secret\n  out prn \"Too high\"\nnow oth now\n  out prn \"Right!\"",
+  "output": "Your guess? 50\nToo high"
+ },
+ {
+  "chapter": "33. Project: Guess the Number",
+  "code": "secret is 42\nguess mak num\nnow wfv now\n  guess get \"Your guess? \"\n  guess ilt secret\n    out prn \"Too low\"\n  guess ogt secret\n    out prn \"Too high\"\n  now oth now\n    out prn \"Right!\"\n    now ebk now",
+  "output": "Your guess? 50\nToo high\nYour guess? 25\nToo low\nYour guess? 42\nRight!"
+ },
+ {
+  "chapter": "33. Project: Guess the Number",
+  "code": "secret is 42\ntries is 0\nguess mak num\nnow wfv now\n  guess get \"Your guess? \"\n  tries add 1\n  guess ilt secret\n    out prn \"Too low\"\n  guess ogt secret\n    out prn \"Too high\"\n  now oth now\n    out prn \"Right, in @tries tries!\"\n    now ebk now",
+  "output": "Your guess? 50\nToo high\nYour guess? 25\nToo low\nYour guess? 42\nRight, in 3 tries!"
+ },
+ {
+  "chapter": "34. Project: A Shopping List That Remembers",
+  "code": "items mak vec@txt\nnow wfv now\n  what get \"add, list or quit? \"\n  what ieq \"quit\"\n    now ebk now\n  what ieq \"add\"\n    thing get \"What to add? \"\n    items add thing\n  what ieq \"list\"\n    out prn items\nout prn \"Bye!\"",
+  "output": "add, list or quit? add\nWhat to add? milk\nadd, list or quit? list\n[milk]\nadd, list or quit? quit\nBye!"
+ },
+ {
+  "chapter": "34. Project: A Shopping List That Remembers",
+  "code": "items is \"milk\"&\"eggs\"\nwhat get \"add, drop, list or quit? \"\nwhat ieq \"drop\"\n  thing get \"What to drop? \"\n  has is chs&items&thing\n  has ieq yes\n    items lrm thing\n    out prn \"Gone.\"\n  now oth now\n    out prn \"That's not on the list.\"\nout prn items",
+  "output": "add, drop, list or quit? drop\nWhat to drop? eggs\nGone.\n[milk]"
+ },
+ {
+  "chapter": "34. Project: A Shopping List That Remembers",
+  "code": "items is \"milk\"&\"eggs\"\nnow show items\n\nshow dfn now\n  list dpm see@vec@txt\n  list ieq vec@txt&\n    out prn \"The list is empty.\"\n    show ert now\n  i flt cct&list\n    number is i+1\n    out prn \"@number. @list@i\"",
+  "output": "1. milk\n2. eggs"
+ },
+ {
+  "chapter": "34. Project: A Shopping List That Remembers",
+  "code": "items is \"milk\"&\"eggs\"\nnow save items\nout prn hrd&\"shopping.txt\"\n\"shopping.txt\" hrm now\n\nsave dfn now\n  list dpm see@vec@txt\n  \"shopping.txt\" hwr ctx&list&\"\\n\"",
+  "output": "milk\neggs"
+ },
+ {
+  "chapter": "34. Project: A Shopping List That Remembers",
+  "code": "\"shopping.txt\" hwr \"milk\\neggs\\n\"\nitems is load&\nout prn items\n\"shopping.txt\" hrm now\nout prn load&\n\nload dfn vec@txt\n  hex&\"shopping.txt\" ieq nay\n    load ert vec@txt&\n  load ert hln&\"shopping.txt\"",
+  "output": "[milk, eggs]\n[]"
+ },
+ {
+  "chapter": "34. Project: A Shopping List That Remembers",
+  "code": "note A shopping list that remembers.\nLIST_FILE mgl \"shopping.txt\"\nitems is load&\nnow wfv now\n  what get \"add, drop, list or quit? \"\n  what ieq \"quit\"\n    now ebk now\n  what ieq \"add\"\n    thing get \"What to add? \"\n    items add thing\n    now save items\n  what ieq \"drop\"\n    thing get \"What to drop? \"\n    has is chs&items&thing\n    has ieq yes\n      items lrm thing\n      now save items\n    now oth now\n      out prn \"That's not on the list.\"\n  what ieq \"list\"\n    now show items\nout prn \"Bye!\"\nLIST_FILE hrm now\n\nload dfn vec@txt\n  hex&LIST_FILE ieq nay\n    load ert vec@txt&\n  load ert hln&LIST_FILE\n\nsave dfn now\n  list dpm see@vec@txt\n  text is ctx&list&\"\\n\"\n  LIST_FILE hwr text+\"\\n\"\n\nshow dfn now\n  list dpm see@vec@txt\n  cct&list ieq 0\n    out prn \"The list is empty.\"\n    show ert now\n  i flt cct&list\n    number is i+1\n    out prn \"@number. @list@i\"",
+  "output": "add, drop, list or quit? list\nThe list is empty.\nadd, drop, list or quit? add\nWhat to add? milk\nadd, drop, list or quit? add\nWhat to add? eggs\nadd, drop, list or quit? list\n1. milk\n2. eggs\nadd, drop, list or quit? drop\nWhat to drop? milk\nadd, drop, list or quit? list\n1. eggs\nadd, drop, list or quit? quit\nBye!"
+ },
+ {
+  "chapter": "35. Project: A Pet Shop",
+  "code": "p mak Pet&\"Rex\"\nout prn p\n\nPet dcl now\n  name dfd txt\n  hunger dfd 0\n  Pet dmk now\n    n dpm txt\n    name is n",
+  "output": "Pet(name: Rex, hunger: 0)"
+ },
+ {
+  "chapter": "35. Project: A Pet Shop",
+  "code": "p mak Pet&\"Rex\"\np wait now\np wait now\nout prn p@hunger\np feed 5\nout prn p@hunger\n\nPet dcl now\n  name dfd txt\n  hunger dfd 0\n  Pet dmk now\n    n dpm txt\n    name is n\n  wait dfn now\n    hunger add 2\n  feed dfn now\n    food dpm num\n    hunger is nmx&hunger-food&0",
+  "output": "4\n0"
+ },
+ {
+  "chapter": "35. Project: A Pet Shop",
+  "code": "d mak Dog&\"Rex\"\nc mak Cat&\"Tom\"\nout prn d@sound\nout prn c@sound\nout prn c@name\n\nPet dcl now\n  name dfd txt\n  Pet dmk now\n    n dpm txt\n    name is n\n  sound dmb txt\n\nDog dcl Pet\n  Dog dmk now\n    n dpm txt\n    now dbs n\n  sound dov txt\n    sound ert \"Woof\"\n\nCat dcl Pet\n  Cat dmk now\n    n dpm txt\n    now dbs n\n  sound dov txt\n    sound ert \"Meow\"",
+  "output": "Woof\nMeow\nTom"
+ },
+ {
+  "chapter": "35. Project: A Pet Shop",
+  "code": "shop mak vec@own@Pet\nd mwn Dog&\"Rex\"\nshop add d\nc mwn Cat&\"Tom\"\nshop add c\np fea shop\n  name is p@name\n  sound is p@sound\n  out prn \"@name says @sound\"\n\nPet dcl now\n  name dfd txt\n  Pet dmk now\n    n dpm txt\n    name is n\n  sound dmb txt\n\nDog dcl Pet\n  Dog dmk now\n    n dpm txt\n    now dbs n\n  sound dov txt\n    sound ert \"Woof\"\n\nCat dcl Pet\n  Cat dmk now\n    n dpm txt\n    now dbs n\n  sound dov txt\n    sound ert \"Meow\"",
+  "output": "Rex says Woof\nTom says Meow"
+ },
+ {
+  "chapter": "35. Project: A Pet Shop",
+  "code": "note A little pet shop\nshop mak vec@own@Pet\nd mwn Dog&\"Rex\"\nshop add d\nc mwn Cat&\"Tom\"\nshop add c\nday fle 3\n  today is day+1\n  out prn \"Day @today\"\n  p fea shop\n    p wait now\n    now look_after p\nout prn \"The shop is closed.\"\n\nlook_after dfn now\n  pet dpm see@own@Pet\n  name is pet@name\n  hunger is pet@hunger\n  hunger ige 6\n    sound is pet@sound\n    out prn \"  @name says @sound, and gets fed.\"\n    pet feed 6\n  now oth now\n    out prn \"  @name is fine, with hunger @hunger.\"\n\nPet dcl now\n  name dfd txt\n  hunger dfd 0\n  Pet dmk now\n    n dpm txt\n    name is n\n  wait dfn now\n    hunger add 2\n  feed dfn now\n    food dpm num\n    hunger is nmx&hunger-food&0\n  sound dmb txt\n\nDog dcl Pet\n  Dog dmk now\n    n dpm txt\n    now dbs n\n  sound dov txt\n    sound ert \"Woof\"\n\nCat dcl Pet\n  Cat dmk now\n    n dpm txt\n    now dbs n\n  sound dov txt\n    sound ert \"Meow\"",
+  "output": "Day 1\n  Rex is fine, with hunger 2.\n  Tom is fine, with hunger 2.\nDay 2\n  Rex is fine, with hunger 4.\n  Tom is fine, with hunger 4.\nDay 3\n  Rex says Woof, and gets fed.\n  Tom says Meow, and gets fed.\nDay 4\n  Rex is fine, with hunger 2.\n  Tom is fine, with hunger 2.\nThe shop is closed."
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "pets is 3\npets add 2\nout prn pets",
+  "output": "5"
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "cookies is 12\nFRIENDS mkn 3\neach is cookies/FRIENDS\nout prn each",
+  "output": "4"
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "food is \"pizza\"\nout prn \"I like @food a lot.\"",
+  "output": "I like pizza a lot."
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "slices is 8\nfriends is 3\nout prn slices/friends\nout prn slices%friends",
+  "output": "2\n2"
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "name is \"Ada\"\nout prn tuc&name\nout prn tsz&name",
+  "output": "ADA\n3"
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "x is 6\nout prn x%2==0",
+  "output": "yes"
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "score is 85\nscore ige 90\n  out prn \"A\"\nscore oge 80\n  out prn \"B\"\nnow oth now\n  out prn \"Try again\"",
+  "output": "B"
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "i is 1\ni fle 10\n  out prn i*5",
+  "output": "5\n10\n15\n20\n25\n30\n35\n40\n45\n50"
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "row flt 4\n  star fle row\n    out put \"*\"\n  out prn \"\"",
+  "output": "*\n**\n***\n****"
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "v is 5&2&9&1&7\nv lso now\nout prn cfr&v\nout prn cla&v",
+  "output": "1\n9"
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "friends mak vec@txt\nfriends add \"Ada\"\nfriends add \"Bob\"\nfriends add \"Cy\"\nf fea friends\n  out prn \"Hello, @f!\"",
+  "output": "Hello, Ada!\nHello, Bob!\nHello, Cy!"
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "scores is 70&85&90&60\nout prn cav&scores\nout prn cmx&scores\nout prn cmn&scores",
+  "output": "76.25\n90\n60"
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "prices mak map@txt@num\nprices@\"apple\" is 2\nprices@\"plum\" is 3\nprices@\"pear\" is 4\nfood&cost fea prices\n  out prn \"@food costs @cost\"",
+  "output": "apple costs 2\npear costs 4\nplum costs 3"
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "letters mak set@ltr\nc fea \"banana\"\n  letters add c\nout prn cct&letters",
+  "output": "3"
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "out prn twice&21\n\ntwice dfn num\n  n dpm num\n  twice ert n*2",
+  "output": "42"
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "v is 3&9&4\nout prn biggest&v\n\nbiggest dfn num\n  list dpm see@vec@num\n  best is list@0\n  x fea list\n    x igt best\n      best is x\n  biggest ert best",
+  "output": "9"
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "words is \"cat\"&\"horse\"&\"dog\"&\"zebra\"\nlonger dlm yno\n  w dpm txt\n  size is tsz&w\n  longer ert size>3\nout prn cft&words&longer",
+  "output": "[horse, zebra]"
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "now show_twice 5\nnow show_twice \"hi\"\n\nshow_twice dfn now\n  x dpm any\n  out prn x\n  out prn x",
+  "output": "5\n5\nhi\nhi"
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "p mak Player\np@name is \"Ada\"\np win now\np win now\nout prn p\n\nPlayer dcl now\n  name dfd txt\n  score dfd 0\n  win dfn now\n    score add 10",
+  "output": "Player(name: Ada, score: 20)"
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "shapes mak vec@own@Shape\ns mwn Square&2.0\nshapes add s\nc mwn Circle&1.0\nshapes add c\nx fea shapes\n  out prn x@area\n\nShape dcl now\n  area dmb dec\n\nSquare dcl Shape\n  side dfd 1.0\n  Square dmk now\n    given dpm dec\n    side is given\n  area dov dec\n    area ert side*side\n\nCircle dcl Shape\n  r dfd 1.0\n  Circle dmk now\n    given dpm dec\n    r is given\n  area dov dec\n    area ert npi*r*r",
+  "output": "4\n3.14159"
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "Color den red&green&blue\nc is Color@green\nc bsw now\n  now bcs red\n    out prn \"Stop\"\n  now bcs green\n    out prn \"Go\"\n  now bcs blue\n    out prn \"Sky\"",
+  "output": "Go"
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "x is 5\np mpt x\n*p add 1\nout prn x",
+  "output": "6"
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "now btr now\n  n is tnm&\"abc\"\n  out prn n\ne bch now\n  out prn \"Please use only digits.\"",
+  "output": "Please use only digits."
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "a mak num\nb mak num\na get \"First number? \"\nb get \"Second number? \"\nout prn a+b",
+  "output": "First number? 3\nSecond number? 4\n7"
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "word get \"Give me a word: \"\nout prn trv&word",
+  "output": "Give me a word: stressed\ndesserts"
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "name is \"count.txt\"\nn is 0\nhex&name ieq yes\n  text is hrd&name\n  n is tnm&text\nn add 1\nname hwr txt&n\nout prn n",
+  "output": "1"
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "v is 1&2&3&4&5&6&7&8&9&10\nn fpr v\n  n is n*n\nout prn v",
+  "output": "[1, 4, 9, 16, 25, 36, 49, 64, 81, 100]"
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "out prn shout@say&\"hello\"\n\nshout dgr now\n  say dfn txt\n    s dpm txt\n    say ert tuc&s",
+  "output": "HELLO"
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "secret is 42\nguess mak num\nnow wfv now\n  guess get \"Your guess? \"\n  away is nab&guess-secret\n  away ieq 0\n    out prn \"Right!\"\n    now ebk now\n  away ile 5\n    out prn \"Getting warm!\"\n  guess ilt secret\n    out prn \"Too low\"\n  now oth now\n    out prn \"Too high\"",
+  "output": "Your guess? 50\nToo high\nYour guess? 44\nGetting warm!\nToo high\nYour guess? 42\nRight!"
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "secret is 42\nwon is nay\nguess mak num\ntries is 0\ntries wlt 7\n  tries add 1\n  guess get \"Your guess? \"\n  guess ieq secret\n    won is yes\n    now ebk now\nwon ieq yes\n  out prn \"Right, in @tries tries!\"\nnow oth now\n  out prn \"Out of tries! It was @secret.\"",
+  "output": "Your guess? 1\nYour guess? 2\nYour guess? 3\nYour guess? 4\nYour guess? 5\nYour guess? 6\nYour guess? 7\nOut of tries! It was 42."
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "now wfv now\n  now play_game now\n  again get \"Play again? \"\n  now ebk again==\"no\"\nout prn \"Thanks for playing!\"\n\nplay_game dfn now\n  secret is 2\n  guess mak num\n  now wfv now\n    guess get \"Your guess? \"\n    now ebk guess==secret\n  out prn \"Right!\"",
+  "output": "Your guess? 2\nRight!\nPlay again? yes\nYour guess? 1\nYour guess? 2\nRight!\nPlay again? no\nThanks for playing!"
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "items is \"pear\"&\"apple\"\nwhat get \"add, clear, list or quit? \"\nwhat ieq \"clear\"\n  items lwp now\nout prn items",
+  "output": "add, clear, list or quit? clear\n[]"
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "items is \"pear\"&\"apple\"\nsorted is cso&items\nnow show sorted\nout prn items\n\nshow dfn now\n  list dpm see@vec@txt\n  i flt cct&list\n    number is i+1\n    out prn \"@number. @list@i\"",
+  "output": "1. apple\n2. pear\n[pear, apple]"
+ },
+ {
+  "chapter": "41. Answers",
+  "code": "shop mak vec@own@Pet\nd mwn Dog&\"Rex\"\nshop add d\nb mwn Bird&\"Kiwi\"\nshop add b\np fea shop\n  p wait now\n  name is p@name\n  sound is p@sound\n  hunger is p@hunger\n  out prn \"@name says @sound, with hunger @hunger\"\n\nPet dcl now\n  name dfd txt\n  hunger dfd 0\n  Pet dmk now\n    n dpm txt\n    name is n\n  wait dvr now\n    hunger add 2\n  sound dmb txt\n\nDog dcl Pet\n  Dog dmk now\n    n dpm txt\n    now dbs n\n  wait dov now\n    hunger add 3\n  sound dov txt\n    sound ert \"Woof\"\n\nBird dcl Pet\n  Bird dmk now\n    n dpm txt\n    now dbs n\n  sound dov txt\n    sound ert \"Tweet\"",
+  "output": "Rex says Woof, with hunger 3\nKiwi says Tweet, with hunger 2"
+ }
+]

@@ -25,9 +25,11 @@ async function dumpTrack(env, track) {
     lines: BLOCKS.map((b) => b.line),
     // Library and reference code, and every line the Vault can deal.
     examples: [
-      // answers: what a learner types when an example asks (English++'s ask).
-      ...DEEP.map((d, i) => d && { where: "chapter " + (i + 1), code: d.ex.code, run: !d.ex.browser, test: !!d.ex.test, answers: d.ex.answers || null }),
-      ...SHELFDEEP.map((d, i) => d && { where: "shelf " + (i + 1), code: d.ex.code, run: !d.ex.browser, test: !!d.ex.test, answers: d.ex.answers || null }),
+      // answers: what a learner types when an example asks (English++'s get).
+      // studio: an English++ example only English++ Studio can run (threads,
+      // pointers, libraries); it is read and checked, not run.
+      ...DEEP.map((d, i) => d && { where: "chapter " + (i + 1), code: d.ex.code, run: !d.ex.browser && !d.ex.studio, test: !!d.ex.test, answers: d.ex.answers || null }),
+      ...SHELFDEEP.map((d, i) => d && { where: "shelf " + (i + 1), code: d.ex.code, run: !d.ex.browser && !d.ex.studio, test: !!d.ex.test, answers: d.ex.answers || null }),
       ...CHEATS.map((c) => ({ where: "cheat card " + c.title, code: c.code })),
       ...CHAPTERS.map((c, i) => ({ where: "chapter " + (i + 1) + " key line", code: Array.isArray(c.line) ? c.line.join("\n") : c.line, line: true })),
     ].filter(Boolean),

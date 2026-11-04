@@ -1117,29 +1117,23 @@ module.exports.haskell = {
   },
 };
 
-// ---------- English++ (the stand-in in englishpp.js) ----------
+// ---------- English++ (the stand-in in englishpp3.js) ----------
 // English++ Studio is a Windows program that can't run here, so the
-// track is checked by a stand-in interpreter written from "The English++
-// Book". It runs every program and whole example, reads every drill and
-// Vault line inside the program shape it belongs in, and refuses
-// anything the book doesn't settle, such as how a yes or no prints.
-const EPP = require("./englishpp");
-// Sandbox drills use the book's main three-words-a-line form; the
-// Library, PC and Vault use the sentence form the stand-in reads.
+// track is checked by a stand-in written from "The English++ Book" (for
+// English++ Studio 3), in its main form: three words on every line. It
+// runs every PC program and Library example, reads every drill and
+// Vault line, and refuses what it doesn't know rather than guess.
+// Examples marked studio (threads, pointers, libraries) are read and
+// checked, not run. tests/englishpp3.test.js pins it to the book.
 const EPP3 = require("./englishpp3");
 module.exports.englishpp = {
   needs: ["node"],
-  build: (dir, code) => EPP.run(code),
-  checkLines: (dir, lines) => lines.map((l, i) => ({ i, err: EPP3.looksThreeWord(l) ? EPP3.check(l) : EPP.checkLine(l) })).filter((e) => e.err),
+  build: (dir, code) => EPP3.run(code),
+  checkLines: (dir, lines) => lines.map((l, i) => ({ i, err: EPP3.check(l) })).filter((e) => e.err),
   checkExamples: (dir, examples) => examples.map((ex, i) => {
-    if (ex.line) return { i, err: ex.code.split("\n").map((l) => EPP3.looksThreeWord(l) ? EPP3.check(l) : EPP.checkLine(l)).filter(Boolean)[0] || "" };
-    const rows = ex.code.split("\n").filter((l) => l.trim());
-    if (!ex.run && rows.some((l) => EPP3.looksThreeWord(l.trim())) && rows.every((l) => /^note /.test(l.trim()) || EPP3.looksThreeWord(l.trim()))) {
-      const bad = rows.map((l, n) => /^( {2})*\S/.test(l) ? (/^note /.test(l.trim()) ? "" : EPP3.check(l.trim())) && `line ${n + 1}: ${EPP3.check(l.trim())}` : `line ${n + 1}: move lines in by two spaces`).filter(Boolean)[0];
-      return { i, err: bad || "" };
-    }
-    if (!ex.run) return { i, err: EPP.check(ex.code) };
-    const r = EPP.run(ex.code, { input: ex.answers });
+    if (ex.line) return { i, err: ex.code.split("\n").map(EPP3.check).filter(Boolean)[0] || "" };
+    if (!ex.run) return { i, err: EPP3.checkProgram(ex.code) };
+    const r = EPP3.run(ex.code, { input: ex.answers });
     return { i, err: r.ok ? "" : r.error };
   }).filter((e) => e.err),
 };
