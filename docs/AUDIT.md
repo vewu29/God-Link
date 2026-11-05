@@ -61,7 +61,7 @@ Run `npm run test:content` to reproduce these numbers.
 | Bash | 54/54 (ShellCheck with every check on, then Bash 5) | 10,030/10,030 (`bash -n`, then ShellCheck) | 45/45 |
 | Haskell | 54/54 (GHC 9.4 `runghc -Wall`, every warning fails) | 10,030/10,030 (GHC's parser) | 45/45 |
 | R | 54/54 (`Rscript`, any error or warning output fails) | 10,030/10,030 (R's parser) | 45/45 |
-| English++ | 66/66 (stand-in written from *The English++ Book*, three words a line) | 10,123/10,123 (the three-word rules) | 84/84 |
+| English++ | 66/66 (stand-in written from *The English++ Book*, three words a line) | 10,180/10,180 (the three-word rules) | 98/98 |
 | Unity | 36/36 (engine stand-in) | 10,030/10,030 | 47/47 |
 | Unreal | 36/36 (engine stand-in) | 10,030/10,030 | 47/47 |
 

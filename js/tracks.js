@@ -110,7 +110,7 @@
     blurb: "Pure functions, strong types and lazy lists: the language that changes how you think about code.",
     keywords: "functional programming fp ghc ghci types lambda pure lazy monads recursion cabal stack",
     file: "main.hs", run: "runghc main.hs", comment: "--", vaultFile: "vault.hs", varPrefix: "" });
-  addTrack({ id: "englishpp", name: "English++", badge: "E++", group: "lang", color: "#a21caf", blocks: 123,
+  addTrack({ id: "englishpp", name: "English++", badge: "E++", group: "lang", color: "#a21caf", blocks: 180,
     blurb: "Three words a line, for kids and for everyone: who, the root, and what. It becomes real C++, and often runs faster.",
     keywords: "english plain english kids children beginner first language englishpp epp english plus plus studio three words roots c++ no symbols turbo",
     file: "main.epp", run: "\u25B6 English++ Studio · Run (F5)", comment: "note", vaultFile: "vault.epp", varPrefix: "" });

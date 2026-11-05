@@ -19,19 +19,20 @@
 //   run(code, opts)      → { ok, stdout, error }; opts.input = answers for get
 "use strict";
 
-// Every root in the book's Whole Chart (Chapter 43), plus is.
+// Every root in the book's Whole Chart (Chapter 50), plus is.
 const ROOTS = new Set((
-  "is " +
-  "add adv amd aml and ant aor apw asb asl asr axr bbl bch bcs bdf bdo blk bsw btr bts " +
-  "cav cct cde cfr cft chm chs cky cla cme cmn cmp cmx cpd cps cra crv csm cso ctx cvl " +
-  "dal dbs dcl dds den dfd dfm dfn dfy dgr dhd dkn dlm dmb dmk dop dov dpm dsc dsf dsh dst dtp dun dvr " +
-  "ebk edl enx ert etw ext fea fge fgt fle flt fne fpr get gln hap hcp hex hln hls hmk hmv hrd hrm hsz hwr " +
-  "ieq iff ige igt ile ilt ine kda kdy kel khr kmi kmo kms kse ktm kwk kyr " +
-  "ldx lfl lin lpf lpl lrm lrs lrv lso lsu luq lwp mak mfi mfo mgl mkn mlo mmv mnw mpt mrf msh msy mtd mwn " +
-  "nab nac nas nat nco ncr ndn nep nfc ngd nhi nhy nkb nlg nlx nmn nmu nmx npe npi npw nra nro nrz nsn nsq ntn nup nwh " +
-  "oeq oge ogt ole olt one oth prn put rcm rdt rjn rsd rwt seq sge sgt sle slt sne " +
-  "tbg tcu tdc ted tfx ths tlc tln tma tmt tnm tpa tps trp trv trx tsp tsz ttc tti tuc twd " +
-  "ueq uge ugt ule ult une weq wfv wge wgt wle wln wlt wne xag xcd xcm xev xgl xic xim xlb xpp xus xwb"
+  "is add adv amd aml and ant aor apw asb asl asr axr bbl bch bcs bdf bdo bdr blk bsw btr bts can cav " +
+  "cbf cbt cct ccu cde cea cfr cft cgr chm chs cjn cky cla cme cmn cmp cmx cnn cnu cot cpb cpd cps cra " +
+  "crg crl crv csm cso ctx cun cvl czp dal dbb dbs dcl dcx dds den dfd dfm dfn dfy dgr dhd dkn dlm dlv " +
+  "dmb dmk dop dov dpm dsc dsf dsh dst dtp dun dvr ebk edl enx ert etw ext eyd fea fge fgt fle flt fne " +
+  "fpr get gln hap hby hcp hex hln hls hmk hmv hrb hrd hrm hsz hwr ieq iff ige igt ile ilt ine kda kdy " +
+  "kel kfa khr kmi kmo kms kns kse ktm kwk kyr ldx lfl lin lpf lpl lrm lrs lrv lrw lso lss lsu luq lwp " +
+  "mak mfi mfo mgl mkn mlo mmv mnw mpt mrf msh msv msy mtd mtl mwn nab nac nas nat nco ncr ndn nep nfc " +
+  "ngd nhi nhy nkb nlg nlw nlx nmn nmu nmx nnd nnt nor npe npi npw nra nro nrz nsl nsn nsq nsr nsz ntn " +
+  "nup nwh nxr oeq oge ogt ole olt one oth prn put rcm rdt rjn rsd rwt seq sge sgt sle slt sne tbg tct " +
+  "tcu tdc tdg ted tfa tfx ths tjs tlc tln tlr tma tmt tnm tpa tps tre trp trv trx tsp tsz ttc tti ttp " +
+  "tuc twd tws ueq uge ugt ule ult une weq wfv wge wgt wle wln wlt wne xag xbd xbe xcd xcm xev xgl xha " +
+  "xic xim xlb xpo xpp xus xwb"
 ).split(/\s+/));
 
 /* ---------- reading a line ---------- */
@@ -121,7 +122,9 @@ const dec = (v) => ({ k: "dec", v });
 const yno = (v) => ({ k: "yno", v: !!v });
 const ltr = (c) => ({ k: "ltr", v: c });
 const vec = (a) => ({ k: "vec", a });
-const isNum = (x) => x && (x.k === "num" || x.k === "dec");
+// hug is a whole number of any size (Chapter 28): exact, as a BigInt.
+const hug = (v) => ({ k: "hug", v: BigInt(v) });
+const isNum = (x) => x && (x.k === "num" || x.k === "dec" || x.k === "hug");
 const NONE = { k: "none" };
 
 // A decimal prints the way C++ prints a double: 6 significant digits.
@@ -137,7 +140,7 @@ function g6(x) {
 function show(x) {
   if (typeof x === "string") return x;
   switch (x.k) {
-    case "num": return String(x.v);
+    case "num": case "hug": return String(x.v);
     case "dec": return g6(x.v);
     case "yno": return x.v ? "yes" : "nay";
     case "ltr": return x.v;
@@ -158,7 +161,7 @@ function cmp(a, b) {
   return fail("These two can't be compared.");
 }
 function equal(a, b) {
-  if (isNum(a) && isNum(b)) return a.v === b.v;
+  if (isNum(a) && isNum(b)) return a.v == b.v; // eslint-disable-line eqeqeq -- a hug (BigInt) equals the same num
   if (typeof a === "string" || typeof b === "string") return a === b;
   if (a.k !== b.k) return false;
   if (a.k === "vec") return a.a.length === b.a.length && a.a.every((x, i) => equal(x, b.a[i]));
@@ -167,13 +170,14 @@ function equal(a, b) {
 function mapKeys(m) { return [...m.m.keys()].sort((x, y) => cmp(m.m.get(x).k, m.m.get(y).k)); }
 function truth(x) {
   if (x && x.k === "yno") return x.v;
-  if (isNum(x)) return x.v !== 0;
+  if (isNum(x)) return x.v != 0; // eslint-disable-line eqeqeq
   return fail("A test needs a yes or no.");
 }
 function copy(x) {
   if (!x || typeof x !== "object") return x;
   if (x.k === "vec") return vec(x.a.map(copy));
-  if (["set", "stk", "que", "hep"].includes(x.k)) return { k: x.k, a: x.a.map(copy) };
+  if (["set", "stk", "que", "hep"].includes(x.k)) return { ...x, a: x.a.map(copy) };
+  if (x.k === "par") return { k: "par", a: x.a.map(copy) };
   if (x.k === "map") { const m = new Map(); for (const [k, e] of x.m) m.set(k, { k: copy(e.k), v: copy(e.v) }); return { k: "map", m, vk: x.vk }; }
   if (x.k === "obj") { const f = {}; for (const n of x.order) f[n] = copy(x.f[n]); return { ...x, f }; }
   return x;
@@ -187,6 +191,12 @@ function arith(op, a, b) {
     return fail("Text joins only with text. Use txt& to turn a number into text.");
   }
   if (!isNum(a) || !isNum(b)) return fail(`${op} works on numbers.`);
+  if (a.k === "hug" || b.k === "hug") {
+    if (a.k === "dec" || b.k === "dec") return fail("A hug works with whole numbers.");
+    const x = BigInt(a.v), y = BigInt(b.v);
+    if ((op === "/" || op === "%") && y === 0n) fail("A whole number can't be divided by 0.");
+    return { k: "hug", v: op === "+" ? x + y : op === "-" ? x - y : op === "*" ? x * y : op === "/" ? x / y : x % y };
+  }
   const d = a.k === "dec" || b.k === "dec";
   switch (op) {
     case "+": return d ? dec(a.v + b.v) : num(a.v + b.v);
@@ -243,6 +253,15 @@ class Interp {
     if (nl) { this.out.push(this.line); this.line = ""; }
   }
 
+  callable(env, name) {
+    if (!/^[A-Za-z_]\w*$/.test(name) || !this.has(env, name)) return false;
+    const x = this.lookup(env, name);
+    if (!x || x.k !== "obj") return false;
+    for (let c = this.classes[x.cls]; c; c = c.parent ? this.classes[c.parent] : null)
+      if (c.body.some((n) => n.root === "dop" && n.who === "call")) return true;
+    return false;
+  }
+
   /* --- values --- */
   value(word, env) {
     const parts = splitTop(word, "&");
@@ -251,6 +270,12 @@ class Interp {
       const args = parts.slice(1).filter((p, i, a) => !(p === "" && i === a.length - 1)).map((p) => this.value(p, env));
       if (/^[A-Za-z_]\w*$/.test(head) && !this.has(env, head)) return this.call(head, args, env);
       if (/^[A-Za-z_]\w*@\w+$/.test(head) && head.split("@")[1] === "at") return this.call(head, args, env);
+      // A box holding a function (handed in by name) runs like the function.
+      if (/^[A-Za-z_]\w*$/.test(head) && this.lookup(env, head) && this.lookup(env, head).k === "fn") return this.apply(this.lookup(env, head), args);
+      // x@top& — a job with nothing to hand it: just the value it reaches.
+      if (!args.length && head.includes("@")) return this.value(head, env);
+      // A thing whose class has call dop is run like a function: a&3.
+      if (this.callable(env, head)) return this.method(this.lookup(env, head), "call", args, "dop");
       return vec([this.value(head, env), ...args]);
     }
     return this.expr(lex(word), env, word);
@@ -308,7 +333,11 @@ class Interp {
         if (t.v === "nay") return yno(false);
         if (t.v === "npi") return dec(Math.PI);
         if (self.has(env, t.v)) return self.lookup(env, t.v);
-        if (self.funcs[t.v] || BUILTIN[t.v]) return self.call(t.v, [], env);
+        // A function named without & is the function itself, to hand to
+        // another one (cea&scores&passed); with & it runs (tick&).
+        if (self.funcs[t.v]) return { k: "fn", name: t.v, f: self.funcs[t.v] };
+        if (ZERO[t.v]) return ZERO[t.v](self);
+        if (BUILTIN[t.v]) return self.call(t.v, [], env);
         return fail(`I don't know a name called ${t.v}.`);
       }
       return fail(`I can't read ${src}.`);
@@ -367,6 +396,7 @@ class Interp {
   }
   // A box keeps its kind: a decimal stays a decimal, a whole number stays whole.
   fit(old, val) {
+    if (old && old.k === "hug" && val && (val.k === "num" || val.k === "hug")) return hug(val.v);
     if (old && old.k === "num" && val && val.k === "dec") return num(val.v);
     if (old && old.k === "dec" && val && val.k === "num") return dec(val.v);
     return val;
@@ -386,6 +416,7 @@ class Interp {
   /* --- kinds --- */
   blank(kind, env) {
     const parts = kind.split("@"), k = parts[0];
+    if (k === "hug") return hug(0);
     if (NUM_KINDS.has(k)) return num(0);
     if (DEC_KINDS.has(k)) return dec(0);
     if (k === "txt") return "";
@@ -395,13 +426,20 @@ class Interp {
     // A stack gives its top (the last in), a queue its front (the first
     // in), and a priority queue (hep) its biggest; lpl takes that one off.
     if (k === "stk" || k === "que" || k === "hep") return { k, a: [] };
+    if (k === "mhp") return { k: "hep", a: [], min: true }; // smallest on top
     if (k === "map" || k === "hsh") return { k: "map", m: new Map(), vk: parts.slice(2).join("@") || "num" };
     if (k === "set" || k === "bag") return { k: "set", a: [] };
     if (this.classes[k]) return this.make(k, [], env);
     return fail(`I don't know a kind called ${kind}.`);
   }
   convert(kind, v) {
+    if (kind === "hug") {
+      if (typeof v === "string") { if (!/^\s*[-+]?\d+\s*$/.test(v)) fail("That text isn't a whole number."); return hug(v.trim()); }
+      if (v.k === "dec") return hug(Math.trunc(v.v));
+      return hug(v.v);
+    }
     if (NUM_KINDS.has(kind)) {
+      if (v && v.k === "hug") return num(Number(v.v));
       if (typeof v === "string") { const n = parseInt(v, 10); if (isNaN(n)) fail("invalid stoi argument"); return num(n); }
       if (v.k === "ltr") return num(v.v.charCodeAt(0));
       if (v.k === "yno") return num(v.v ? 1 : 0);
@@ -415,6 +453,10 @@ class Interp {
   }
 
   /* --- functions and classes --- */
+  apply(fv, args) {
+    if (!fv || fv.k !== "fn") fail("That isn't a function.");
+    return this.invoke(fv.f, args, null);
+  }
   call(name, args, env) {
     if (name.includes("@")) fail(`I can't run ${name}.`);
     if (NUM_KINDS.has(name) || DEC_KINDS.has(name) || ["txt", "ltr", "yno"].includes(name)) {
@@ -423,20 +465,29 @@ class Interp {
     }
     if (this.classes[name]) return this.make(name, args, env);
     const f = this.funcs[name];
+    if (f && /^gnr@/.test(f.kind)) return { k: "gen", f, args };
     if (f) return this.invoke(f, args, null);
     if (BUILTIN[name]) return BUILTIN[name](args, this);
     return fail(`I don't know a function called ${name}.`);
   }
-  invoke(f, args, self) {
-    const env = { vars: new Map(), up: null, self };
+  invoke(f, args, self, yieldTo) {
+    // dlm sees the names around it; dlv keeps its own copies of them.
+    const env = { vars: new Map(), up: f.closure || null, self: self || (f.closure && f.closure.self) || null, fn: f, yieldTo };
     const params = f.body.filter((n) => n.root === "dpm");
+    // A last parameter that is a list takes all the values left over.
+    const last = params[params.length - 1];
+    if (last && /^vec@/.test(last.what) && (args.length > params.length || (args.length === params.length && !(args[args.length - 1] && args[args.length - 1].k === "vec"))) && args.length >= params.length - 1) {
+      const k = params.length - 1;
+      args = [...args.slice(0, k), vec(args.slice(k).map(copy))];
+    }
     if (args.length > params.length || args.length < params.filter((p) => !this.isDefault(p.what)).length)
       fail(`${f.name} takes ${params.length} value${params.length === 1 ? "" : "s"}.`);
     if (params.some((p) => /^(ref|mlo)@/.test(p.what))) fail("References (ref@) aren't part of this stand-in.");
     params.forEach((p, i) => env.vars.set(p.who, i < args.length ? this.fitKind(p.what, args[i]) : this.value(p.what, env)));
     try { this.block(f.body.filter((n) => n.root !== "dpm"), env); }
     catch (e) { if (e && e.ret) return e.value; throw e; }
-    if (f.kind !== "now") fail(`${f.name} ended without giving back a value.`);
+    finally { if (env.statics) for (const nm of env.statics) f.statics[nm] = env.vars.get(nm); }
+    if (f.kind !== "now" && !/^gnr@/.test(f.kind)) fail(`${f.name} ended without giving back a value.`);
     return NONE;
   }
   isDefault(w) { return !/^[a-z]{3}(@|$)/.test(w) || ["yes"].includes(w); }
@@ -470,9 +521,9 @@ class Interp {
     }
     this.block(f.body.filter((n) => n.root !== "dpm"), env);
   }
-  method(obj, name, args) {
+  method(obj, name, args, root) {
     for (let c = this.classes[obj.cls]; c; c = c.parent ? this.classes[c.parent] : null) {
-      const m = c.body.find((n) => (n.root === "dfn" || n.root === "dov" || n.root === "dvr") && n.who === name);
+      const m = c.body.find((n) => (root ? n.root === root : n.root === "dfn" || n.root === "dov" || n.root === "dvr") && n.who === name);
       if (m) return this.invoke({ name, kind: m.what, body: m.kids }, args, obj);
     }
     return fail(`A ${obj.cls} can't ${name}.`);
@@ -481,6 +532,12 @@ class Interp {
   /* --- running lines --- */
   tick() { if (++this.steps > 2e6) fail("The program ran too long."); }
   block(lines, env) {
+    // bdr blocks run when this block ends, however it ends, last one first.
+    const later = [];
+    try { this.lines(lines, env, later); }
+    finally { for (const d of later.reverse()) this.block(d.kids, this.inner(env)); }
+  }
+  lines(lines, env, later) {
     let i = 0;
     while (i < lines.length) {
       const n = lines[i];
@@ -506,6 +563,7 @@ class Interp {
         i += 2; continue;
       }
       if (n.root === "bch") this.at_(n, "A catch has to come straight after a try.");
+      if (n.root === "bdr") { later.push(n); i++; continue; }
       this.stmt(n, env);
       i++;
     }
@@ -553,10 +611,13 @@ class Interp {
           const p = this.place(who, env), cur = p.get(), v = this.value(what, env);
           if (root === "add" && cur && cur.k === "vec") { cur.a.push(copy(v)); return; }
           if (root === "add" && cur && (cur.k === "stk" || cur.k === "que")) { cur.a.push(copy(v)); return; }
-          if (root === "add" && cur && cur.k === "hep") { cur.a.push(copy(v)); cur.a.sort(cmp); return; }
+          if (root === "add" && cur && cur.k === "hep") { cur.a.push(copy(v)); cur.a.sort(cur.min ? (x, y) => cmp(y, x) : cmp); return; }
           if (root === "add" && cur && cur.k === "set") { if (!cur.a.some((x) => equal(x, v))) { cur.a.push(copy(v)); cur.a.sort(cmp); } return; }
           if (root === "add" && typeof cur === "string") { p.put(arith("+", cur, typeof v === "string" ? v : v.k === "ltr" ? v.v : fail("Text joins only with text."))); return; }
-          if (root === "apw") { const r = Math.pow(cur.v, v.v); p.put(cur.k === "dec" ? dec(r) : num(r)); return; }
+          if (root === "apw") {
+            if (cur.k === "hug") { p.put(hug(cur.v ** BigInt(v.v))); return; }
+            const r = Math.pow(cur.v, v.v); p.put(cur.k === "dec" ? dec(r) : num(r)); return;
+          }
           const r = arith({ add: "+", asb: "-", aml: "*", adv: "/", amd: "%" }[root], cur, v);
           return p.put(r);
         }
@@ -579,7 +640,7 @@ class Interp {
         case "prn": case "put": {
           if (who !== "out" && who !== "err") fail("prn and put write to out or err.");
           const parts = splitTop(what, "&");
-          const v = parts.length > 1 && !(/^[A-Za-z_]\w*$/.test(parts[0]) && !this.has(env, parts[0]))
+          const v = parts.length > 1 && parts[parts.length - 1] !== "" && !(/^[A-Za-z_]\w*$/.test(parts[0]) && (!this.has(env, parts[0]) || this.callable(env, parts[0])))
             ? parts.map((w) => show(this.value(w, env))).join(" ") : show(this.value(what, env));
           if (who === "err") return;
           return this.print(v, root === "prn");
@@ -614,6 +675,19 @@ class Interp {
         }
         case "fea": {
           const c = this.value(what, env);
+          if (c && c.k === "gen") {
+            const consume = (v) => {
+              env.vars.set(who, v);
+              try { this.block(n.kids, this.inner(env)); }
+              catch (e) {
+                if (e && e.brk && (!e.label || e.label === who)) throw { genStop: true };
+                if (e && e.nxt && (!e.label || e.label === who)) return;
+                throw e;
+              }
+            };
+            try { this.invoke(c.f, c.args, null, consume); } catch (e) { if (e && e.genStop) return; throw e; }
+            return;
+          }
           const items = c.k === "vec" || c.k === "set" ? c.a.slice() : typeof c === "string" ? [...c].map(ltr) : c.k === "map" ? mapKeys(c).map((k) => c.m.get(k)) : fail("fea walks through a collection.");
           let i = 0;
           return this.loop(env, n.kids, () => {
@@ -624,6 +698,10 @@ class Interp {
               const ks = who.split("&");
               if (ks.length !== 2) fail("A walk through a map names the key and the value: k&v fea m.");
               env.vars.set(ks[0], it.k); env.vars.set(ks[1], it.v);
+            } else if (who.includes("&")) {
+              const ks = who.split("&");
+              if (!it || it.k !== "par" || ks.length !== 2) fail("Only a pair can be taken apart into two names.");
+              env.vars.set(ks[0], it.a[0]); env.vars.set(ks[1], it.a[1]);
             } else env.vars.set(who, it);
             return true;
           }, who.split("&")[0]);
@@ -658,8 +736,44 @@ class Interp {
           return;
         }
         case "hrm": delete this.files[this.value(who, env)]; return;
-        case "dfn": case "dcl": case "dst": return; // read before the program runs
-        case "dlm": this.funcs[who] = { name: who, kind: what, body: n.kids }; return;
+        case "dfn": case "dcx": case "dcl": case "dst": return; // read before the program runs
+        case "dlm": this.funcs[who] = { name: who, kind: what, body: n.kids, closure: env }; return;
+        case "dlv": {
+          // A copy of every name it can see, kept with the lambda.
+          const snap = { vars: new Map(), up: null, self: env.self };
+          const chain = []; for (let e = env; e; e = e.up) chain.unshift(e);
+          for (const e of chain) for (const [k, v] of e.vars) snap.vars.set(k, copy(v));
+          this.funcs[who] = { name: who, kind: what, body: n.kids, closure: snap };
+          return;
+        }
+        case "msv": {
+          let fe = env; while (fe && !fe.fn) fe = fe.up;
+          if (!fe) fail("msv makes a number that stays between calls, so it belongs inside a function.");
+          const st = fe.fn.statics || (fe.fn.statics = {});
+          if (!(who in st)) st[who] = copy(this.value(what, env));
+          fe.vars.set(who, st[who]);
+          (fe.statics || (fe.statics = new Set())).add(who);
+          return;
+        }
+        case "eyd": {
+          let fe = env; while (fe && !fe.yieldTo) fe = fe.up;
+          if (!fe) fail("eyd hands out a value, so it belongs inside a function that gives back gnr@.");
+          fe.yieldTo(copy(this.value(what, env)));
+          return;
+        }
+        case "lrw": { const l = this.list(who, env), k = N(this.value(what, env)).v; if (l.a.length) { const r = ((k % l.a.length) + l.a.length) % l.a.length; l.a.push(...l.a.splice(0, r)); } return; }
+        case "lss": {
+          const l = this.list(who, env);
+          if (what === "now") { l.a.sort(cmp); return; }
+          const before = (a, b) => truth(this.call(what, [a, b], env));
+          l.a.sort((a, b) => (before(a, b) ? -1 : before(b, a) ? 1 : 0));
+          return;
+        }
+        case "hby": {
+          const f = this.value(who, env), b = L(this.value(what, env));
+          this.files[f] = b.a.map((x) => String.fromCharCode(N(x).v & 255)).join("");
+          return;
+        }
         default: {
           // A line that runs a function or a method: now f 1, rex bark now.
           if (who === "now" && this.funcs[root]) { this.invoke(this.funcs[root], what === "now" ? [] : splitTop(what, "&").map((w) => this.value(w, env)), null); return; }
@@ -685,12 +799,12 @@ class Interp {
   run(top) {
     // Functions and classes are read first, so they can be used above where they're written.
     for (const n of top) {
-      if (n.root === "dfn") { if (this.funcs[n.who]) throw new EppError(`There are two functions called ${n.who}.`, n.no); this.funcs[n.who] = { name: n.who, kind: n.what, body: n.kids }; }
+      if (n.root === "dfn" || n.root === "dcx") { if (this.funcs[n.who]) throw new EppError(`There are two functions called ${n.who}.`, n.no); this.funcs[n.who] = { name: n.who, kind: n.what, body: n.kids }; }
       if (n.root === "dcl" || n.root === "dst") this.classes[n.who] = { name: n.who, parent: n.what === "now" ? null : n.what, body: n.kids, plain: n.root === "dst" };
     }
     for (const c of Object.values(this.classes)) if (c.parent && !this.classes[c.parent]) throw new EppError(`I don't know a class called ${c.parent}.`, 0);
     const env = { vars: new Map(), up: null, self: null, consts: new Set() };
-    this.block(top.filter((n) => n.root !== "dfn" && n.root !== "dcl" && n.root !== "dst"), env);
+    this.block(top.filter((n) => !["dfn", "dcx", "dcl", "dst"].includes(n.root)), env);
     if (this.line) { this.out.push(this.line); this.line = ""; }
   }
 }
@@ -751,6 +865,80 @@ const BUILTIN = {
 BUILTIN.hrd = (a, it) => { const f = T(a[0]); if (!(f in it.files)) throw new Problem(`There is no file called ${f}.`); return it.files[f]; };
 BUILTIN.hex = (a, it) => yno(T(a[0]) in it.files);
 BUILTIN.hln = (a, it) => { const f = T(a[0]); if (!(f in it.files)) throw new Problem(`There is no file called ${f}.`); return vec(it.files[f].split("\n").filter((x, i, arr) => !(x === "" && i === arr.length - 1))); };
+
+/* ---------- words added to the chart (The English++ Book, Chapters 13, 20, 21, 28, 38) ---------- */
+const pair = (x, y) => ({ k: "par", a: [x, y] });
+const F = (x) => (x && x.k === "fn" ? x : fail("That needs a function, named without &."));
+const each = (c) => (c && (c.k === "vec" || c.k === "set") ? c.a : fail("That needs a list."));
+Object.assign(BUILTIN, {
+  // text
+  tre: (a) => { const n = N(a[1]).v; if (n < 0) fail("tre repeats 0 or more times."); return T(a[0]).repeat(n); },
+  tct: (a) => { const s = T(a[0]), t = T(a[1]); if (!t) fail("tct needs something to count."); return num(s.split(t).length - 1); },
+  tdg: one((c) => yno(c.k === "ltr" && /^[0-9]$/.test(c.v))),
+  tlr: one((c) => yno(c.k === "ltr" && /^[A-Za-z]$/.test(c.v))),
+  tws: one((c) => yno(c.k === "ltr" && /^[ \t\n\r\f\v]$/.test(c.v))),
+  ttp: one((x) => (typeof x === "string" ? "txt" : ["num", "dec", "ltr", "yno", "hug"].includes(x.k) ? x.k : fail("This stand-in only names the kind of a single value."))),
+  tfa: (a) => fill(T(a[0]), a.slice(1)),
+  // lists and functions
+  cea: (a, it) => yno(each(a[0]).every((x) => truth(it.apply(F(a[1]), [x])))),
+  can: (a, it) => yno(each(a[0]).some((x) => truth(it.apply(F(a[1]), [x])))),
+  cnn: (a, it) => yno(!each(a[0]).some((x) => truth(it.apply(F(a[1]), [x])))),
+  cft: (a, it) => vec(each(a[0]).filter((x) => truth(it.apply(F(a[1]), [x])))),
+  cmp: (a, it) => vec(each(a[0]).map((x) => it.apply(F(a[1]), [x]))),
+  crl: (a, it) => each(a[0]).reduce((acc, x) => it.apply(F(a[2]), [acc, x]), a[1]),
+  czp: (a) => { const x = each(a[0]), y = each(a[1]); return vec(x.slice(0, Math.min(x.length, y.length)).map((v, i) => pair(v, y[i]))); },
+  cnu: one((c) => vec(each(c).map((v, i) => pair(num(i), v)))),
+  cun: (a) => { const out = []; for (const x of [...each(a[0]), ...each(a[1])]) if (!out.some((y) => equal(x, y))) out.push(x); return vec(out); },
+  cbt: (a) => vec(each(a[0]).filter((x, i, arr) => each(a[1]).some((y) => equal(x, y)) && arr.findIndex((z) => equal(z, x)) === i)),
+  cot: (a) => vec(each(a[0]).filter((x, i, arr) => !each(a[1]).some((y) => equal(x, y)) && arr.findIndex((z) => equal(z, x)) === i)),
+  ccu: (a) => { const v = each(a[0]), from = N(a[1]).v; if (from < 0 || from > v.length) fail("That position is outside the list."); const n = a.length > 2 ? N(a[2]).v : v.length - from; if (n < 0 || from + n > v.length) fail("That part goes past the end of the list."); return vec(v.slice(from, from + n)); },
+  crg: (a) => { const from = N(a[0]).v, to = N(a[1]).v, step = a.length > 2 ? N(a[2]).v : 1; if (step <= 0) fail("crg counts up, with a step above 0."); const out = []; for (let i = from; i < to; i += step) out.push(num(i)); return vec(out); },
+  cbf: (a) => yno(each(a[0]).some((x) => equal(x, a[1]))),
+  cpb: (a) => { const at = each(a[0]).findIndex((x) => equal(x, a[1])); if (at < 0) fail("cpb is for a value that is in the list; ask cbf first."); return num(at); },
+  cgr: (a, it) => { const m = { k: "map", m: new Map(), vk: "vec" }; for (const x of each(a[0])) { const key = it.apply(F(a[1]), [x]); const e = m.m.get(keyOf(key)) || { k: key, v: vec([]) }; e.v.a.push(x); m.m.set(keyOf(key), e); } return m; },
+  cjn: one((c) => vec(each(c).flatMap((x) => each(x)))),
+  // bits, on 32-bit whole numbers like C++'s int
+  nnd: (a) => num(N(a[0]).v & N(a[1]).v),
+  nor: (a) => num(N(a[0]).v | N(a[1]).v),
+  nxr: (a) => num(N(a[0]).v ^ N(a[1]).v),
+  nnt: one((x) => num(~N(x).v)),
+  nsl: (a) => num(N(a[0]).v << N(a[1]).v),
+  nsr: (a) => num(N(a[0]).v >> N(a[1]).v),
+  // codes
+  xha: one((t) => require("crypto").createHash("sha256").update(T(t), "utf8").digest("hex")),
+  xbe: one((t) => Buffer.from(T(t), "utf8").toString("base64")),
+  xbd: one((t) => Buffer.from(T(t), "base64").toString("utf8")),
+});
+BUILTIN.hrb = (a, it) => { const f = T(a[0]); if (!(f in it.files)) throw new Problem(`There is no file called ${f}.`); return vec([...it.files[f]].map((c) => num(c.charCodeAt(0)))); };
+// Values that are words on their own, with no & (nlw: the lowest whole number).
+const ZERO = { nlw: () => num(-2147483648) };
+
+// tfa fills {} in a pattern, in C++'s std::format pattern language. This
+// stand-in reads the common part: {} and {:[fill][<^>][width][.precision][f]}.
+function fill(pattern, args) {
+  let k = 0;
+  return pattern.replace(/\{\{|\}\}|\{(:[^}]*)?\}/g, (m, spec) => {
+    if (m === "{{") return "{";
+    if (m === "}}") return "}";
+    if (k >= args.length) fail("tfa has more {} than values.");
+    const v = args[k++];
+    const sp = (spec || ":").slice(1);
+    const mm = sp.match(/^(?:(.)?([<^>]))?(\d+)?(?:\.(\d+))?([fd])?$/);
+    if (!mm) fail(`This stand-in doesn't read the pattern {${spec}}.`);
+    const [, fch, align, width, prec, type] = mm;
+    let t;
+    if (prec !== undefined) { if (!isNum(v)) fail("A precision is for a number."); t = Number(v.v).toFixed(Number(prec)); }
+    else if (v && v.k === "dec") { if (!Number.isInteger(v.v) && String(v.v).includes("e")) fail("This stand-in doesn't print that decimal with tfa."); t = Number.isInteger(v.v) ? String(v.v) : String(v.v); }
+    else t = show(v);
+    if (type === "d" && !(v && (v.k === "num" || v.k === "hug"))) fail("{:d} is for a whole number.");
+    const w = width ? Number(width) : 0;
+    if (t.length >= w) return t;
+    const pad = (n) => (fch || " ").repeat(n);
+    const al = align || (isNum(v) ? ">" : "<");
+    const gap = w - t.length;
+    return al === "<" ? t + pad(gap) : al === ">" ? pad(gap) + t : pad(Math.floor(gap / 2)) + t + pad(gap - Math.floor(gap / 2));
+  });
+}
 
 function checkProgram(code) {
   try { read(code); return ""; } catch (e) { if (e instanceof EppError) return `line ${e.line}: ${e.message}`; throw e; }

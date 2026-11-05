@@ -40,7 +40,7 @@ test("never prints something the book doesn't", () => {
     ran++;
     assert.strictEqual(r.stdout.replace(/\n$/, ""), ex.output, `${ex.chapter}\n${ex.code}`);
   }
-  assert.ok(ran >= 125, `only ${ran} book examples ran`);
+  assert.ok(ran >= 170, `only ${ran} book examples ran`);
 });
 
 test("a program's answers come from opts.input", () => {
