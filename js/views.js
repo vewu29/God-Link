@@ -42,10 +42,17 @@ function showView(name) {
   if (step !== 0 && !(travelReduce && travelReduce.matches)) {
     views[name].classList.add(step > 0 ? "travel-fwd" : "travel-back");
     if (Math.abs(step) > 1) views[name].classList.add("travel-far");
+    /* Visual upgrade — the room's grids rise in on arrival: the
+       .arriving tag lets the first cards stagger in (see the
+       riseIn rules at the end of css/app.css), then comes off
+       once the longest stagger has landed (330ms delay + 260ms
+       rise = 590ms), so later re-renders (search, filters) never
+       replay the entrance. */
+    views[name].classList.add("arriving");
     var arrived = views[name], token = ++travelToken;
     setTimeout(function () {
-      if (token === travelToken) arrived.classList.remove("travel-fwd", "travel-back", "travel-far");
-    }, 580);
+      if (token === travelToken) arrived.classList.remove("travel-fwd", "travel-back", "travel-far", "arriving");
+    }, 650);
   }
   currentRoom = name;
   Object.keys(views).forEach(function (k) {

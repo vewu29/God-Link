@@ -38,14 +38,14 @@ button, input, select { font: inherit; color: inherit; }
   display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 36px; min-width: 36px; padding: 0 9px;
   border-radius: 8px; border: 1px solid var(--line); background: var(--panel-2); cursor: pointer; font-weight: 600; font-size: 13px;
 }
-.st-btn:hover, .st-icon:hover, .st-mini:hover, .st-tool:hover { background: var(--panel-3); border-color: var(--line-2); }
+.st-btn:hover, .st-icon:hover, .st-mini:hover, .st-tool:hover { background: var(--panel-3); border-color: var(--line-2); box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.35), 0 4px 14px rgba(0, 0, 0, 0.35); }
 .st-btn:disabled, .st-icon:disabled { opacity: 0.45; cursor: default; }
 .st-play, .st-stop {
   display: inline-flex; align-items: center; gap: 7px; min-height: 38px; padding: 0 16px; border-radius: 9px; border: 0; cursor: pointer;
   font-weight: 800; font-size: 14px; color: #052e12; background: linear-gradient(180deg, #4ade80, #22c55e); box-shadow: 0 4px 14px rgba(34, 197, 94, 0.3);
 }
 .st-stop { color: #fff; background: linear-gradient(180deg, #f87171, #dc2626); box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35); }
-.st-mini { min-height: 30px; padding: 0 8px; font-size: 12px; }
+.st-mini { min-height: 30px; padding: 0 8px; font-size: 13px; }
 .st-mini .si, .st-icon .si { width: 16px; height: 16px; }
 .st-accent { background: var(--accent); border-color: var(--accent); color: #fff; }
 .st-accent:hover { background: #1d4ed8; }
@@ -105,13 +105,13 @@ button, input, select { font: inherit; color: inherit; }
 }
 .st-var .st-icon { min-width: 30px; min-height: 30px; padding: 0; }
 .st-var-val { grid-column: 1 / -1; }
-.st-note { margin: 4px 12px 10px; color: var(--muted); font-size: 12.5px; }
+.st-note { margin: 4px 12px 10px; color: var(--muted); font-size: 13px; }
 
 /* ---------- details ---------- */
 .st-sec { padding: 4px 12px 12px; border-bottom: 1px solid var(--line); }
 .st-sec h3 { margin: 8px 0 8px; font-size: 13px; color: var(--ink-2); }
 .st-field { display: grid; grid-template-columns: 82px minmax(0, 1fr); align-items: center; gap: 8px; margin: 6px 0; }
-.st-field > span { font-size: 12.5px; color: var(--muted); font-weight: 600; }
+.st-field > span { font-size: 13px; color: var(--muted); font-weight: 600; }
 .st-xyz { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
 .st-xyz label { position: relative; }
 .st-xyz label::before { content: attr(data-axis); position: absolute; left: 6px; top: 50%; transform: translateY(-50%); font-size: 11px; font-weight: 800; pointer-events: none; }
@@ -173,10 +173,10 @@ button, input, select { font: inherit; color: inherit; }
 .bp-body { display: grid; grid-template-columns: auto auto; gap: 2px 14px; padding: 6px 4px 8px; }
 .bp-col { display: flex; flex-direction: column; gap: 2px; }
 .bp-col.outs { align-items: flex-end; }
-.bp-row { display: flex; align-items: center; gap: 6px; min-height: 26px; font-size: 12.5px; color: var(--ink-2); }
+.bp-row { display: flex; align-items: center; gap: 6px; min-height: 26px; font-size: 13px; color: var(--ink-2); }
 .bp-row .lbl { white-space: nowrap; }
-.bp-set { grid-column: 1 / -1; display: flex; align-items: center; gap: 6px; padding: 0 8px 2px; font-size: 12px; color: var(--muted); }
-.bp-set select, .bp-set input[type="text"] { min-height: 26px; max-width: 150px; border-radius: 6px; border: 1px solid var(--line-2); background: var(--panel-3); padding: 1px 5px; font-size: 12px; }
+.bp-set { grid-column: 1 / -1; display: flex; align-items: center; gap: 6px; padding: 0 8px 2px; font-size: 13px; color: var(--muted); }
+.bp-set select, .bp-set input[type="text"] { min-height: 26px; max-width: 150px; border-radius: 6px; border: 1px solid var(--line-2); background: var(--panel-3); padding: 1px 5px; font-size: 13px; }
 .bp-in { min-height: 24px; border-radius: 6px; border: 1px solid var(--line-2); background: #11141a; padding: 1px 5px; font-size: 12px; }
 .bp-in[type="number"] { width: 64px; }
 .bp-in[type="text"] { width: 104px; }
@@ -279,7 +279,13 @@ body.touch .st-pad { display: flex; }
 .st-acts { display: flex; align-items: flex-end; gap: 12px; }
 .st-acts .act1 { width: 84px; height: 84px; font-size: 16px; background: rgba(34, 197, 94, 0.5); }
 .st-err { position: absolute; left: 50%; bottom: 20px; transform: translateX(-50%); max-width: 90vw; background: #3b1212; border: 1px solid #7f1d1d; color: #fecaca; padding: 10px 14px; border-radius: 10px; font-weight: 600; }
-@media (prefers-reduced-motion: reduce) { .st-msg.pop { animation: none; } }
+@media (prefers-reduced-motion: reduce) {
+  /* Visual upgrade — the same global stilling the main app uses:
+     every animation and transition in this sheet stops, so no new
+     motion can ever slip past reduced motion here either. */
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .st-msg.pop { animation: none; }
+}
 
 /* Forced colours: the Studio's toolbar buttons and tabs read through
    their backgrounds, which forced-colors strips — so they get a real
