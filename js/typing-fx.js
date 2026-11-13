@@ -59,7 +59,7 @@
     var s = readJSON(SETTINGS_KEY) || {};
     return {
       sound: SOUNDS.indexOf(s.sound) >= 0 ? s.sound : "melody",
-      volume: num(s.volume, 0, 1, 0.6),
+      volume: num(s.volume, 0, 1, 0.9),
       haptics: s.haptics !== false
     };
   })();
@@ -147,9 +147,14 @@
     if (settings.sound === "off" || !unlocked) return null;
     var c = audio();
     if (!c) return null;
-    /* Paused by the phone (a call, the lock screen, another app)?
-       Ask it to wake; this note is skipped, the next one plays. */
-    if (c.state !== "running") { if (window.cbAudioWake) window.cbAudioWake(); return null; }
+    /* Paused by the phone (a call, the lock screen, another app, or a
+       tab switch)? Ask it to wake — and schedule the note anyway
+       instead of dropping it: the clock is frozen while the engine
+       is suspended, so the note plays the moment it runs again.
+       Dropping it here is what made the sounds stay silent after
+       coming back to the tab, because the wake itself is async and
+       the next few notes were skipped one by one. */
+    if (c.state !== "running") { if (window.cbAudioWake) window.cbAudioWake(); }
     return c;
   }
   function musicOn() { return !!(window.__musicIsOn && window.__musicIsOn()); }
@@ -201,51 +206,51 @@
     var jit = 1 + (Math.random() - 0.5) * 0.06;
     var kind = settings.sound;
     if (kind === "typewriter") {
-      noise(t, 0.028, 3400 * jit, 1.1, 0.32 * soft, null, pan);
-      tone(ch === " " ? 120 : 165, t, 0.045, "sine", 0.22 * soft, 110, pan);
+      noise(t, 0.028, 3400 * jit, 1.1, 0.48 * soft, null, pan);
+      tone(ch === " " ? 120 : 165, t, 0.045, "sine", 0.33 * soft, 110, pan);
     } else if (kind === "bubbles") {
       var fb = freq(72 + PENTA[WAVE[pos % WAVE.length]] + TIER_LIFT[tier]);
-      tone(fb * 0.7, t, 0.09, "sine", 0.2 * soft, fb * 1.45, pan);
-      tone(fb * 1.5, t + 0.03, 0.06, "sine", 0.05 * soft, fb * 2.2, -pan);
+      tone(fb * 0.7, t, 0.09, "sine", 0.3 * soft, fb * 1.45, pan);
+      tone(fb * 1.5, t + 0.03, 0.06, "sine", 0.08 * soft, fb * 2.2, -pan);
     } else if (kind === "mechanical") {
       /* The click of the switch, the clack of the cap, the thock of the board. */
-      noise(t, 0.012, 5600 * jit, 0.8, 0.5 * soft, null, pan);
-      noise(t + 0.006, 0.05, 1700 * jit, 1.6, 0.16 * soft, null, pan);
-      tone((ch === " " ? 68 : 96) * jit, t, 0.07, "sine", 0.3 * soft, 55, pan);
+      noise(t, 0.012, 5600 * jit, 0.8, 0.75 * soft, null, pan);
+      noise(t + 0.006, 0.05, 1700 * jit, 1.6, 0.24 * soft, null, pan);
+      tone((ch === " " ? 68 : 96) * jit, t, 0.07, "sine", 0.45 * soft, 55, pan);
     } else if (kind === "piano") {
       /* A hammer, then a string's fundamental and its first overtones,
          each fading at its own pace. */
-      noise(t, 0.012, 2600, 0.8, 0.05 * soft, "lowpass", pan);
-      tone(f0, t, 1.1, "triangle", 0.14 * soft, null, pan);
-      tone(f0 * 2, t, 0.6, "sine", 0.05 * soft, null, pan);
-      tone(f0 * 3, t, 0.32, "sine", 0.022 * soft, null, pan);
-      tone(f0 * 1.002, t, 0.9, "sine", 0.05 * soft, null, -pan * 0.5);
+      noise(t, 0.012, 2600, 0.8, 0.08 * soft, "lowpass", pan);
+      tone(f0, t, 1.1, "triangle", 0.21 * soft, null, pan);
+      tone(f0 * 2, t, 0.6, "sine", 0.08 * soft, null, pan);
+      tone(f0 * 3, t, 0.32, "sine", 0.033 * soft, null, pan);
+      tone(f0 * 1.002, t, 0.9, "sine", 0.08 * soft, null, -pan * 0.5);
     } else if (kind === "marimba") {
-      tone(f0, t, 0.42, "sine", 0.24 * soft, null, pan);
-      tone(f0 * 3.93, t, 0.09, "sine", 0.06 * soft, null, pan);
-      tone(f0 * 10.1, t, 0.03, "sine", 0.02 * soft, null, pan);
-      noise(t, 0.015, 900, 1, 0.05 * soft, "lowpass", pan);
+      tone(f0, t, 0.42, "sine", 0.36 * soft, null, pan);
+      tone(f0 * 3.93, t, 0.09, "sine", 0.09 * soft, null, pan);
+      tone(f0 * 10.1, t, 0.03, "sine", 0.03 * soft, null, pan);
+      noise(t, 0.015, 900, 1, 0.08 * soft, "lowpass", pan);
     } else if (kind === "crystal") {
       var fc = f0 * 2;
-      tone(fc, t, 1.4, "sine", 0.075 * soft, null, pan);
-      tone(fc * 2.76, t, 0.55, "sine", 0.026 * soft, null, -pan);
-      tone(fc * 5.4, t, 0.25, "sine", 0.012 * soft, null, pan);
-      tone(fc * 1.003, t + 0.01, 1.2, "sine", 0.03 * soft, null, -pan);
+      tone(fc, t, 1.4, "sine", 0.11 * soft, null, pan);
+      tone(fc * 2.76, t, 0.55, "sine", 0.04 * soft, null, -pan);
+      tone(fc * 5.4, t, 0.25, "sine", 0.018 * soft, null, pan);
+      tone(fc * 1.003, t + 0.01, 1.2, "sine", 0.045 * soft, null, -pan);
     } else if (kind === "arcade") {
-      tone(f0, t, 0.07, "square", 0.05 * soft, f0 * 1.5, pan);
-      tone(f0 * 2, t + 0.035, 0.05, "square", 0.03 * soft, null, pan);
+      tone(f0, t, 0.07, "square", 0.08 * soft, f0 * 1.5, pan);
+      tone(f0 * 2, t + 0.035, 0.05, "square", 0.045 * soft, null, pan);
     } else {
       var m = 67 + PENTA[WAVE[pos % WAVE.length]] + TIER_LIFT[tier];
       if (ch === " ") m -= 12;
-      tone(freq(m), t, 0.16, "triangle", 0.15 * soft, null, pan);
-      tone(freq(m + 12), t, 0.08, "sine", 0.045 * soft, null, pan);
+      tone(freq(m), t, 0.16, "triangle", 0.22 * soft, null, pan);
+      tone(freq(m + 12), t, 0.08, "sine", 0.07 * soft, null, pan);
     }
   }
   function soundSlip() {
     var c = ready(); if (!c) return;
     var t = c.currentTime;
-    tone(150, t, 0.17, "triangle", 0.22, 92);
-    noise(t, 0.06, 520, 0.9, 0.14);
+    tone(150, t, 0.17, "triangle", 0.33, 92);
+    noise(t, 0.06, 520, 0.9, 0.21);
   }
   /* A finished rep plays a chord that climbs a major scale with the rep
      count, so the eight reps of a block rise like a staircase. */
@@ -254,33 +259,33 @@
     if (musicOn()) return; /* the music engine answers reps itself */
     var c = ready(); if (!c) return;
     var t = c.currentTime + 0.02, base = 60 + STEPS[Math.max(0, Math.min(7, (rep || 1) - 1))];
-    [0, 4, 7, 12].forEach(function (iv, k) { tone(freq(base + iv), t + k * 0.07, 0.42, "triangle", 0.13); });
-    if (perfect) tone(freq(base + 24), t + 0.3, 0.5, "sine", 0.06);
+    [0, 4, 7, 12].forEach(function (iv, k) { tone(freq(base + iv), t + k * 0.07, 0.42, "triangle", 0.2); });
+    if (perfect) tone(freq(base + 24), t + 0.3, 0.5, "sine", 0.09);
   }
   function soundMaster() {
     if (musicOn()) return;
     var c = ready(); if (!c) return;
     var t = c.currentTime + 0.02;
-    [0, 4, 7, 12, 16, 19, 24].forEach(function (iv, k) { tone(freq(60 + iv), t + k * 0.06, 0.9, "triangle", 0.11); });
-    [0, 4, 7].forEach(function (iv) { tone(freq(72 + iv), t + 0.5, 1.3, "sine", 0.08); });
+    [0, 4, 7, 12, 16, 19, 24].forEach(function (iv, k) { tone(freq(60 + iv), t + k * 0.06, 0.9, "triangle", 0.17); });
+    [0, 4, 7].forEach(function (iv) { tone(freq(72 + iv), t + 0.5, 1.3, "sine", 0.12); });
   }
   function soundBank() {
     var c = ready(); if (!c) return;
     var t = c.currentTime + 0.02;
-    [0, 7, 12].forEach(function (iv, k) { tone(freq(69 + iv), t + k * 0.06, 0.32, "triangle", 0.12); });
+    [0, 7, 12].forEach(function (iv, k) { tone(freq(69 + iv), t + k * 0.06, 0.32, "triangle", 0.18); });
   }
   function soundCombo(tier) {
     var c = ready(); if (!c) return;
     var t = c.currentTime;
-    noise(t, 0.28, 900, 0.7, 0.12, "highpass");
-    tone(freq(76 + TIER_LIFT[Math.min(4, tier)]), t + 0.05, 0.3, "sine", 0.12);
-    tone(freq(83 + TIER_LIFT[Math.min(4, tier)]), t + 0.12, 0.35, "sine", 0.1);
+    noise(t, 0.28, 900, 0.7, 0.18, "highpass");
+    tone(freq(76 + TIER_LIFT[Math.min(4, tier)]), t + 0.05, 0.3, "sine", 0.18);
+    tone(freq(83 + TIER_LIFT[Math.min(4, tier)]), t + 0.12, 0.35, "sine", 0.15);
   }
   function soundLevel() {
     var c = ready(); if (!c) return;
     var t = c.currentTime + 0.02;
-    PENTA.forEach(function (iv, k) { tone(freq(64 + iv), t + k * 0.045, 0.25, "triangle", 0.1); });
-    [0, 4, 7, 12].forEach(function (iv) { tone(freq(76 + iv), t + 0.5, 1.1, "sine", 0.07); });
+    PENTA.forEach(function (iv, k) { tone(freq(64 + iv), t + k * 0.045, 0.25, "triangle", 0.15); });
+    [0, 4, 7, 12].forEach(function (iv) { tone(freq(76 + iv), t + 0.5, 1.1, "sine", 0.1); });
   }
   function haptic(pattern) {
     if (!settings.haptics || !navigator.vibrate) return;
@@ -760,8 +765,8 @@
       var t = c.currentTime + 0.05;
       [0, 2, 4, 5, 7, 9, 11].forEach(function (iv, k) {
         var at = t + (k / 6) * (wave - each * 0.4) / 1000;
-        tone(freq(72 + iv), at, 1.3, "sine", 0.05, null, -0.6 + k * 0.2);
-        tone(freq(84 + iv), at, 0.6, "sine", 0.015, null, 0.6 - k * 0.2);
+        tone(freq(72 + iv), at, 1.3, "sine", 0.075, null, -0.6 + k * 0.2);
+        tone(freq(84 + iv), at, 0.6, "sine", 0.022, null, 0.6 - k * 0.2);
       });
     }
     return Math.round(wave + zoom + 150);

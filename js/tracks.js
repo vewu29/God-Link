@@ -172,13 +172,32 @@
     sharedRoom = { ctx: c, input: input };
     return input;
   };
+  /* Wake the shared engine. Some browsers ignore a resume that is
+     not from a user gesture — coming back to a tab is not one — so
+     a single try from visibilitychange can silently fail. Retry a
+     couple of times: the next tap or key is a gesture, and the
+     retry loop covers the desktop case where the first try raced
+     the tab becoming visible. */
+  var wakeTries = 0, wakeTimer = null;
   window.cbAudioWake = function () {
     var c = sharedAudio;
-    if (c && c.state !== "running" && c.state !== "closed") { try { var p = c.resume(); if (p && p.catch) p.catch(function () {}); } catch (e) {} }
+    if (!c || c.state === "running" || c.state === "closed") { wakeTries = 0; return; }
+    wakeTries++;
+    try {
+      var p = c.resume();
+      if (p && p.catch) p.catch(function () {});
+      if (p && p.then) p.then(function () {
+        if (c.state !== "running" && wakeTries < 3) {
+          if (wakeTimer) clearTimeout(wakeTimer);
+          wakeTimer = setTimeout(function () { wakeTimer = null; window.cbAudioWake(); }, 250);
+        } else wakeTries = 0;
+      });
+    } catch (e) {}
   };
   ["pointerdown", "touchend", "keydown", "click"].forEach(function (t) { document.addEventListener(t, function () { window.cbAudioWake(); }, true); });
   document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") window.cbAudioWake(); });
   window.addEventListener("pageshow", function () { window.cbAudioWake(); });
+  window.addEventListener("focus", function () { window.cbAudioWake(); });
 
   window.CB_TRACK_GROUPS = GROUPS;
   window.CB_TRACK_LIST = LIST;
