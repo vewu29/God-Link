@@ -25,7 +25,7 @@
   /* blocks = drill blocks in the track (the picker shows progress
      without loading the track). badge = the short mark on its tile. */
   var LIST = [
-    { id: "cpp", name: "C++", badge: "C++", group: "lang", color: "#2563eb", blocks: 30,
+    { id: "cpp", name: "C++", badge: "C++", group: "lang", color: "#2563eb", blocks: 180,
       blurb: "Fast, powerful, everywhere: games, engines, browsers and devices.",
       file: "main.cpp", run: "g++ main.cpp -o app && ./app", comment: "//", vaultFile: "vault.cpp",
       storeKey: "code-block-progress-v1", profileProg: "progress", profileVault: "vault", bookKey: "code-block-book-v1" },
