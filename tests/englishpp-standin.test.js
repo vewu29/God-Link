@@ -14,7 +14,7 @@ test("English++ stand-in: the book's own examples print what the book says", () 
   assert.deepEqual(out('print "Hello, V!"'), ["Hello, V!"]);
   assert.deepEqual(out(src("make a number called score with 0", "set score to 10", "print score", "set score to score + 5", "print score")), ["10", "15"]);
   assert.deepEqual(out(src("print 7 / 2", "print 7.0 / 2")), ["3", "3.5"], "whole numbers divide to a whole number");
-  // Chapter 25: the program behind the Blueprint picture, and its output.
+  // Chapters 77-78 (Classic): the program behind the Blueprint picture, and its output.
   assert.deepEqual(out(src(
     "note Add up the odd numbers, and show the even ones.",
     "make a number called total with 0",
@@ -26,7 +26,7 @@ test("English++ stand-in: the book's own examples print what the book says", () 
     "  end if",
     "end for",
     'print "The odd numbers add up to " + (total as text)')), ["2", "4", "6", "8", "10", "The odd numbers add up to 25"]);
-  // Chapter 28: two threads each add 1,000 to one atomic number.
+  // Chapter 81 (Classic): two threads each add 1,000 to one atomic number.
   assert.deepEqual(out(src(
     "make an atomic number called counter with 0",
     "define work taking an atomic number called total and a number called times:",

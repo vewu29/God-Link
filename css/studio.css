@@ -5,7 +5,7 @@
    7:1 or better; pin colours are Unreal's, brightened for the dark. */
 :root {
   --bg: #0f1115; --panel: #171a20; --panel-2: #1e222a; --panel-3: #262b35; --line: #313744; --line-2: #3d4554;
-  --ink: #eef2f7; --ink-2: #c9d1dd; --muted: #9aa5b5; --accent: #2563eb; --accent-ink: #ffffff; --good: #22c55e; --bad: #f87171;
+  --ink: #eef2f7; --ink-2: #c9d1dd; --muted: #a7b1bf; --accent: #2563eb; --accent-ink: #ffffff; --good: #22c55e; --bad: #f87171;
   --gold: #f5b70a; --r: 10px; --top: 52px; --tabs: 0px;
   color-scheme: dark;
 }
@@ -185,7 +185,7 @@ button, input, select { font: inherit; color: inherit; }
 select.bp-in { max-width: 96px; }
 .bp-in[type="checkbox"] { width: 16px; height: 16px; min-height: 0; accent-color: #e0425a; }
 .bp-pin {
-  position: relative; width: 22px; height: 22px; flex: none; border: 0; background: none; padding: 0; cursor: crosshair; display: grid; place-items: center;
+  position: relative; width: 24px; height: 24px; flex: none; border: 0; background: none; padding: 0; cursor: crosshair; display: grid; place-items: center;
 }
 .bp-pin::before {
   content: ""; width: 12px; height: 12px; border-radius: 50%; border: 2.5px solid var(--pc, #ccc); background: transparent; box-sizing: border-box;
@@ -280,3 +280,12 @@ body.touch .st-pad { display: flex; }
 .st-acts .act1 { width: 84px; height: 84px; font-size: 16px; background: rgba(34, 197, 94, 0.5); }
 .st-err { position: absolute; left: 50%; bottom: 20px; transform: translateX(-50%); max-width: 90vw; background: #3b1212; border: 1px solid #7f1d1d; color: #fecaca; padding: 10px 14px; border-radius: 10px; font-weight: 600; }
 @media (prefers-reduced-motion: reduce) { .st-msg.pop { animation: none; } }
+
+/* Forced colours: the Studio's toolbar buttons and tabs read through
+   their backgrounds, which forced-colors strips — so they get a real
+   edge, and the pressed/active ones get a Highlight outline. */
+@media (forced-colors: active) {
+  .st-btn, .st-icon, .st-mini, .st-tool, .st-tabs button { border: 1px solid ButtonText; }
+  .st-tool[aria-pressed="true"], .st-tabs button[aria-pressed="true"], .bp-pin.on { outline: 2px solid Highlight; outline-offset: 1px; }
+  .st-btn:disabled, .st-icon:disabled { opacity: 1; }
+}

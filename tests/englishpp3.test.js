@@ -22,6 +22,9 @@ test("refuses what the Studio refuses", () => {
   assert.match(E3.check("x is 6;"), /semicolons/);
   assert.match(E3.check("out prn f(x)"), /round brackets/);
   assert.match(E3.check("x zzz 1"), /Whole Chart/);
+  assert.strictEqual(E3.check("d eat now", new Set(["eat"])), "", "a defined three-letter method is a name");
+  assert.match(E3.check("d eat now"), /Whole Chart/, "an undefined three-letter middle word is still refused");
+  assert.deepEqual([...E3.definedNames("Animal dcl now\n  eat dfn now\n    out prn \"yum\"\n  bark dfn now")].sort(), ["bark", "eat"]);
   assert.match(E3.check('out prn "Hello'), /never closed/);
   assert.match(E3.check("out prn rex.age"), /dot/);
   assert.match(E3.run("x is 1\n   out prn x").error, /two spaces/);

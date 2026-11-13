@@ -19,7 +19,7 @@
 //   run(code, opts)      → { ok, stdout, error }; opts.input = answers for get
 "use strict";
 
-// Every root in the book's Whole Chart (Chapter 50), plus is.
+// Every root in the book's Whole Chart (Chapter 52), plus is.
 const ROOTS = new Set((
   "is add adv amd aml and ant aor apw asb asl asr axr bbl bch bcs bdf bdo bdr blk bsw btr bts can cav " +
   "cbf cbt cct ccu cde cea cfr cft cgr chm chs cjn cky cla cme cmn cmp cmx cnn cnu cot cpb cpd cps cra " +
@@ -55,8 +55,25 @@ function words(line) {
 // The middle word is a root from the chart, or the name of a function or
 // method the program defines (now greet "Ada", rex bark now). Every root
 // has three letters, so a name of four or more, or one with _, is a name.
+// A three-letter name (eat, run) is a name only when the program defines
+// it — pass those names in `names` (see definedNames) so a typo like zzz
+// is still refused.
 const isOwnName = (w) => /^[A-Za-z_][A-Za-z0-9_]*$/.test(w) && (w.length > 3 || w.includes("_"));
-const middleOk = (w) => ROOTS.has(w) || isOwnName(w);
+const middleOk = (w, names) => ROOTS.has(w) || isOwnName(w) || (names ? names.has(w) : false);
+
+// The names a program defines as functions or methods: the who of a dfn,
+// dlm, dov, dvr, dfy, dmb, dmk, dkn, dsf or dds line (greet dfn now,
+// bark dfn now). Used by check() so a defined three-letter method is
+// accepted while an undefined one is still refused.
+function definedNames(code) {
+  const names = new Set();
+  const DEF = new Set(["dfn", "dlm", "dov", "dvr", "dfy", "dmb", "dmk", "dkn", "dsf", "dds"]);
+  for (const raw of code.split("\n")) {
+    const w = words(raw.trim());
+    if (w && w.length === 3 && DEF.has(w[1])) names.add(w[0]);
+  }
+  return names;
+}
 
 function looksThreeWord(line) {
   const w = words(line.trim());
@@ -74,12 +91,12 @@ function marksProblem(word) {
 }
 
 // One drill line, on its own. The middle word must be a root in the chart.
-function check(line) {
+function check(line, names) {
   if (line !== line.trim()) return "A drill line has no spaces at its start or end.";
   const w = words(line);
   if (!w) return "A quote mark is never closed.";
   if (w.length !== 3) return `This line has ${w.length} words. Every line has exactly 3: who, the root, and what.`;
-  if (!middleOk(w[1])) return `“${w[1]}” is not a root in the Whole Chart.`;
+  if (!middleOk(w[1], names)) return `“${w[1]}” is not a root in the Whole Chart.`;
   for (const word of w) { const p = marksProblem(word); if (p) return p; }
   return "";
 }
@@ -122,7 +139,7 @@ const dec = (v) => ({ k: "dec", v });
 const yno = (v) => ({ k: "yno", v: !!v });
 const ltr = (c) => ({ k: "ltr", v: c });
 const vec = (a) => ({ k: "vec", a });
-// hug is a whole number of any size (Chapter 28): exact, as a BigInt.
+// hug is a whole number of any size (Chapter 34): exact, as a BigInt.
 const hug = (v) => ({ k: "hug", v: BigInt(v) });
 const isNum = (x) => x && (x.k === "num" || x.k === "dec" || x.k === "hug");
 const NONE = { k: "none" };
@@ -969,4 +986,4 @@ function isThreeWordProgram(code) {
   return rows.length > 0 && rows.every((l) => { const w = words(l); return w && w.length === 3; }) && rows.some(looksThreeWord);
 }
 
-module.exports = { looksThreeWord, check, checkProgram, run, isThreeWordProgram, ROOTS, g6 };
+module.exports = { looksThreeWord, check, checkProgram, run, isThreeWordProgram, ROOTS, g6, definedNames };

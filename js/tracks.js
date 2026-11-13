@@ -52,7 +52,7 @@
     blurb: "The friendliest first language: clear code for data, automation, AI and the web.",
     keywords: "beginner data science ai machine learning automation scripting",
     file: "main.py", run: "python3 main.py", comment: "#", vaultFile: "vault.py", varPrefix: "" });
-  addTrack({ id: "javascript", name: "JavaScript", badge: "JS", group: "lang", color: "#8a6d00", blocks: 30,
+  addTrack({ id: "javascript", name: "JavaScript", badge: "JS", group: "lang", color: "#6b5400", blocks: 30,
     blurb: "The language of the web: interactive pages, apps, servers with Node.js.",
     keywords: "web browser website frontend node react js",
     file: "main.js", run: "node main.js", comment: "//", vaultFile: "vault.js", varPrefix: "" });
@@ -60,7 +60,7 @@
     blurb: "Android apps, big business systems and Minecraft mods — typed, fast and everywhere.",
     keywords: "android minecraft enterprise jvm oop backend",
     file: "Main.java", run: "java Main.java", comment: "//", vaultFile: "Vault.java", varPrefix: "int " });
-  addTrack({ id: "typescript", name: "TypeScript", badge: "TS", group: "lang", color: "#2f74c0", blocks: 30,
+  addTrack({ id: "typescript", name: "TypeScript", badge: "TS", group: "lang", color: "#1e589a", blocks: 30,
     blurb: "JavaScript with types: catch bugs before your code runs, in apps big and small.",
     keywords: "web typed javascript react angular node frontend ts",
     file: "main.ts", run: "npx tsc && node main.js", comment: "//", vaultFile: "vault.ts", varPrefix: "" });
@@ -110,7 +110,7 @@
     blurb: "Pure functions, strong types and lazy lists: the language that changes how you think about code.",
     keywords: "functional programming fp ghc ghci types lambda pure lazy monads recursion cabal stack",
     file: "main.hs", run: "runghc main.hs", comment: "--", vaultFile: "vault.hs", varPrefix: "" });
-  addTrack({ id: "englishpp", name: "English++", badge: "E++", group: "lang", color: "#a21caf", blocks: 180,
+  addTrack({ id: "englishpp", name: "English++", badge: "E++", group: "lang", color: "#a21caf", blocks: 132,
     blurb: "Three words a line, for kids and for everyone: who, the root, and what. It becomes real C++, and often runs faster.",
     keywords: "english plain english kids children beginner first language englishpp epp english plus plus studio three words roots c++ no symbols turbo",
     file: "main.epp", run: "\u25B6 English++ Studio · Run (F5)", comment: "note", vaultFile: "vault.epp", varPrefix: "" });

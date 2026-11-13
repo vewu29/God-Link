@@ -1131,7 +1131,7 @@ module.exports.englishpp = {
   build: (dir, code) => EPP3.run(code),
   checkLines: (dir, lines) => lines.map((l, i) => ({ i, err: EPP3.check(l) })).filter((e) => e.err),
   checkExamples: (dir, examples) => examples.map((ex, i) => {
-    if (ex.line) return { i, err: ex.code.split("\n").map(EPP3.check).filter(Boolean)[0] || "" };
+    if (ex.line) { const names = EPP3.definedNames(ex.code); return { i, err: ex.code.split("\n").map((l) => EPP3.check(l, names)).filter(Boolean)[0] || "" }; }
     if (!ex.run) return { i, err: EPP3.checkProgram(ex.code) };
     const r = EPP3.run(ex.code, { input: ex.answers });
     return { i, err: r.ok ? "" : r.error };

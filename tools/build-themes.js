@@ -23,10 +23,10 @@ const path = require("path");
 const SKY_LIGHT = {
   mode: "light", bg: "#dbeafe", surface: "#ffffff", surface2: "#dbeafe", ink: "#071f3d", muted: "#2f4d75", line: "#a8c6ee",
   accent: "#1d4ed8", accentBright: "#2f7fe0", accentDeep: "#1e3a8a", sky: "#38bdf8", ice: "#eaf4ff", onAccent: "#ffffff",
-  good: "#0369a1", goodSoft: "#d6eafd", bad: "#b3382e", worldBg: "#081f3a",
+  good: "#034e7d", goodSoft: "#d6eafd", bad: "#b3382e", worldBg: "#081f3a",
   bAccent: "#1d4ed8", bAccentDeep: "#1e3a8a", bAccentMid: "#1f6ccf", bAccentStrong: "#1a63c2", bGood: "#0369a1", bSelect: "#1e40af",
   conTop: "#0d3060", conMid: "#0a2547", conDeep: "#081a30", conHi: "#14406f", conBorder: "#2b5285",
-  conInk: "#eaf4ff", conInk2: "#cfe6ff", conMuted: "#a9c8ee", conDim: "#7d9dbd", conGlow: "#8fd0ff"
+  conInk: "#eaf4ff", conInk2: "#cfe6ff", conMuted: "#a9c8ee", conDim: "#93b4d4", conGlow: "#8fd0ff"
 };
 const SKY_DARK = Object.assign({}, SKY_LIGHT, {
   mode: "dark", bg: "#050f1f", surface: "#0d2242", surface2: "#16335c", ink: "#f0f7ff", muted: "#b9d4f5", line: "#2b5285",
@@ -36,7 +36,7 @@ const SKY_DARK = Object.assign({}, SKY_LIGHT, {
 
 const THEMES = {
   forest: {
-    mode: "light", bg: "#dcfce7", surface: "#ffffff", surface2: "#dcfce7", ink: "#052e16", muted: "#3b5b46", line: "#a7d8b8",
+    mode: "light", bg: "#dcfce7", surface: "#ffffff", surface2: "#dcfce7", ink: "#052e16", muted: "#35543f", line: "#a7d8b8",
     accent: "#166534", accentBright: "#16a34a", accentDeep: "#14532d", sky: "#4ade80", ice: "#f0fdf4", onAccent: "#ffffff",
     good: "#15803d", goodSoft: "#dcfce7", bad: "#b91c1c", worldBg: "#052e16",
     bAccent: "#166534", bAccentDeep: "#14532d", bAccentMid: "#15803d", bAccentStrong: "#166534", bGood: "#0f766e", bSelect: "#166534",
@@ -53,7 +53,7 @@ const THEMES = {
   },
   sunset: {
     mode: "light", bg: "#ffedd5", surface: "#fffaf5", surface2: "#ffedd5", ink: "#431407", muted: "#7c2d12", line: "#f5c6a5",
-    accent: "#b53b0b", accentBright: "#ea580c", accentDeep: "#9a3412", sky: "#fb923c", ice: "#fff7ed", onAccent: "#ffffff",
+    accent: "#b53b0b", accentBright: "#ea580c", accentDeep: "#9a3412", sky: "#fb923c", ice: "#fff7ed", onAccent: "#ffffff", btnBg: "var(--accent-deep)",
     good: "#be185d", goodSoft: "#ffedd5", bad: "#b91c1c", worldBg: "#2a0e1a",
     bAccent: "#b53b0b", bAccentDeep: "#9a3412", bAccentMid: "#b53b0b", bAccentStrong: "#a8370a", bGood: "#be185d", bSelect: "#9a3412",
     conTop: "#4a1d2e", conMid: "#3b1424", conDeep: "#2a0e1a", conHi: "#5c2639", conBorder: "#7a3b52",
@@ -61,7 +61,7 @@ const THEMES = {
   },
   candy: {
     mode: "light", bg: "#fce7f3", surface: "#ffffff", surface2: "#fce7f3", ink: "#3b0a2a", muted: "#6b2a55", line: "#f5b8da",
-    accent: "#be185d", accentBright: "#db2777", accentDeep: "#9d174d", sky: "#f472b6", ice: "#fdf2f8", onAccent: "#ffffff",
+    accent: "#be185d", accentBright: "#db2777", accentDeep: "#9d174d", sky: "#f472b6", ice: "#fdf2f8", onAccent: "#ffffff", btnBg: "var(--accent-deep)",
     good: "#7e22ce", goodSoft: "#f3e8ff", bad: "#b91c1c", worldBg: "#200a33",
     bAccent: "#be185d", bAccentDeep: "#9d174d", bAccentMid: "#be185d", bAccentStrong: "#a3154f", bGood: "#7e22ce", bSelect: "#9d174d",
     conTop: "#3d1458", conMid: "#2e0f45", conDeep: "#200a33", conHi: "#4f1d70", conBorder: "#6d3a91",
@@ -69,7 +69,7 @@ const THEMES = {
   },
   galaxy: {
     mode: "dark", bg: "#0b0820", surface: "#161236", surface2: "#221c4d", ink: "#f3f0ff", muted: "#c4b5fd", line: "#3b3270",
-    accent: "#a78bfa", accentBright: "#c4b5fd", accentDeep: "#6d28d9", sky: "#a585ff", ice: "#161236", onAccent: "#1a1033",
+    accent: "#a78bfa", accentBright: "#c4b5fd", accentDeep: "#6d28d9", sky: "#a585ff", ice: "#161236", onAccent: "#1a1033", btnBg: "var(--accent-deep)", btnInk: "#ffffff",
     good: "#f0abfc", goodSoft: "#2a1f5c", bad: "#fda4af", worldBg: "#07051a",
     bAccent: "#6d28d9", bAccentDeep: "#4c1d95", bAccentMid: "#6d28d9", bAccentStrong: "#5b21b6", bGood: "#a21caf", bSelect: "#5b21b6",
     conTop: "#1f1747", conMid: "#181238", conDeep: "#100c27", conHi: "#2b2160", conBorder: "#4b3d8f",
@@ -85,7 +85,7 @@ const THEMES = {
   },
   paper: {
     mode: "light", bg: "#f4ecd8", surface: "#fbf6ea", surface2: "#efe4cc", ink: "#2b2116", muted: "#5e4b35", line: "#d8c7a4",
-    accent: "#8a4b12", accentBright: "#b45f19", accentDeep: "#6b3a0e", sky: "#d49a5c", ice: "#fbf6ea", onAccent: "#ffffff",
+    accent: "#8a4b12", accentBright: "#b45f19", accentDeep: "#6b3a0e", sky: "#d49a5c", ice: "#fbf6ea", onAccent: "#ffffff", btnBg: "var(--accent-deep)",
     good: "#3f6212", goodSoft: "#ece5c9", bad: "#9b2c2c", worldBg: "#241d14",
     bAccent: "#8a4b12", bAccentDeep: "#6b3a0e", bAccentMid: "#8a4b12", bAccentStrong: "#7a420f", bGood: "#3f6212", bSelect: "#6b3a0e",
     conTop: "#3a2f22", conMid: "#2f261b", conDeep: "#241d14", conHi: "#4a3c2b", conBorder: "#6b5a42",
@@ -167,6 +167,13 @@ function tokens(t) {
     "--con-top": t.conTop, "--con-mid": t.conMid, "--con-deep": t.conDeep, "--con-hi": t.conHi, "--con-border": t.conBorder,
     "--con-ink": t.conInk, "--con-ink-2": t.conInk2, "--con-muted": t.conMuted, "--con-dim": t.conDim, "--con-glow": t.conGlow
   };
+  /* Filled buttons: most themes keep the sky-to-accent gradient
+     (--btn-bg defaults to var(--grad-primary) in css/app.css); the
+     themes whose on-accent label only reaches AA on that gradient
+     spend the deep accent instead, so the label reaches AAA. Galaxy's
+     on-accent is dark, so its button label goes white with it. */
+  if (t.btnBg) out["--btn-bg"] = t.btnBg;
+  if (t.btnInk) out["--btn-ink"] = t.btnInk;
   ["50", "100", "200", "300", "400", "500", "600", "700", "800", "900", "950"].forEach((k, i) => { out["--blue-" + k] = ramp[i]; });
   return out;
 }

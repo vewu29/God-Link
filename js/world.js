@@ -78,6 +78,39 @@
   var linCache = {};
   function L(hex) { return linCache[hex] || (linCache[hex] = new THREE.Color(hex).convertSRGBToLinear()); }
 
+  /* Theme colours: the road board's fog, light rig, plinths and path
+     are tinted by the active theme, read live from the CSS tokens —
+     so a theme change re-tints the world without a reload. The tower
+     keeps its golden evening, and the lightning/FX blues stay fixed.
+     In Sky the themed values are the same blues the rig always had,
+     so the default view does not change. */
+  var cssRoot = document.documentElement;
+  function themeHex(name, fallback) {
+    var v = "";
+    try { v = getComputedStyle(cssRoot).getPropertyValue(name).trim(); } catch (e) {}
+    return v || fallback;
+  }
+  var TC = {};
+  var PATH_LIT = new THREE.Color(), PATH_NEAR = new THREE.Color();
+  function readThemeColors() {
+    TC.fog = L(themeHex("--world-bg", "#081f3a"));
+    TC.amb = L(themeHex("--con-ink", "#eaf4ff"));
+    TC.hemiSky = L(themeHex("--sky", "#38bdf8"));
+    TC.hemiGround = L(themeHex("--world-bg", "#081f3a"));
+    TC.sun = L(themeHex("--con-ink", "#eaf4ff"));
+    TC.fill = L(themeHex("--sky", "#38bdf8"));
+    TC.rim = L(themeHex("--accent-bright", "#2f7fe0"));
+    TC.glow = L(themeHex("--sky", "#38bdf8"));
+    TC.ped = L(themeHex("--con-deep", "#081a30"));
+    TC.pedEmissive = L(themeHex("--world-bg", "#081f3a"));
+    TC.pedDone = L(themeHex("--accent-bright", "#2f7fe0"));
+    TC.pathLit = L(themeHex("--sky", "#38bdf8"));
+    TC.pathNear = L(themeHex("--accent", "#1d4ed8"));
+    PATH_LIT.copy(TC.pathLit);
+    PATH_NEAR.copy(TC.pathNear);
+  }
+  readThemeColors();
+
   /* The reduced-motion preference is a live query: switching it on
      mid-session stills the world at once (see onReduceMotionChange). */
   var reduceMotionMQ = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
@@ -90,7 +123,7 @@
   try { if (localStorage.getItem(MODE_KEY) === "tower") mode = "tower"; } catch (e) { /* the original view */ }
 
   var scene = new THREE.Scene();
-  scene.fog = new THREE.Fog(L(0x0b2a4c), 50, 120);
+  scene.fog = new THREE.Fog(TC.fog, 50, 120);
   var camera = new THREE.PerspectiveCamera(46, W / H, 0.1, 420);
 
   /* ================= Light =================
@@ -100,17 +133,17 @@
      that lifts each block off the board. The tower stands in a golden
      evening: a warm, low sun from the front-left, a cool sky fill, and
      an orange rim from the sunset behind it. */
-  var amb = new THREE.AmbientLight(L(0xdceeff), 0.22);
-  var hemi = new THREE.HemisphereLight(L(0xbfe0ff), L(0x0a2547), 0.32);
-  var sun = new THREE.DirectionalLight(L(0xf2f8ff), 1.3);
+  var amb = new THREE.AmbientLight(TC.amb, 0.22);
+  var hemi = new THREE.HemisphereLight(TC.hemiSky, TC.hemiGround, 0.32);
+  var sun = new THREE.DirectionalLight(TC.sun, 1.3);
   sun.castShadow = true;
   sun.shadow.mapSize.set(2048, 2048);
   sun.shadow.bias = -0.0004;
   sun.shadow.normalBias = 0.02;
   sun.shadow.radius = 4;
-  var fill = new THREE.DirectionalLight(L(0x7cc4ff), 0.3);
-  var rim = new THREE.DirectionalLight(L(0x9adcff), 0.5);
-  var glow = new THREE.PointLight(L(0x38bdf8), 0.62, 46);
+  var fill = new THREE.DirectionalLight(TC.fill, 0.3);
+  var rim = new THREE.DirectionalLight(TC.rim, 0.5);
+  var glow = new THREE.PointLight(TC.glow, 0.62, 46);
   scene.add(amb, hemi, sun, sun.target, fill, rim, glow);
 
   /* ================= Sky =================
@@ -350,7 +383,7 @@
     mesh.userData.index = i;
     mesh.userData.topMat = top; mesh.userData.sideMat = side;
     anchor.add(mesh);
-    var ped = new THREE.Mesh(pedestalGeo, new THREE.MeshPhysicalMaterial({ color: L(0x0f2f57), roughness: 0.52, metalness: 0.25, clearcoat: 0.25, clearcoatRoughness: 0.5, envMapIntensity: 0.32, emissive: L(0x0a2547), emissiveIntensity: 0.35 }));
+    var ped = new THREE.Mesh(pedestalGeo, new THREE.MeshPhysicalMaterial({ color: TC.ped, roughness: 0.52, metalness: 0.25, clearcoat: 0.25, clearcoatRoughness: 0.5, envMapIntensity: 0.32, emissive: TC.pedEmissive, emissiveIntensity: 0.35 }));
     ped.position.y = -0.5;
     ped.receiveShadow = true; ped.castShadow = true;
     anchor.add(ped);
@@ -482,7 +515,6 @@
     var mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, opacity: opacity, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }));
     return { mesh: mesh, geo: geo, vp: vp, samples: samples, dim: dim };
   }
-  var PATH_LIT = L(0xa6dcff), PATH_NEAR = L(0x5d93d9);
   function paintPath(path) {
     if (!path) return;
     var open = firstOpen();
@@ -866,7 +898,7 @@
         else { tm.roughness = 0.42; tm.clearcoat = 0.45; tm.envMapIntensity = 0.75; sm.clearcoat = 0.35; sm.envMapIntensity = 0.65; }
       }
       var pm = pedestals[i].material;
-      pm.emissive.copy(L(isDoneI ? 0x2f7fe0 : 0x0a2547));
+      pm.emissive.copy(isDoneI ? TC.pedDone : TC.pedEmissive);
       pm.emissiveIntensity = isDoneI ? (mpBloom ? 1.1 : 0.8) : 0.4;
       var rm = rims[i].material;
       if (isDoneI) { rm.color.copy(L(0x9adcff)); rm.opacity = mpBloom ? 0.95 : 0.8; }
@@ -1399,20 +1431,31 @@
       scene.environment = envTower || envRoad;
       modeExposure = 0.92;
     } else {
-      amb.color.copy(L(0xdceeff)); amb.intensity = 0.18;
-      hemi.color.copy(L(0xbfe0ff)); hemi.groundColor.copy(L(0x0a2547)); hemi.intensity = 0.28;
-      sun.color.copy(L(0xf2f8ff)); sun.intensity = 1.3; sun.position.set(10, 22, 8); sun.target.position.set(0, 0, 0);
+      amb.color.copy(TC.amb); amb.intensity = 0.18;
+      hemi.color.copy(TC.hemiSky); hemi.groundColor.copy(TC.hemiGround); hemi.intensity = 0.28;
+      sun.color.copy(TC.sun); sun.intensity = 1.3; sun.position.set(10, 22, 8); sun.target.position.set(0, 0, 0);
       sc.left = -18; sc.right = 18; sc.top = 20; sc.bottom = -20; sc.near = 0.5; sc.far = 60;
-      fill.color.copy(L(0x7cc4ff)); fill.intensity = 0.3; fill.position.set(-12, 10, -8);
-      rim.color.copy(L(0x9adcff)); rim.intensity = 0.5; rim.position.set(-4, 6, -16);
-      glow.color.copy(L(0x38bdf8)); glow.distance = 46; glow.position.set(0, 7, 2);
-      scene.fog.color.copy(L(0x0b2a4c)); scene.fog.near = 50; scene.fog.far = 120;
+      fill.color.copy(TC.fill); fill.intensity = 0.3; fill.position.set(-12, 10, -8);
+      rim.color.copy(TC.rim); rim.intensity = 0.5; rim.position.set(-4, 6, -16);
+      glow.color.copy(TC.glow); glow.distance = 46; glow.position.set(0, 7, 2);
+      scene.fog.color.copy(TC.fog); scene.fog.near = 50; scene.fog.far = 120;
       paintSky([[-1, 0x040b18], [0, 0x123a66], [0.12, 0x0c2b52], [0.45, 0x071a36], [1, 0x030a17]], null);
       scene.environment = envRoad;
       modeExposure = 1.0;
     }
     sc.updateProjectionMatrix();
   }
+  /* Re-tint the road board from the active theme (js/theme.js fires
+     cb:theme on every theme change). The tower keeps its golden
+     evening; only the road rig, the plinths and the path follow the
+     theme. refreshWorld() repaints the path and the plinth glows. */
+  function applyThemeColors() {
+    readThemeColors();
+    for (var i = 0; i < pedestals.length; i++) pedestals[i].material.color.copy(TC.ped);
+    applyModeLook();
+    refreshWorld();
+  }
+  if (document.addEventListener) document.addEventListener("cb:theme", applyThemeColors);
   function setMode(m, initial) {
     if (m !== "tower") m = "road";
     if (m === "tower" && !towerSet) {
