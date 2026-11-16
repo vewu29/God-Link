@@ -654,6 +654,7 @@
     master.gain.cancelScheduledValues(AC.currentTime);
     master.gain.setTargetAtTime(0.5, AC.currentTime, 0.8);
     nextBar = AC.currentTime + 0.1; barCount = 0;
+    if (timer) clearInterval(timer);
     timer = setInterval(loop, 200); loop();
   }
   function stop() {
@@ -985,6 +986,25 @@
     btnText.textContent = "Music off";
     stop();
   };
+  /* Coming back to the tab: the browser may have frozen this
+     scheduler's interval while the engine was suspended, so no
+     new bar is ever scheduled even once the engine runs again.
+     Restart the heartbeat and run the scheduler once: loop()
+     only schedules bars inside the 0.7 s window ahead of the
+     clock, and its own resync drops the bars missed while
+     hidden, so restarting the timer (or calling loop() while
+     the old timer still lives) can never double-schedule a bar. */
+  function wakeMusic() {
+    if (!on || !AC) return;
+    if (window.cbAudioWake) window.cbAudioWake();
+    if (timer) clearInterval(timer);
+    timer = setInterval(loop, 200);
+    loop();
+  }
+  document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") wakeMusic(); });
+  window.addEventListener("pageshow", wakeMusic);
+  window.addEventListener("focus", wakeMusic);
+  window.__musicWake = wakeMusic;
   /* Mood picker — switching moods retunes the engine from the next
      bar onward; the choice is remembered on this device. */
   var moodBtns = document.querySelectorAll(".mood-btn");

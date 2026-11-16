@@ -174,27 +174,30 @@
   };
   /* Wake the shared engine. Some browsers ignore a resume that is
      not from a user gesture — coming back to a tab is not one — so
-     a single try from visibilitychange can silently fail. Retry a
-     couple of times: the next tap or key is a gesture, and the
-     retry loop covers the desktop case where the first try raced
-     the tab becoming visible. */
+     a single try from visibilitychange can silently fail. The retry
+     used to be chained to the resume promise's .then(), but an
+     ignored resume's promise never settles, so no retry ever fired
+     and the engine stayed suspended until the next tap — which is
+     what left the sounds silent after a tab switch. Retry on a
+     timer instead, a few times, so the engine wakes on its own the
+     moment the browser allows it; a tap or key calls this again
+     with a gesture and restarts the budget. */
   var wakeTries = 0, wakeTimer = null;
-  window.cbAudioWake = function () {
+  window.cbAudioWake = function (fromGesture) {
     var c = sharedAudio;
-    if (!c || c.state === "running" || c.state === "closed") { wakeTries = 0; return; }
+    if (!c || c.state === "running" || c.state === "closed") { wakeTries = 0; if (wakeTimer) { clearTimeout(wakeTimer); wakeTimer = null; } return; }
+    if (fromGesture) wakeTries = 0;
     wakeTries++;
     try {
       var p = c.resume();
       if (p && p.catch) p.catch(function () {});
-      if (p && p.then) p.then(function () {
-        if (c.state !== "running" && wakeTries < 3) {
-          if (wakeTimer) clearTimeout(wakeTimer);
-          wakeTimer = setTimeout(function () { wakeTimer = null; window.cbAudioWake(); }, 250);
-        } else wakeTries = 0;
-      });
     } catch (e) {}
+    if (wakeTries < 6) {
+      if (wakeTimer) clearTimeout(wakeTimer);
+      wakeTimer = setTimeout(function () { wakeTimer = null; window.cbAudioWake(); }, 250);
+    }
   };
-  ["pointerdown", "touchend", "keydown", "click"].forEach(function (t) { document.addEventListener(t, function () { window.cbAudioWake(); }, true); });
+  ["pointerdown", "touchend", "keydown", "click"].forEach(function (t) { document.addEventListener(t, function () { window.cbAudioWake(true); }, true); });
   document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") window.cbAudioWake(); });
   window.addEventListener("pageshow", function () { window.cbAudioWake(); });
   window.addEventListener("focus", function () { window.cbAudioWake(); });

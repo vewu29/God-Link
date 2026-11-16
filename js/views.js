@@ -819,8 +819,24 @@ function startStageMusic() {
   stageAC.resume();
   stageMaster.gain.setTargetAtTime(0.5, stageAC.currentTime, 0.6);
   stageNext = stageAC.currentTime + 0.1; stageBar = 0;
+  if (stageTimer) clearInterval(stageTimer);
   stageTimer = setInterval(stageSchedule, 220); stageSchedule();
 }
+/* Coming back to the tab: the same frozen-interval recovery as
+   the main engine — restart the heartbeat so the picture music
+   resumes once the shared engine runs again. stageSchedule()
+   only schedules inside its 0.6 s window and drops missed steps,
+   so restarting the timer can never double-schedule a step. */
+function wakeStageMusic() {
+  if (!stageOn || !stageAC) return;
+  if (window.cbAudioWake) window.cbAudioWake();
+  if (stageTimer) clearInterval(stageTimer);
+  stageTimer = setInterval(stageSchedule, 220);
+  stageSchedule();
+}
+document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") wakeStageMusic(); });
+window.addEventListener("pageshow", wakeStageMusic);
+window.addEventListener("focus", wakeStageMusic);
 function stopStageMusic() {
   if (!stageOn) return;
   stageOn = false;
