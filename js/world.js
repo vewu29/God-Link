@@ -280,8 +280,17 @@
     do { g.font = weight + " " + s + "px " + family; s -= 2; } while (s > 12 && g.measureText(text).width > maxW);
   }
   function topTexture(b, i) {
-    var S = 512, c = document.createElement("canvas"); c.width = c.height = S;
+    /* The face is drawn in 512-space and scaled onto a 256 canvas:
+       the same print at a quarter of the texture memory. A 512
+       canvas face is ~1MB of GPU texture (+ mipmaps) per block, so
+       Classes' 278 blocks were ~370MB and killed phone tabs on
+       load — the chunked build spread the work over frames but the
+       total still landed. At 256, Classes is ~92MB and even
+       Printing's 536 blocks (~178MB) sit under the ~240MB the
+       phone already handled when the site had 180 blocks. */
+    var S = 512, c = document.createElement("canvas"); c.width = c.height = 256;
     var g = c.getContext("2d");
+    g.scale(0.5, 0.5);
     var base = new THREE.Color(b.color);
     var light = base.clone().lerp(new THREE.Color(0xffffff), 0.2), deep = base.clone().lerp(new THREE.Color(0x0b2d5c), 0.32);
     var grad = g.createLinearGradient(0, 0, S, S);
