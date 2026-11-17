@@ -116,8 +116,18 @@
   var reduceMotionMQ = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
   var reduceMotion = !!(reduceMotionMQ && reduceMotionMQ.matches);
 
-  var N = BLOCKS.length;
+  /* Category filter (English++): the world shows only the active
+     category's blocks, so 3,000 drills never build 3,000 meshes.
+     WB maps world indices to BLOCKS indices; bi() is the BLOCKS
+     index for a world index, wi() the reverse (-1 when absent).
+     Other tracks have no category field, so WB is every index and
+     nothing changes. The drill view keeps BLOCKS indices everywhere
+     (openBlock, __worldHandoff, pickAt's userData.index), so only
+     this file's internal loops translate. */
+  var WB = (window.__eppVisibleIdx ? window.__eppVisibleIdx() : null) || BLOCKS.map(function (_, i) { return i; });
+  var N = WB.length;
   var LAST = Math.max(1, N - 1);
+  function wi(b) { return WB.indexOf(b); }
   var MODE_KEY = "code-block-world-mode-v1";
   var mode = "road";
   try { if (localStorage.getItem(MODE_KEY) === "tower") mode = "tower"; } catch (e) { /* the original view */ }
@@ -369,18 +379,19 @@
   var glowGeo = new THREE.CircleGeometry(3.2, 32);
   var haloGeo = new THREE.TorusGeometry(1.25, 0.05, 8, 44);
   var contactGeo = new THREE.CircleGeometry(2.7, 32);
-  BLOCKS.forEach(function (b, i) {
+  WB.forEach(function (bi_, i) {
+    var b = BLOCKS[bi_];
     var anchor = new THREE.Group();
     var deepSide = new THREE.Color(b.color).lerp(new THREE.Color(0x0b2d5c), 0.42).convertSRGBToLinear();
     var top = new THREE.MeshPhysicalMaterial({ roughness: 0.26, metalness: 0.05, clearcoat: 0.9, clearcoatRoughness: 0.16, envMapIntensity: 1.0 });
-    top.map = topTexture(b, i);
+    top.map = topTexture(b, bi_);
     /* the glow of a mastered block rides the printed face itself, so
        the dark print never washes out */
     top.emissiveMap = top.map;
     var side = new THREE.MeshPhysicalMaterial({ color: deepSide, roughness: 0.34, metalness: 0.08, clearcoat: 0.7, clearcoatRoughness: 0.25, envMapIntensity: 0.9 });
     var mesh = new THREE.Mesh(blockGeo, [top, side]);
     mesh.castShadow = true; mesh.receiveShadow = true;
-    mesh.userData.index = i;
+    mesh.userData.index = bi_;
     mesh.userData.topMat = top; mesh.userData.sideMat = side;
     anchor.add(mesh);
     var ped = new THREE.Mesh(pedestalGeo, new THREE.MeshPhysicalMaterial({ color: TC.ped, roughness: 0.52, metalness: 0.25, clearcoat: 0.25, clearcoatRoughness: 0.5, envMapIntensity: 0.32, emissive: TC.pedEmissive, emissiveIntensity: 0.35 }));
@@ -518,7 +529,7 @@
   function paintPath(path) {
     if (!path) return;
     var open = firstOpen();
-    var frontier = open < 0 ? Infinity : open;
+    var frontier = open < 0 ? Infinity : wi(open);
     var c = path.geo.attributes.color;
     for (var v = 0; v < path.vp.length; v++) {
       var p = path.vp[v];
@@ -851,7 +862,7 @@
   scene.add(beaconRing);
   function placeBeacon() {
     var open = firstOpen();
-    var b = open >= 0 ? bases[open] : null;
+    var b = open >= 0 ? bases[wi(open)] : null;
     beacon.visible = beaconRing.visible = !!b;
     if (!b) return;
     var bs = mode === "tower" ? b.s * 0.75 : 1;
@@ -877,9 +888,9 @@
     mpBloom = done >= N;
     paintPath(mode === "tower" ? towerPath : roadPath);
     placeBeacon();
-    var open = firstOpen();
+    var open = firstOpen(), openW = open < 0 ? -1 : wi(open);
     meshes.forEach(function (mesh, i) {
-      var isDoneI = isDone(i), frac = repsOf(i) / REPS_GOAL, warm = !isDoneI && frac > 0;
+      var isDoneI = isDone(WB[i]), frac = repsOf(WB[i]) / REPS_GOAL, warm = !isDoneI && frac > 0;
       var tm = mesh.userData.topMat, sm = mesh.userData.sideMat;
       if (isDoneI) {
         sm.emissive.copy(L(0x2f7fe0)); sm.emissiveIntensity = mpBloom ? 0.8 : 0.55;
@@ -894,7 +905,7 @@
       } else {
         sm.emissive.setHex(0x000000); sm.emissiveIntensity = 0;
         tm.emissive.setHex(0x000000); tm.emissiveIntensity = 0;
-        if (i === open) { tm.roughness = 0.2; tm.clearcoat = 0.95; tm.envMapIntensity = 1.15; sm.clearcoat = 0.65; sm.envMapIntensity = 0.95; }
+        if (i === openW) { tm.roughness = 0.2; tm.clearcoat = 0.95; tm.envMapIntensity = 1.15; sm.clearcoat = 0.65; sm.envMapIntensity = 0.95; }
         else { tm.roughness = 0.42; tm.clearcoat = 0.45; tm.envMapIntensity = 0.75; sm.clearcoat = 0.35; sm.envMapIntensity = 0.65; }
       }
       var pm = pedestals[i].material;
@@ -902,7 +913,7 @@
       pm.emissiveIntensity = isDoneI ? (mpBloom ? 1.1 : 0.8) : 0.4;
       var rm = rims[i].material;
       if (isDoneI) { rm.color.copy(L(0x9adcff)); rm.opacity = mpBloom ? 0.95 : 0.8; }
-      else if (i === open) { rm.color.copy(L(0x7cc4ff)); rm.opacity = 0.4; }
+      else if (i === openW) { rm.color.copy(L(0x7cc4ff)); rm.opacity = 0.4; }
       else if (warm) { rm.color.copy(L(0x5fb2ff)); rm.opacity = 0.15 + 0.4 * frac; }
       else rm.opacity = 0;
       rims[i].visible = rm.opacity > 0;
@@ -910,7 +921,7 @@
       glows[i].visible = isDoneI;
       halos[i].material.opacity = isDoneI ? (mpBloom ? 0.72 : 0.55) : 0;
       halos[i].visible = isDoneI;
-      mesh.userData.isCurrent = (i === open);
+      mesh.userData.isCurrent = (i === openW);
       mesh.userData.isDone = isDoneI;
       var ring = rings[i];
       ring.geometry.dispose();
@@ -937,7 +948,7 @@
     document.fonts.ready.then(function () {
       meshes.forEach(function (mesh, i) {
         var tm = mesh.userData.topMat, old = tm.map;
-        tm.map = topTexture(BLOCKS[i], i);
+        tm.map = topTexture(BLOCKS[WB[i]], WB[i]);
         tm.emissiveMap = tm.map;
         tm.needsUpdate = true;
         if (old) old.dispose();
@@ -971,17 +982,19 @@
   }
   function blockTop(p) { return p.y + 1.2 * p.s; }
   window.__burstAt = function (i, big) {
-    var p = bases[i]; if (!p || worldLost) return;
+    var w = wi(i);
+    var p = bases[w]; if (!p || worldLost) return;
     /* the burst lands ON the block: it squashes, then springs back */
-    var bm = meshes[i];
+    var bm = meshes[w];
     if (bm) { bm.userData.squash = big ? 0.6 : 0.3; bm.userData.squashVel = 0; }
     var n = big ? 90 : 26;
     for (var k = 0; k < n; k++) spawn(p.x, blockTop(p), p.z, 3.2 * p.s, 4.2 * Math.sqrt(p.s), k % 3 === 0);
     if (big) fireShock(p.x, p.y - 0.5 * p.s, p.z, 5.4 * p.s, 850);
   };
   window.__shimmerAt = function (i) {
-    var p = bases[i]; if (!p || worldLost) return;
-    var sm = meshes[i];
+    var w = wi(i);
+    var p = bases[w]; if (!p || worldLost) return;
+    var sm = meshes[w];
     if (sm) { sm.userData.squash = Math.max(sm.userData.squash || 0, 0.2); sm.userData.squashVel = 0; }
     for (var k = 0; k < 12; k++) spawn(p.x + (Math.random() - 0.5) * 1.7 * p.s, blockTop(p), p.z + (Math.random() - 0.5) * 1.7 * p.s, 0.7 * p.s, 1.5, k % 4 !== 3);
   };
@@ -1002,10 +1015,11 @@
      exposure down a breath while the learner's eye is in the list. */
   var handoffIndex = -1, handoffKind = "", handoffT0 = 0;
   window.__worldHandoff = function (i, kind) {
-    if (worldLost || reduceMotion || !meshes[i]) return false;
-    handoffIndex = i; handoffKind = kind; handoffT0 = performance.now();
-    if (kind === "settle" && meshes[i].userData.isDone) {
-      var p = bases[i];
+    var w = wi(i);
+    if (worldLost || reduceMotion || w < 0 || !meshes[w]) return false;
+    handoffIndex = w; handoffKind = kind; handoffT0 = performance.now();
+    if (kind === "settle" && meshes[w].userData.isDone) {
+      var p = bases[w];
       for (var k = 0; k < 14; k++) spawn(p.x + (Math.random() - 0.5) * 1.7 * p.s, blockTop(p) + 0.15, p.z + (Math.random() - 0.5) * 1.7 * p.s, 0.7 * p.s, 1.6, k % 4 !== 3);
     }
     return true;
@@ -1110,8 +1124,8 @@
   function updatePathPulse(t) {
     var path = mode === "tower" ? towerPath : roadPath;
     if (!path) return;
-    var open = firstOpen();
-    var pEnd = open < 0 ? LAST : open, pStart = open > 0 ? open - 1 : (open < 0 ? 0 : -0.5);
+    var open = firstOpen(), openW = open < 0 ? LAST : wi(open);
+    var pEnd = openW, pStart = open > 0 ? openW - 1 : (open < 0 ? 0 : -0.5);
     var dur = open < 0 ? 7000 : 3400, ph = (t % dur) / dur;
     var ease = ph < 0.5 ? 2 * ph * ph : 1 - Math.pow(-2 * ph + 2, 2) / 2;
     var q = pathPointAt(path, pStart + (pEnd - pStart) * ease);
@@ -1172,7 +1186,7 @@
      once every block is mastered), by the shortest way round. */
   function faceNext() {
     if (mode !== "tower" || dragging) return;
-    var open = firstOpen(), th = tTheta(open < 0 ? LAST : open);
+    var open = firstOpen(), th = tTheta(open < 0 ? LAST : wi(open));
     azimuth = th + Math.PI * 2 * Math.round((azimuth - th) / (Math.PI * 2));
     azimuthVel = 0;
   }
@@ -1235,8 +1249,8 @@
        outranks the habit of leaning toward the next block */
     var fb = null, amt = 0;
     if (handoffIndex >= 0 && bases[handoffIndex]) { fb = bases[handoffIndex]; amt = handoffKind === "pick" ? 0.45 : 0.3; }
-    else if (hoverIndex >= 0 && bases[hoverIndex]) { fb = bases[hoverIndex]; amt = 0.22; }
-    else { var oi = firstOpen(); if (oi >= 0 && bases[oi]) { fb = bases[oi]; amt = 0.1; } }
+    else if (hoverIndex >= 0 && wi(hoverIndex) >= 0 && bases[wi(hoverIndex)]) { fb = bases[wi(hoverIndex)]; amt = 0.22; }
+    else { var oi = firstOpen(), ow = oi >= 0 ? wi(oi) : -1; if (ow >= 0 && bases[ow]) { fb = bases[ow]; amt = 0.1; } }
     if (mode === "tower") {
       focusGoal.set(0, 12.2 + tiltCur * 4.5, 0);
       if (fb) {
@@ -1523,7 +1537,7 @@
       if (performance.now() < skyPulseUntil) glow.intensity = 1.45 + Math.sin(t * 0.012) * 0.35;
       beacon.material.opacity = 0.24 + Math.sin(t * 0.0022) * 0.08;
       beaconRing.material.opacity = 0.42 + Math.sin(t * 0.0022) * 0.14;
-      var bsc = 1 + Math.sin(t * 0.0022) * 0.035, b0 = bases[firstOpen()];
+      var bsc = 1 + Math.sin(t * 0.0022) * 0.035, b0 = bases[wi(firstOpen())];
       if (b0) beaconRing.scale.set(b0.s * bsc, b0.s * bsc, 1);
       /* now and then a mote drifts up off a block, and a mastered one twinkles */
       if (Math.random() < 0.02) {
@@ -1551,7 +1565,7 @@
     if (Math.abs(attentionGoal - attentionDim) < 0.002) attentionDim = attentionGoal;
     renderer.toneMappingExposure = modeExposure - 0.16 * attentionDim;
     if (handoffIndex >= 0 && performance.now() - handoffT0 > (handoffKind === "pick" ? 3000 : 2400)) { handoffIndex = -1; handoffKind = ""; }
-    var open = firstOpen();
+    var open = firstOpen(), openW = open < 0 ? -1 : wi(open), hoverW = hoverIndex >= 0 ? wi(hoverIndex) : -1;
     meshes.forEach(function (mesh, i) {
       var isDoneI = mesh.userData.isDone;
       var bob = reduceMotion ? 0 : Math.sin(t * 0.0012 + i * 0.7) * 0.07;
@@ -1561,7 +1575,7 @@
       mesh.position.set(0, bob, 0);
       mesh.rotation.y = isDoneI && !reduceMotion ? Math.sin(t * 0.0005 + i * 2.1) * 0.05 : 0;
       /* size and squash are springs, so a block lands with weight */
-      var target = isDoneI ? 1.06 : (i === open ? 1 + (reduceMotion ? 0.05 : Math.sin(t * 0.004) * 0.05 + 0.05) : 1);
+      var target = isDoneI ? 1.06 : (i === openW ? 1 + (reduceMotion ? 0.05 : Math.sin(t * 0.004) * 0.05 + 0.05) : 1);
       var sCur = mesh.userData.scaleCur == null ? 1 : mesh.userData.scaleCur, sVel = mesh.userData.scaleVel || 0;
       if (reduceMotion) { sCur = target; sVel = 0; }
       else { sVel += (target - sCur) * 0.16; sVel *= 0.72; sCur += sVel; }
@@ -1580,7 +1594,7 @@
         mesh.position.y = 4 * 0.55 * cph * (1 - cph);
       }
       /* the hover and the handoff lift the block to meet the pointer */
-      var liftGoal = (i === hoverIndex) ? 0.16 : (i === open ? 0.08 : 0);
+      var liftGoal = (i === hoverW) ? 0.16 : (i === openW ? 0.08 : 0);
       if (i === handoffIndex) {
         if (handoffKind === "pick") liftGoal = Math.max(liftGoal, 0.55);
         else { var sf = 1 - (performance.now() - handoffT0) / 900; if (sf > 0) liftGoal = Math.max(liftGoal, 0.5 * sf * sf); }
@@ -1635,11 +1649,12 @@
      on screen (client pixels) right now. */
   window.__worldMode = function () { return mode; };
   window.__worldProject = function (i) {
-    var m = meshes[i]; if (!m || !bases[i]) return null;
+    var w = wi(i);
+    var m = meshes[w]; if (!m || !bases[w]) return null;
     scene.updateMatrixWorld();
     var v = new THREE.Vector3();
     m.getWorldPosition(v);
-    v.y += 0.5 * bases[i].s;
+    v.y += 0.5 * bases[w].s;
     v.project(camera);
     var r = canvas.getBoundingClientRect();
     return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height, onScreen: v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 };

@@ -1059,6 +1059,10 @@
         cursor: pointer; min-height: 38px;
       }
       .vchip.active { background: var(--accent); border-color: var(--accent); color: #041e3a; }
+      /* Category picker row above the drill list (English++ only):
+         hidden until drill.js builds the chips. */
+      .cat-row { margin: 2px 2px 12px; }
+      .cat-row[hidden] { display: none; }
       .theme-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 22px 2px 0; }
       .theme-head h3 { margin: 0; font-size: var(--text-body); color: #ffffff; }
       .theme-head span { font-size: var(--text-small); font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }

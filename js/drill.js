@@ -129,20 +129,94 @@ function save() {
 }
 function repsOf(i) { return Math.min(state.reps[i] || 0, REPS_GOAL); }
 function isDone(i) { return repsOf(i) >= REPS_GOAL; }
-function doneCount() { var c = 0; for (var i = 0; i < BLOCKS.length; i++) if (isDone(i)) c++; return c; }
-function firstOpen() { for (var i = 0; i < BLOCKS.length; i++) if (!isDone(i)) return i; return -1; }
+
+/* ================= Categories (English++) =================
+   The English++ track carries thousands of drills, each tagged
+   by topic in its `category` field. The picker (buildCats, below)
+   lets a learner open one category — say Classes — and grind just
+   those blocks, in book order. Other tracks have no category field,
+   so none of this applies to them: visibleIdx() is every block and
+   the picker stays hidden. Progress is stored by BLOCKS index, so
+   filtering never moves a saved rep: visibleIdx() only chooses
+   which indices show, and the world reads the same list through
+   window.__eppVisibleIdx (drill.js loads before world.js). A
+   category pick saves and reloads, so the 3D world rebuilds with
+   only that category's blocks instead of 3,000 meshes. */
+var EPP_CAT_KEY = "code-block-epp-category-v1";
+var EPP_CATS = [
+  { id: "first-steps", name: "First Steps" },
+  { id: "names-values", name: "Names & Values" },
+  { id: "printing", name: "Printing" },
+  { id: "math", name: "Math" },
+  { id: "text", name: "Text" },
+  { id: "tests-choices", name: "Tests & Choices" },
+  { id: "loops", name: "Loops" },
+  { id: "talking-watching", name: "Talking & Watching" },
+  { id: "lists", name: "Lists" },
+  { id: "maps-collections", name: "Maps & Collections" },
+  { id: "functions", name: "Functions" },
+  { id: "checks-tests", name: "Checks & Tests" },
+  { id: "classes", name: "Classes" },
+  { id: "pointers", name: "Pointers" },
+  { id: "errors", name: "Errors" },
+  { id: "bits-big", name: "Bits & Big Numbers" },
+  { id: "files", name: "Files" },
+  { id: "clock-threads", name: "Clock & Threads" },
+  { id: "outside-world", name: "Outside World" }
+];
+function hasCats() { return !!(BLOCKS.length && BLOCKS[0] && BLOCKS[0].category); }
+function catName(id) { for (var k = 0; k < EPP_CATS.length; k++) if (EPP_CATS[k].id === id) return EPP_CATS[k].name; return ""; }
+function activeCat() {
+  if (!hasCats()) return null;
+  var c = null;
+  try { c = localStorage.getItem(EPP_CAT_KEY); } catch (e) {}
+  if (!c || !catName(c)) c = "first-steps";
+  return c;
+}
+var _visCache = null;
+function visibleIdx() {
+  if (_visCache) return _visCache;
+  var c = activeCat(), out = [], i;
+  if (!c) { for (i = 0; i < BLOCKS.length; i++) out.push(i); }
+  else { for (i = 0; i < BLOCKS.length; i++) if (BLOCKS[i].category === c) out.push(i); }
+  if (!out.length) { out = []; for (i = 0; i < BLOCKS.length; i++) out.push(i); }
+  _visCache = out;
+  return out;
+}
+window.__eppVisibleIdx = visibleIdx;
+/* The masterpiece ceremony, per category: the profile save keeps
+   one track-wide `celebrated` flag (sanitizeState rebuilds the save
+   shape, so nothing extra survives there), so category
+   celebrations live in their own small key. Without categories
+   this falls back to the profile flag, exactly as before. */
+var EPP_CELEB_KEY = "code-block-epp-celebrated-v1";
+function celebratedCat(id) {
+  if (!id) return !!state.celebrated;
+  try { var m = JSON.parse(localStorage.getItem(EPP_CELEB_KEY) || "{}"); return !!m[id]; } catch (e) { return false; }
+}
+function markCelebratedCat(id) {
+  if (!id) { state.celebrated = true; save(); return; }
+  try { var m = JSON.parse(localStorage.getItem(EPP_CELEB_KEY) || "{}"); m[id] = true; localStorage.setItem(EPP_CELEB_KEY, JSON.stringify(m)); } catch (e) {}
+}
+function doneCount() { var idx = visibleIdx(), c = 0; for (var k = 0; k < idx.length; k++) if (isDone(idx[k])) c++; return c; }
+function firstOpen() { var idx = visibleIdx(); for (var k = 0; k < idx.length; k++) if (!isDone(idx[k])) return idx[k]; return -1; }
 
 /* ================= DOM refs ================= */
 function $(id) { return document.getElementById(id); }
 var pctText = $("pctText"), barFill = $("barFill"), barTrack = $("barTrack"), doneCountEl = $("doneCount");
 var hubView = $("hubView"), drillView = $("drillView"), blockGrid = $("blockGrid");
+var hubChip = $("hubChip"), hubHint = $("hubHint");
+var hubH2 = document.querySelector(".list-head h2");
 var masterpieceBanner = $("masterpieceBanner");
 var continueBtn = $("continueBtn");
 
 /* ================= Block list ================= */
 var listBtns = [];
-(function buildList() {
-  BLOCKS.forEach(function (b, i) {
+function buildList() {
+  blockGrid.innerHTML = "";
+  listBtns = [];
+  visibleIdx().forEach(function (i) {
+    var b = BLOCKS[i];
     var btn = document.createElement("button");
     btn.type = "button"; btn.className = "block-btn";
     var chip = document.createElement("span");
@@ -162,24 +236,64 @@ var listBtns = [];
     btn.appendChild(chip); btn.appendChild(meta); btn.appendChild(check);
     btn.addEventListener("click", function () { openBlock(i); });
     blockGrid.appendChild(btn);
-    listBtns.push({ btn: btn, reps: rp });
+    listBtns[i] = { btn: btn, reps: rp };
+  });
+}
+buildList();
+
+/* The category picker: one chip per topic with its block count.
+   A pick saves the category and reloads, so the 3D world rebuilds
+   with only that category's blocks. Hidden entirely on tracks
+   without categories. */
+(function buildCats() {
+  if (!hasCats()) return;
+  var row = $("catRow");
+  if (!row) return;
+  row.hidden = false;
+  var cur = activeCat();
+  EPP_CATS.forEach(function (cat) {
+    var n = 0;
+    for (var i = 0; i < BLOCKS.length; i++) if (BLOCKS[i].category === cat.id) n++;
+    if (!n) return;
+    var chip = document.createElement("button");
+    chip.type = "button"; chip.className = "vchip" + (cat.id === cur ? " active" : "");
+    chip.textContent = cat.name + " · " + n;
+    chip.setAttribute("aria-pressed", cat.id === cur ? "true" : "false");
+    chip.addEventListener("click", function () {
+      if (cat.id === cur) return;
+      try { localStorage.setItem(EPP_CAT_KEY, cat.id); } catch (e) {}
+      location.reload();
+    });
+    row.appendChild(chip);
   });
 })();
 
 function refreshProgress() {
+  var vis = visibleIdx();
   var done = doneCount();
-  var pct = Math.round((done / BLOCKS.length) * 100);
+  var pct = Math.round((done / vis.length) * 100);
   pctText.textContent = pct + "%";
   barFill.style.width = pct + "%";
   barTrack.setAttribute("aria-valuenow", String(pct));
-  barTrack.setAttribute("aria-valuetext", pct + "% mastered — " + done + " of " + BLOCKS.length + " blocks");
+  barTrack.setAttribute("aria-valuetext", pct + "% mastered — " + done + " of " + vis.length + " blocks");
   doneCountEl.textContent = String(done);
   listBtns.forEach(function (entry, i) {
     entry.btn.classList.toggle("done", isDone(i));
     entry.btn.style.setProperty("--p", String(Math.round((repsOf(i) / REPS_GOAL) * 100)));
     entry.reps.textContent = isDone(i) ? "Mastered" : (repsOf(i) > 0 ? repsOf(i) + " / " + REPS_GOAL + " reps" : "Not started");
   });
-  masterpieceBanner.classList.toggle("hidden", done < BLOCKS.length);
+  masterpieceBanner.classList.toggle("hidden", done < vis.length);
+  /* The hub headings name the active category (English++ only);
+     other tracks keep their static headings. */
+  var cat = activeCat();
+  if (cat) {
+    var nm = catName(cat);
+    if (hubH2) hubH2.textContent = nm + " · " + vis.length + " blocks";
+    if (hubChip) hubChip.textContent = vis.length + " blocks";
+    if (hubHint) hubHint.textContent = "In book order — tap any block to drill it.";
+    var mpP = masterpieceBanner.querySelector("p");
+    if (mpP) mpP.textContent = nm + " mastered — all " + vis.length + " blocks. Every block in your world glows bright blue, and the music is playing the full arrangement. You built this — one repeated line at a time.";
+  }
   /* Loop 67 — the finale glissando no longer fires from here.
      refreshProgress runs for every state swap too (signing in,
      signing out, switching or deleting a profile, a reset), so
@@ -346,7 +460,8 @@ function renderReps() {
   }
   lastRepShown = r;
   nextBtn.classList.toggle("hidden", !isDone(current));
-  nextBtn.textContent = current >= BLOCKS.length - 1 ? "Back to your world" : "Next block — " + BLOCKS[current + 1].name;
+  var visNext = visibleIdx(), posNext = visNext.indexOf(current);
+  nextBtn.textContent = posNext < 0 || posNext >= visNext.length - 1 ? "Back to your world" : "Next block — " + BLOCKS[visNext[posNext + 1]].name;
 }
 /* Loop 50 — an identical status set twice ("Still got it.
    Perfect rep." on consecutive practice reps) is not
@@ -364,7 +479,7 @@ function openBlock(i) {
   $("drillChip").innerHTML = '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#' + (b.icon || "i-cube") + '"/></svg>';
   $("drillTitle").textContent = b.name;
   $("drillChapter").textContent = b.chapter;
-  if (sessionBlock) sessionBlock.textContent = "Block " + (i + 1) + " of " + BLOCKS.length;
+  if (sessionBlock) { var visS = visibleIdx(), posS = visS.indexOf(i); sessionBlock.textContent = "Block " + (posS >= 0 ? posS + 1 : i + 1) + " of " + visS.length; }
   paintSessionMood(storedMood());
   var cn = $("consoleName");
   if (cn) cn.textContent = CB_META.file;
@@ -438,7 +553,8 @@ function closeDrill() {
 }
 $("backBtn").addEventListener("click", closeDrill);
 nextBtn.addEventListener("click", function () {
-  if (current >= BLOCKS.length - 1) closeDrill(); else openBlock(current + 1);
+  var vis = visibleIdx(), pos = vis.indexOf(current);
+  if (pos < 0 || pos >= vis.length - 1) closeDrill(); else openBlock(vis[pos + 1]);
 });
 targetLine.addEventListener("click", function () { typeInput.focus(); });
 
@@ -504,9 +620,9 @@ typeInput.addEventListener("input", function () {
          last open one. It used to fire from refreshProgress's
          100% transition, which state swaps (profile sign-in /
          out / switch) could trip without any rep being typed. */
-      if (doneCount() === BLOCKS.length && window.__finaleGliss) window.__finaleGliss();
-      if (doneCount() === BLOCKS.length && !state.celebrated) {
-        state.celebrated = true; save();
+      if (doneCount() === visibleIdx().length && window.__finaleGliss) window.__finaleGliss();
+      if (doneCount() === visibleIdx().length && !celebratedCat(activeCat())) {
+        markCelebratedCat(activeCat());
         if (window.__celebrate) window.__celebrate();
         setTimeout(closeDrill, 900);
         /* Loop 15: once the hub and its banner are back on screen,
