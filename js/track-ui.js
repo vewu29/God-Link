@@ -120,19 +120,38 @@
   function setText(sel, txt) { var el = document.querySelector(sel); if (el) el.textContent = txt; }
   function setHTML(sel, html) { var el = document.querySelector(sel); if (el) el.innerHTML = html; }
   var nB = T.blocks.length, nC = T.chapters.length, nS = T.shelves.length;
+  /* English++ category picker: when a category is active, the hub
+     headings name that category, not the whole track. track-ui runs
+     after drill.js's load-time refreshProgress, so it must scope the
+     same headings itself or it clobbers the category words back to
+     the track totals. */
+  var eppCat = null, eppN = 0, eppName = "";
+  try {
+    var savedCat = localStorage.getItem("code-block-epp-category-v1");
+    if (savedCat && T.blocks.length && T.blocks[0].category) {
+      for (var ci = 0; ci < T.blocks.length; ci++) if (T.blocks[ci].category === savedCat) eppN++;
+      if (eppN > 0 && eppN < nB) {
+        eppCat = savedCat;
+        eppName = (typeof window.catName === "function") ? window.catName(savedCat) : savedCat;
+      }
+    }
+  } catch (e) {}
+  var hubN = eppCat ? eppN : nB;
   setText(".mastery-label", name + " Mastery");
   /* Only the words after the live counter change: drill.js already
      holds #doneCount and keeps writing into it. */
   var mc = document.querySelector(".mastery-count");
-  if (mc) { for (var n = 0; n < mc.childNodes.length; n++) { if (mc.childNodes[n].nodeType === 3 && mc.childNodes[n].nodeValue.indexOf("of 30") >= 0) mc.childNodes[n].nodeValue = " of " + nB + " blocks mastered"; } }
+  if (mc) { for (var n = 0; n < mc.childNodes.length; n++) { if (mc.childNodes[n].nodeType === 3 && mc.childNodes[n].nodeValue.indexOf("of 30") >= 0) mc.childNodes[n].nodeValue = " of " + hubN + " blocks mastered"; } }
   setText(".music-note", "Chill generative music plays while you drill. Every block you master adds a new layer — finish all " + nB + " and it blooms into the full piece.");
   var world = $("world");
   if (world) world.setAttribute("aria-label", "3D top-down world of " + nB + " " + name + " blocks. Tap a block to open its drill, drag to look around, pinch or scroll to zoom, double-tap to reset the view.");
   setText("#masterpieceBanner h2", "The " + name + " Masterpiece");
-  setText("#masterpieceBanner p", "All " + nB + " " + name + " blocks mastered. Every block in your world glows bright blue, and the music is playing the full arrangement. You built this — one repeated line at a time.");
+  setText("#masterpieceBanner p", eppCat
+    ? eppName + " mastered — all " + eppN + " blocks. Every block in your world glows bright blue, and the music is playing the full arrangement. You built this — one repeated line at a time."
+    : "All " + nB + " " + name + " blocks mastered. Every block in your world glows bright blue, and the music is playing the full arrangement. You built this — one repeated line at a time.");
   var hubH = document.querySelector("#hubView .list-head h2");
-  if (hubH) hubH.textContent = "All " + nB + " blocks";
-  setText("#hubChip", nB + " blocks");
+  if (hubH) hubH.textContent = eppCat ? eppName + " · " + eppN + " blocks" : "All " + nB + " blocks";
+  setText("#hubChip", hubN + " blocks");
   setText("#hubHint", "In learning order — tap any block to drill it.");
   setHTML("#sandboxView .source-note", esc(T.sandboxNote || ("Every " + name + " block is written in plain words for Code Block. Each block takes 8 perfect repetitions. Your " + name + " progress is saved separately from every other track.")));
   setText("#libraryView .lib-intro h2", "The " + name + " Library");

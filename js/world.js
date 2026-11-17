@@ -379,7 +379,17 @@
   var glowGeo = new THREE.CircleGeometry(3.2, 32);
   var haloGeo = new THREE.TorusGeometry(1.25, 0.05, 8, 44);
   var contactGeo = new THREE.CircleGeometry(2.7, 32);
-  WB.forEach(function (bi_, i) {
+  /* Blocks are built a slice at a time so a big category never does
+     all of its work in one frame: each block is ~8 meshes, 3 physical
+     materials and a canvas face, so 503 of them in one synchronous
+     loop can kill a phone tab before the page appears. The first
+     slice builds at load so the road is never empty; the rest follow
+     on animation frames. The block arrays stay dense and in WB
+     order, so every consumer that reads meshes.length /
+     anchors.length / bases.length only ever sees built blocks. */
+  var BUILD_PER_FRAME = 40, buildPos = 0;
+  function buildBlock(pos) {
+    var bi_ = WB[pos];
     var b = BLOCKS[bi_];
     var anchor = new THREE.Group();
     var deepSide = new THREE.Color(b.color).lerp(new THREE.Color(0x0b2d5c), 0.42).convertSRGBToLinear();
@@ -421,7 +431,36 @@
     scene.add(anchor);
     meshes.push(mesh); anchors.push(anchor); pedestals.push(ped); rims.push(rimMesh); glows.push(glowDisc); halos.push(halo); rings.push(ring);
     bases.push({ x: 0, y: 0, z: 0, rot: 0, s: 1 });
-  });
+  }
+  /* The faces are baked in whatever fonts have arrived; when the real
+     faces land, rebake each built block's face once so the world wears
+     the same type as the page around it. Runs on fonts.ready and
+     again when a chunked build finishes, so blocks built after the
+     fonts arrive still get the real face. */
+  function rebakeFaces() {
+    meshes.forEach(function (mesh, i) {
+      var tm = mesh.userData.topMat, old = tm.map;
+      tm.map = topTexture(BLOCKS[WB[i]], WB[i]);
+      tm.emissiveMap = tm.map;
+      tm.needsUpdate = true;
+      if (old) old.dispose();
+    });
+  }
+  function buildSlice() {
+    var end = Math.min(N, buildPos + BUILD_PER_FRAME);
+    var first = buildPos === 0;
+    for (; buildPos < end; buildPos++) buildBlock(buildPos);
+    /* The first slice runs inside initWorld, before the layout
+       constants (ROW/ROWS), the beacon and the paths exist — so it
+       builds only. The layout is applied by the init code below
+       (applyLayout) and the visuals by the post-init refreshWorld.
+       Later slices run on animation frames, after initWorld has
+       returned, so they can lay out and repaint as they go. */
+    if (!first) { applyLayout(); refreshWorld(); }
+    if (buildPos < N) requestAnimationFrame(buildSlice);
+    else if (!first) rebakeFaces();
+  }
+  buildSlice();
 
   /* ================= Layouts =================
      Where each block sits in each view: { x, y, z, rot, s } for its
@@ -453,7 +492,8 @@
   }
   function applyLayout() {
     var tower = mode === "tower";
-    for (var i = 0; i < N; i++) {
+    /* Only built anchors exist yet while a chunked build runs. */
+    for (var i = 0; i < anchors.length; i++) {
       var L = tower ? towerLayout(i) : roadLayout(i);
       bases[i] = L;
       anchors[i].position.set(L.x, L.y, L.z);
@@ -939,21 +979,14 @@
     if (mode === "tower" && open !== lastFacedOpen) { lastFacedOpen = open; faceNext(); }
   }
   window.__refreshWorld = refreshWorld;
+  window.__worldBuilt = function () { return buildPos; };
   window.__skyPulse = function () { skyPulseUntil = performance.now() + 7000; };
 
   /* The faces are baked in whatever fonts have arrived; when the real
      faces land, rebake each block's face once so the world wears the
      same type as the page around it. */
   if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(function () {
-      meshes.forEach(function (mesh, i) {
-        var tm = mesh.userData.topMat, old = tm.map;
-        tm.map = topTexture(BLOCKS[WB[i]], WB[i]);
-        tm.emissiveMap = tm.map;
-        tm.needsUpdate = true;
-        if (old) old.dispose();
-      });
-    });
+    document.fonts.ready.then(function () { rebakeFaces(); });
   }
 
   /* ================= Particles =================
@@ -1541,12 +1574,12 @@
       if (b0) beaconRing.scale.set(b0.s * bsc, b0.s * bsc, 1);
       /* now and then a mote drifts up off a block, and a mastered one twinkles */
       if (Math.random() < 0.02) {
-        var mp = bases[Math.floor(Math.random() * N)];
-        spawn(mp.x + (Math.random() - 0.5) * 2 * mp.s, mp.y + 0.9 * mp.s, mp.z + (Math.random() - 0.5) * 2 * mp.s, 0.5 * mp.s, 1.1, Math.random() < 0.3);
+        var mp = bases[Math.floor(Math.random() * bases.length)];
+        if (mp) spawn(mp.x + (Math.random() - 0.5) * 2 * mp.s, mp.y + 0.9 * mp.s, mp.z + (Math.random() - 0.5) * 2 * mp.s, 0.5 * mp.s, 1.1, Math.random() < 0.3);
       }
       if (Math.random() < 0.06) {
         for (var tw = 0; tw < 6; tw++) {
-          var ti = Math.floor(Math.random() * N);
+          var ti = Math.floor(Math.random() * meshes.length);
           if (meshes[ti] && meshes[ti].userData.isDone) {
             var tp = bases[ti];
             spawn(tp.x + (Math.random() - 0.5) * 1.6 * tp.s, blockTop(tp) + 0.3, tp.z + (Math.random() - 0.5) * 1.6 * tp.s, 0.4 * tp.s, 1.3, true);
@@ -1616,8 +1649,8 @@
     });
     if (celebrating && performance.now() > celebUntil) celebrating = false;
     if (celebrating && !reduceMotion && Math.random() < 0.25) {
-      var cp = bases[Math.floor(Math.random() * N)];
-      spawn(cp.x, blockTop(cp) + 0.2, cp.z, 2 * cp.s, 5 * Math.sqrt(cp.s), Math.random() < 0.35);
+      var cp = bases[Math.floor(Math.random() * bases.length)];
+      if (cp) spawn(cp.x, blockTop(cp) + 0.2, cp.z, 2 * cp.s, 5 * Math.sqrt(cp.s), Math.random() < 0.35);
     }
     var anyAlive = false;
     for (var k = 0; k < PMAX; k++) {
