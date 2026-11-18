@@ -12,6 +12,12 @@
 //     instead of being dropped. Browsers ignore a resume() that is
 //     not from a user gesture, so the resume from visibilitychange
 //     is modelled as ignored here — the note must still be scheduled.
+//  3. A system sound that interrupts the engine without hiding the
+//     page (an iPhone timer) does not mute them either: the engine
+//     goes to "interrupted" while the sound plays, then to
+//     "suspended" when it ends, and the state change itself must
+//     start a fresh wake cycle — the old code never heard the
+//     interruption end, so it never tried to resume again.
 const test = require("node:test");
 const assert = require("node:assert");
 const fs = require("fs");
@@ -90,12 +96,21 @@ class MockContext {
     this.currentTime = 1;
     this.sampleRate = 44100;
     this.destination = {};
+    this.__listeners = {};
+  }
+  addEventListener(t, fn) { (this.__listeners[t] = this.__listeners[t] || []).push(fn); }
+  setState(s) {
+    this.state = s;
+    (this.__listeners["statechange"] || []).forEach(function (fn) { fn({}); });
   }
   resume() {
     resumeCalls++;
-    if (!gestureAllowed) return new Promise(function () {}); // ignored, never settles
+    // While a system sound holds the session ("interrupted") the
+    // resume is ignored even from a gesture; it only works once
+    // the interruption has ended.
+    if (!gestureAllowed || this.state === "interrupted") return new Promise(function () {}); // ignored, never settles
     const self = this;
-    return Promise.resolve().then(function () { self.state = "running"; });
+    return Promise.resolve().then(function () { self.setState("running"); });
   }
   createGain() { return new MockNode(); }
   createDynamicsCompressor() { const n = new MockNode(); n.threshold = new MockParam(); n.ratio = new MockParam(); n.attack = new MockParam(); n.release = new MockParam(); return n; }
@@ -270,4 +285,54 @@ test("music: the scheduler restarts after a tab switch", async function () {
     global.setInterval = realSetInterval;
     global.clearInterval = realClearInterval;
   }
+});
+
+test("sound effects: an iPhone timer interruption wakes the engine when it ends", async function () {
+  // The timer goes off while the page stays open, so the page
+  // never hides and no visibilitychange fires. The engine is
+  // interrupted, then suspended when the timer ends — and the old
+  // code heard neither change, so once the retry budget from the
+  // interruption was spent it never tried to resume again.
+  const tracksSrc = fs.readFileSync(path.join(__dirname, "..", "js", "tracks.js"), "utf8");
+  const fxSrc = fs.readFileSync(path.join(__dirname, "..", "js", "typing-fx.js"), "utf8");
+  if (!window.cbAudioContext) { eval(tracksSrc); eval(fxSrc); }
+
+  const card = makeEl();
+  card.querySelector = function () { return null; };
+
+  // 1. Sounds work: a gesture runs the engine.
+  gestureAllowed = true;
+  fire("pointerdown");
+  await tick();
+  assert.strictEqual(sharedCtx.state, "running");
+  started.length = 0;
+  window.CBFX.slip(card, null, 0, "a", "b");
+  assert.ok(started.length > 0, "sounds play before the timer");
+
+  // 2. The timer goes off: the engine is interrupted, and the
+  //    wake retries run while resume() is ignored, until the
+  //    6 x 250 ms budget runs out with the alarm still ringing.
+  gestureAllowed = false;
+  sharedCtx.setState("interrupted");
+  await sleep(1800);
+  assert.strictEqual(sharedCtx.state, "interrupted", "still interrupted while the timer rings");
+  const callsWhileRinging = resumeCalls;
+
+  // 3. The timer ends: the engine drops to suspended. The old
+  //    code hears nothing here — no listener, budget spent — so
+  //    it never tries to resume again. The new code hears the
+  //    state change and starts a fresh wake cycle.
+  sharedCtx.setState("suspended");
+  await tick();
+  assert.ok(resumeCalls > callsWhileRinging, "a fresh wake is attempted when the interruption ends");
+
+  // 4. The next tap is a gesture, so the resume is allowed and
+  //    the sounds come back.
+  gestureAllowed = true;
+  started.length = 0;
+  fire("keydown");
+  window.CBFX.slip(card, null, 0, "a", "b");
+  assert.ok(started.length > 0, "sounds are scheduled again after the timer");
+  await tick();
+  assert.strictEqual(sharedCtx.state, "running", "the engine runs again after the timer");
 });

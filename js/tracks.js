@@ -131,12 +131,34 @@
      allow few engines at once and pause ("interrupt") them for calls,
      the lock screen or another app's sound; with one shared engine,
      waking it on the next tap or key brings every sound back. */
-  var sharedAudio = null;
+  var sharedAudio = null, stateWatchCtx = null;
   window.cbAudioContext = function () {
     if (sharedAudio && sharedAudio.state !== "closed") return sharedAudio;
     var C = window.AudioContext || window.webkitAudioContext;
     if (!C) return null;
     try { sharedAudio = new C(); } catch (e) { sharedAudio = null; }
+    /* Watch the engine itself. A system sound (an iPhone timer,
+       a call, Siri) interrupts it without ever hiding the page,
+       so no return-to-tab listener fires: the engine goes to
+       "interrupted" while the sound plays, then to "suspended"
+       when it ends — and stays there, because the retry budget
+       from the interruption was already spent while resume() was
+       being ignored. Every drop out of "running" starts a fresh
+       wake cycle, so the engine is retried the moment the
+       interruption ends; every return to "running" restarts the
+       music schedulers, so no bar is lost to the frozen clock. */
+    if (sharedAudio && stateWatchCtx !== sharedAudio && typeof sharedAudio.addEventListener === "function") {
+      stateWatchCtx = sharedAudio;
+      sharedAudio.addEventListener("statechange", function () {
+        if (!sharedAudio) return;
+        if (sharedAudio.state === "running") {
+          if (window.__musicWake) window.__musicWake();
+          if (window.__stageMusicWake) window.__stageMusicWake();
+        } else if (sharedAudio.state === "suspended" || sharedAudio.state === "interrupted") {
+          window.cbAudioWake();
+        }
+      });
+    }
     return sharedAudio;
   };
   /* A shared room: a stereo convolution reverb whose impulse is made

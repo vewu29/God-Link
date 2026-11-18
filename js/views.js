@@ -837,6 +837,7 @@ function wakeStageMusic() {
 document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") wakeStageMusic(); });
 window.addEventListener("pageshow", wakeStageMusic);
 window.addEventListener("focus", wakeStageMusic);
+window.__stageMusicWake = wakeStageMusic;
 function stopStageMusic() {
   if (!stageOn) return;
   stageOn = false;
