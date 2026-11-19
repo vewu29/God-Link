@@ -1,0 +1,394 @@
+/* Code Block styles, split from css/app.css — loads after pc.css:
+   profiles / sign up, online accounts, the Vault, glossary /
+   field guide / cheat panels. */
+      /* ---------- Profiles / Sign up ---------- */
+      .prof-card, .vault-card {
+        background: linear-gradient(170deg, var(--surface) 60%, var(--ice) 140%);
+        border: 1px solid var(--line); border-radius: var(--r-card);
+        padding: 18px; box-shadow: var(--shadow-sm); margin-top: 14px;
+      }
+      .prof-head { display: flex; align-items: center; gap: 14px; }
+      .avatar {
+        width: 58px; height: 58px; border-radius: 50%; flex: none;
+        display: flex; align-items: center; justify-content: center;
+        color: #ffffff; font-size: var(--text-h2); font-weight: 800;
+        box-shadow: inset 0 -6px 12px rgba(var(--shade-rgb), 0.25), 0 4px 10px rgba(var(--shade-2-rgb), 0.25);
+        text-shadow: 0 1px 3px rgba(var(--shade-rgb), 0.4);
+      }
+      .prof-name { font-size: var(--text-h3); font-weight: 800; margin: 0; }
+      .prof-sub { font-size: var(--text-caption); color: var(--muted); margin: 2px 0 0; line-height: 1.5; }
+      .prof-stats { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+      .prof-stat {
+        flex: 1 1 120px; background: var(--surface-2); border: 1px solid var(--line);
+        border-radius: var(--r-row); padding: 10px 12px;
+      }
+      .prof-stat b { display: block; font-size: var(--text-h3); color: var(--accent-deep); }
+      :where(:root[data-mode="dark"]) .prof-stat b { color: var(--accent-bright); }
+      .prof-stat span { font-size: var(--text-small); color: var(--muted); font-weight: 600; }
+      .prof-label { display: block; font-size: var(--text-caption); font-weight: 700; color: var(--muted); margin: 16px 0 6px; }
+      .prof-input {
+        width: 100%; min-height: 48px; border-radius: var(--r-row); padding: 10px 14px;
+        border: 1.5px solid var(--line); background: var(--surface); color: var(--ink);
+        font-size: var(--text-body); font-family: inherit;
+      }
+      .swatch-row { display: flex; gap: 9px; flex-wrap: wrap; }
+      .swatch {
+        width: 42px; height: 42px; border-radius: 50%; border: 3px solid transparent;
+        cursor: pointer; padding: 0;
+      }
+      .swatch.sel { border-color: var(--ink); box-shadow: 0 0 0 2px var(--surface), 0 0 0 4.5px var(--ink); }
+      .big-btn {
+        width: 100%; min-height: 50px; margin-top: 16px; border: none; border-radius: var(--r-tile);
+        background: var(--btn-bg);
+        color: var(--btn-ink); font-size: var(--text-body); font-weight: 800; cursor: pointer;
+        box-shadow: 0 6px 18px var(--glow-med); text-shadow: 0 1px 2px rgba(var(--shade-rgb), 0.3);
+      }
+      .ghost-btn {
+        width: 100%; min-height: 46px; margin-top: 10px; border-radius: var(--r-row); cursor: pointer;
+        background: var(--surface-2); border: 1px solid var(--line); color: var(--ink);
+        font-size: var(--text-caption); font-weight: 700;
+      }
+      .ghost-btn.danger { color: var(--bad); }
+      .prof-msg { font-size: var(--text-caption); line-height: 1.55; margin-top: 12px; color: var(--muted); }
+      .prof-msg.err { color: var(--bad); font-weight: 600; }
+      .profile-pick {
+        display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
+        background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-tile);
+        padding: 10px 12px; margin-top: 9px; cursor: pointer; color: var(--ink); min-height: 60px;
+      }
+      .profile-pick .avatar { width: 42px; height: 42px; font-size: var(--text-h3); }
+      .profile-pick b { font-size: var(--text-body); }
+      .profile-pick span:not(.avatar) { display: block; font-size: var(--text-small); color: var(--muted); }
+
+      /* ---------- Online accounts (js/account.js) ----------
+         The sign-up / log-in card and the account's own card sit above
+         the profile cards; the leaderboard closes the room, and a live
+         strip in the progress card counts everyone's lines today. */
+      .acct-card .prof-stats { margin-top: 12px; }
+      .acct-head .prof-name { margin-top: 8px; }
+      .acct-head .prof-name:focus { outline: none; }
+      .acct-head .prof-name:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+      .acct-badge {
+        display: inline-flex; align-items: center; gap: 6px; padding: 4px 11px; border-radius: 99px;
+        background: var(--good-soft); color: var(--accent-deep); font-size: var(--text-caption); font-weight: 800;
+        letter-spacing: 0.04em; text-transform: uppercase;
+      }
+      :where(:root[data-mode="dark"]) .acct-badge { color: var(--accent-bright); }
+      .acct-badge .ico, .acct-title .ico, .acct-code-card h3 .ico { width: 16px; height: 16px; flex: none; }
+      .acct-title { margin: 14px 0 4px; font-size: var(--text-h3); }
+      .acct-code-card h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 4px; font-size: var(--text-h3); }
+      .acct-code-card h3 .ico { width: 20px; height: 20px; color: var(--accent); }
+      .acct-code-card h3:focus { outline: none; }
+      .acct-code-card { border: 2px solid var(--accent); }
+      .acct-code {
+        margin: 14px 0 4px; padding: 14px 12px; border-radius: var(--r-row); text-align: center;
+        background: var(--surface-2); border: 1px dashed var(--line); color: var(--ink);
+        font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace; font-size: clamp(19px, 5.6vw, 26px);
+        font-weight: 700; letter-spacing: 0.08em; word-break: break-all; user-select: all;
+      }
+      .acct-code-in { font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace; letter-spacing: 0.06em; text-transform: uppercase; }
+      .acct-code-in::placeholder { text-transform: none; }
+      .acct-tabs { display: flex; gap: 6px; padding: 4px; border-radius: var(--r-tile); background: var(--surface-2); border: 1px solid var(--line); }
+      .acct-tabs button {
+        flex: 1 1 0; min-height: 44px; border: 0; border-radius: var(--r-row); background: transparent; color: var(--muted);
+        font-family: inherit; font-size: var(--text-caption); font-weight: 700; cursor: pointer; padding: 6px 8px;
+      }
+      .acct-tabs button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-sm); }
+      .acct-tabs button:focus-visible, .acct-show:focus-visible, .acct-link:focus-visible, .board-tabs button:focus-visible,
+      .live-link:focus-visible, .board-join:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+      .acct-pass { position: relative; }
+      .acct-pass .prof-input { padding-right: 54px; }
+      .acct-show {
+        position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+        width: 44px; height: 40px; border: 0; border-radius: 10px; background: transparent; color: var(--muted); cursor: pointer;
+        display: grid; place-items: center;
+      }
+      .acct-show .ico { width: 20px; height: 20px; }
+      .acct-hint { margin: 6px 0 0; font-size: var(--text-small); color: var(--muted); line-height: 1.45; }
+      .acct-check { display: flex; align-items: center; gap: 10px; margin-top: 16px; font-size: var(--text-caption); font-weight: 600; cursor: pointer; min-height: 44px; }
+      .acct-check input { width: 22px; height: 22px; flex: none; accent-color: var(--accent); margin: 0; }
+      .acct-link {
+        display: inline-block; margin-top: 12px; padding: 8px 2px; min-height: 40px; border: 0; background: none; cursor: pointer;
+        color: var(--accent-deep); font-family: inherit; font-size: var(--text-caption); font-weight: 700; text-decoration: underline; text-underline-offset: 3px;
+      }
+      :where(:root[data-mode="dark"]) .acct-link, :where(:root[data-mode="dark"]) .board-join { color: var(--accent-bright); }
+      .acct-fine { display: flex; gap: 8px; align-items: flex-start; margin: 16px 0 0; font-size: var(--text-small); color: var(--muted); line-height: 1.5; }
+      .acct-fine .ico { width: 16px; height: 16px; flex: none; margin-top: 2px; color: var(--good); }
+      .acct-sync { margin: 10px 0 0; font-size: var(--text-small); color: var(--muted); }
+      .acct-row { display: flex; gap: 10px; flex-wrap: wrap; }
+      .acct-row > button { flex: 1 1 150px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin-top: 14px; }
+      .acct-row .ico { width: 17px; height: 17px; }
+      .acct-delete { margin-top: 14px; padding: 12px; border-radius: var(--r-row); border: 1px solid var(--bad); background: var(--surface); }
+      .ghost-btn.danger-fill { background: var(--bad); border-color: var(--bad); color: var(--surface); }
+      .acct-more { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 4px; }
+      .acct-more summary, .prof-local summary {
+        cursor: pointer; min-height: 44px; display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: var(--text-body); color: var(--ink);
+        list-style: none;
+      }
+      .acct-more summary::-webkit-details-marker, .prof-local summary::-webkit-details-marker { display: none; }
+      .acct-more summary::after, .prof-local summary::after {
+        content: ""; flex: none; margin-left: auto; width: 9px; height: 9px; margin-right: 4px;
+        border-right: 2.5px solid var(--muted); border-bottom: 2.5px solid var(--muted); transform: translateY(-2px) rotate(45deg);
+      }
+      .acct-more[open] summary::after, .prof-local[open] summary::after { transform: translateY(2px) rotate(-135deg); }
+      .prof-local summary { font-size: var(--text-body); }
+      .acct-more summary:focus-visible, .prof-local summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 8px; }
+      .acct-note { display: flex; gap: 10px; align-items: flex-start; margin: 14px 0 0; padding: 12px 14px; border-radius: var(--r-tile);
+        background: var(--surface); border: 1px solid var(--line); font-size: var(--text-caption); line-height: 1.5; color: var(--ink); }
+      .acct-note .ico { width: 20px; height: 20px; flex: none; color: var(--accent); }
+
+      .live-strip {
+        display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; margin: var(--sp-3) 0 0; padding: 8px 8px 8px 12px;
+        border-radius: var(--r-tile); background: var(--surface); border: 1px solid var(--line); font-size: var(--text-caption); color: var(--ink);
+      }
+      .live-strip > .ico { width: 16px; height: 16px; flex: none; color: #b45309; }
+      :where(:root[data-mode="dark"]) .live-strip > .ico { color: #fcd34d; }
+      .live-text b { font-weight: 800; font-variant-numeric: tabular-nums; }
+      .live-online { color: var(--muted); }
+      .live-online:not(:empty)::before { content: "·"; margin-right: 10px; color: var(--muted); }
+      .live-link {
+        margin-left: auto; min-height: 36px; padding: 4px 12px; border-radius: 99px; cursor: pointer;
+        border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); font-family: inherit; font-size: var(--text-caption); font-weight: 700;
+      }
+
+      .board {
+        margin-top: var(--sp-5, 20px); padding: var(--sp-4, 16px) var(--sp-5, 20px);
+        background: var(--card-grad); border: 1px solid var(--line); border-radius: var(--r-card); box-shadow: var(--elev-1);
+      }
+      .board-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+      .board-head h3 { display: flex; align-items: center; gap: 8px; margin: 0; font-size: var(--text-h3); }
+      .board-head h3 .ico { width: 20px; height: 20px; color: #b45309; }
+      :where(:root[data-mode="dark"]) .board-head h3 .ico { color: #fcd34d; }
+      .board-tabs { display: flex; gap: 4px; padding: 3px; border-radius: 99px; background: var(--surface-2); border: 1px solid var(--line); }
+      .board-tabs button {
+        min-height: 36px; padding: 4px 14px; border: 0; border-radius: 99px; background: transparent; color: var(--muted);
+        font-family: inherit; font-size: var(--text-caption); font-weight: 700; cursor: pointer;
+      }
+      .board-tabs button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-sm); }
+      .board-hint { margin: 8px 0 0; font-size: var(--text-caption); color: var(--muted); line-height: 1.5; }
+      .board-list { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 6px; }
+      .board-row {
+        display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: var(--r-row);
+        background: var(--surface); border: 1px solid var(--line);
+      }
+      .board-row.me { border: 2px solid var(--accent); padding: 7px 11px; }
+      .board-rank {
+        width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; flex: none;
+        background: var(--surface-2); color: var(--ink); font-weight: 800; font-size: var(--text-caption); font-variant-numeric: tabular-nums;
+      }
+      .board-rank.medal-1 { background: linear-gradient(135deg, #fde68a, #f59e0b); color: #422006; }
+      .board-rank.medal-2 { background: linear-gradient(135deg, #f1f5f9, #94a3b8); color: #1e293b; }
+      .board-rank.medal-3 { background: linear-gradient(135deg, #fed7aa, #ea8a4c); color: #431407; }
+      .board-who { flex: 1 1 auto; min-width: 0; }
+      .board-who b { display: block; font-size: var(--text-body); color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .board-who > span { font-size: var(--text-small); color: var(--muted); }
+      .board-you {
+        display: inline-block; margin-left: 6px; padding: 1px 7px; border-radius: 99px; vertical-align: 2px;
+        background: var(--accent); color: var(--on-accent); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em;
+      }
+      .board-xp { flex: none; font-weight: 800; font-size: var(--text-caption); color: var(--ink); font-variant-numeric: tabular-nums; }
+      .board-empty { margin: 14px 0 0; padding: 14px; border-radius: var(--r-row); border: 1px dashed var(--line); color: var(--muted); font-size: var(--text-caption); text-align: center; }
+      .board-me { margin: 12px 0 0; font-size: var(--text-caption); color: var(--ink); line-height: 1.5; }
+      .board-join {
+        display: inline; padding: 0; border: 0; background: none; cursor: pointer; font: inherit; font-weight: 700;
+        color: var(--accent-deep); text-decoration: underline; text-underline-offset: 3px;
+      }
+      .board-live { display: flex; align-items: center; gap: 8px; margin: 12px 0 0; font-size: var(--text-caption); color: var(--muted); }
+      .board-live .ico { width: 15px; height: 15px; flex: none; color: #b45309; }
+      :where(:root[data-mode="dark"]) .board-live .ico { color: #fcd34d; }
+
+      /* ---------- The Vault ---------- */
+      .vault-meter-num { font-size: var(--text-h2); font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; }
+      .pack-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 14px; }
+      @media (max-width: 380px) { .pack-grid { grid-template-columns: 1fr; } }
+      .pack-btn {
+        text-align: left; background: linear-gradient(170deg, var(--surface) 60%, var(--ice) 140%);
+        border: 1px solid var(--line); border-radius: var(--r-tile); padding: 11px 12px; cursor: pointer;
+        color: var(--ink); box-shadow: var(--shadow-sm); min-height: 62px;
+      }
+      .pack-btn b { display: block; font-size: var(--text-caption); line-height: 1.3; }
+      .pack-btn span { font-size: var(--text-caption); color: var(--muted); font-weight: 600; }
+      .pack-btn.full { border-color: var(--accent); background: var(--good-soft); }
+      .drill-row {
+        display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+        background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-row);
+        padding: 10px 12px; margin-top: 8px; cursor: pointer; color: var(--ink); min-height: 48px;
+      }
+      .drill-row code { font-family: "JetBrains Mono", monospace; font-size: var(--text-small); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+      .drill-row .tick { color: var(--good); font-weight: 800; flex: none; }
+      .vault-input {
+        width: 100%; min-height: 50px; margin-top: 10px; border-radius: var(--r-row); padding: 10px 14px;
+        border: 1.5px solid var(--line); background: var(--surface); color: var(--ink);
+        font-family: "JetBrains Mono", monospace; font-size: var(--text-body);
+      }
+
+      /* ---------- Loop 11 — The Vault after hours ----------
+         The Vault is a different room in the house: entering it drops
+         the whole view into deep night navy by re-scoping the design
+         tokens, so every shared component (cards, pack tiles, drill
+         rows, session bars, the drill console) re-skins itself from
+         the same variables — no parallel dark copies to maintain.
+         The plain meter becomes a monument: a wall of 10,000 dots,
+         one per drill. A 10×10 pack map gives the hundred packs a
+         shape you can read at a glance, and theme groups + a search
+         and status filters give them wayfinding. */
+      #vaultView {
+        --ink: var(--con-ink);
+        --muted: var(--con-muted);
+        --surface: var(--con-mid);
+        --surface-2: var(--con-hi);
+        --line: var(--con-border);
+        --ice: var(--con-deep);
+        --accent: var(--sky);
+        --accent-bright: var(--sky);
+        --accent-deep: var(--con-glow);
+        --good: var(--con-glow);
+        --good-soft: rgba(var(--sky-rgb), 0.16);
+        --shadow-sm: 0 10px 26px rgba(var(--shade-rgb), 0.5), 0 2px 8px rgba(var(--shade-rgb), 0.35);
+        --shadow: 0 18px 40px rgba(var(--shade-rgb), 0.55), 0 4px 12px rgba(var(--shade-rgb), 0.4);
+        /* Loop 17 — the night room re-tunes the light tokens too:
+           glows a touch stronger, edge light in moonlight blue, so
+           everything inside the Vault re-skins itself a third time. */
+        --glow-soft: rgba(var(--sky-rgb), 0.22);
+        --glow-med: rgba(var(--sky-rgb), 0.4);
+        --glow-strong: rgba(var(--sky-rgb), 0.58);
+        --edge-light: inset 0 1px 0 rgba(var(--tint-rgb), 0.22);
+        --edge-light-soft: inset 0 1px 0 rgba(var(--tint-rgb), 0.14);
+        margin-top: 6px;
+        padding: 20px 16px 26px;
+        border: 1px solid var(--con-border);
+        border-radius: var(--r-hero);
+        background:
+          radial-gradient(120% 340px at 50% -60px, rgba(var(--sky-rgb), 0.16), rgba(var(--sky-rgb), 0) 70%),
+          linear-gradient(180deg, var(--con-mid) 0%, var(--con-deep) 78%);
+        box-shadow: inset 0 1px 0 rgba(var(--tint-rgb), 0.14), 0 24px 48px rgba(var(--shade-rgb), 0.35);
+        color: var(--ink);
+      }
+      #vaultView .lib-intro { border-bottom: 1px solid rgba(var(--tint-rgb), 0.14); padding-bottom: 14px; }
+      #vaultView .lib-intro h2 { color: #ffffff; text-shadow: 0 0 22px var(--glow-med); }
+      @media print { #vaultView { background: none; box-shadow: none; border: none; } }
+
+      /* The monument: one dot per drill, lit as drills bank */
+      .monument-canvas {
+        display: block; width: 100%; max-width: 540px; height: auto;
+        margin: 14px auto 2px;
+        filter: drop-shadow(0 0 14px var(--glow-soft));
+      }
+      .monument-cap { margin: 10px 2px 0; font-size: var(--text-caption); line-height: 1.55; color: var(--muted); text-align: center; }
+      .monument-cap b { color: var(--accent-deep); font-variant-numeric: tabular-nums; }
+
+      /* The pack map: 100 squares, fill = drills banked in that pack */
+      .pack-map { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; margin-top: 12px; }
+      .pmap-cell {
+        position: relative; aspect-ratio: 1 / 1; min-height: 0; padding: 0; overflow: hidden;
+        border-radius: 5px; cursor: pointer;
+        border: 1px solid rgba(var(--tint-rgb), 0.22); background: rgba(var(--sky-rgb), 0.06);
+      }
+      .pmap-cell .fill {
+        position: absolute; left: 0; right: 0; bottom: 0;
+        background: linear-gradient(180deg, var(--sky), var(--blue-700)); opacity: 0.9;
+      }
+      .pmap-cell.doing { border-color: rgba(var(--tint-rgb), 0.55); }
+      .pmap-cell.done { border-color: var(--sky); box-shadow: 0 0 8px var(--glow-strong); }
+      .pmap-cell:focus-visible { outline: 2px solid var(--sky); outline-offset: 2px; }
+      .pack-map-legend { display: flex; gap: 8px 16px; flex-wrap: wrap; margin-top: 11px; font-size: var(--text-small); font-weight: 600; color: var(--muted); }
+      .pack-map-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; }
+
+      /* Wayfinding: search + status chips over the grouped pack list */
+      .vault-tools { margin-top: 16px; }
+      .vault-search {
+        width: 100%; min-height: 48px; border-radius: var(--r-row); padding: 10px 14px;
+        border: 1.5px solid var(--line); background: rgba(var(--shade-rgb), 0.55); color: var(--ink);
+        font-size: var(--text-body); font-family: inherit;
+      }
+      .vault-search::placeholder { color: var(--con-dim); }
+      .vault-search:focus-visible { outline: 2px solid var(--sky); outline-offset: 1px; }
+      .vault-chips { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 10px; }
+      .vchip {
+        border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+        border-radius: 99px; padding: 8px 15px; font-size: var(--text-caption); font-weight: 700;
+        cursor: pointer; min-height: 38px;
+      }
+      .vchip.active { background: var(--accent); border-color: var(--accent); color: #041e3a; }
+      /* Category picker row above the drill list (English++ only):
+         hidden until drill.js builds the chips. */
+      .cat-row { margin: 2px 2px 12px; }
+      .cat-row[hidden] { display: none; }
+      .theme-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 22px 2px 0; }
+      .theme-head h3 { margin: 0; font-size: var(--text-body); color: #ffffff; }
+      .theme-head span { font-size: var(--text-small); font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+      .theme-track { margin-top: 7px; }
+      #vaultView .pack-grid { margin-top: 10px; }
+      @media (min-width: 1024px) { #vaultView .pack-grid { grid-template-columns: repeat(3, 1fr); } }
+      .pack-btn .pack-bar { display: block; height: 5px; border-radius: 99px; background: rgba(var(--tint-rgb), 0.16); margin-top: 9px; overflow: hidden; }
+      .pack-btn .pack-bar i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--sky), var(--accent-bright)); }
+      .pack-btn.doing { border-color: rgba(var(--tint-rgb), 0.6); }
+
+      /* Inside a pack: meter card + numbered rows with banked chips */
+      .pack-meter {
+        margin-top: 12px; padding: 13px 15px;
+        border: 1px solid var(--line); border-radius: var(--r-tile);
+        background: var(--card-grad-soft); box-shadow: var(--elev-1);
+      }
+      .pack-meter-num { font-size: var(--text-body); font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; }
+      .drill-row .rnum { flex: none; width: 28px; font-size: var(--text-caption); font-weight: 800; color: var(--muted); font-variant-numeric: tabular-nums; }
+      .drill-row .tick {
+        width: 24px; height: 24px; border-radius: 50%; flex: none;
+        border: 1.5px solid var(--line); display: flex; align-items: center; justify-content: center;
+        font-size: var(--text-caption); color: transparent;
+      }
+      .drill-row.done { border-color: rgba(var(--tint-rgb), 0.55); }
+      .drill-row.done .tick { background: linear-gradient(135deg, var(--sky), var(--accent-bright)); border-color: transparent; color: #041e3a; }
+
+      /* The Vault drill types inside the Sandbox console: its input
+         sits in the console's own well, so it trades the standalone
+         field styling for the console's transparent one. */
+      .type-card .vault-input {
+        flex: 1; min-width: 0; width: auto; margin: 0; padding: 15px 0;
+        background: transparent; border: none; border-radius: 0;
+        color: var(--con-ink); font-size: var(--text-body); outline: none; caret-color: var(--sky);
+      }
+      #vaultLineFill { height: 100%; width: 0; border-radius: 99px; background: linear-gradient(90deg, var(--sky), var(--accent-bright)); transition: width 0.18s ease; }
+      @media (prefers-reduced-motion: reduce) { #vaultLineFill { transition: none; } }
+
+      /* Guest teaser: a taste of Pack 1, read-only */
+      .peek-line {
+        display: block; margin-top: 8px; padding: 9px 11px;
+        font-family: "JetBrains Mono", monospace; font-size: var(--text-caption); line-height: 1.55;
+        background: rgba(var(--shade-rgb), 0.6); color: var(--con-ink-2);
+        border: 1px solid rgba(var(--con-border-rgb), 0.7); border-radius: var(--r-row); overflow-wrap: anywhere;
+      }
+
+      /* ---------- Glossary / Field Guide / Cheat panels ---------- */
+      .gloss-search {
+        width: 100%; min-height: 48px; border-radius: var(--r-row); padding: 10px 14px; margin-top: 12px;
+        border: 1.5px solid var(--line); background: var(--surface); color: var(--ink);
+        font-size: var(--text-body); font-family: inherit;
+      }
+      .gloss-az { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+      .gloss-az button {
+        border: 1px solid var(--line); background: var(--surface-2); color: var(--ink);
+        border-radius: 8px; min-width: 38px; min-height: 40px; font-weight: 800; font-size: var(--text-caption); cursor: pointer;
+      }
+      .gloss-az button.sel { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+      .gloss-item {
+        background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-row);
+        padding: 10px 13px; margin-top: 8px;
+      }
+      .gloss-item b { font-size: var(--text-caption); color: var(--accent-deep); }
+      :where(:root[data-mode="dark"]) .gloss-item b { color: var(--accent-bright); }
+      .gloss-item p { margin: 3px 0 0; font-size: var(--text-caption); line-height: 1.55; color: var(--muted); }
+      .field-card, .cheat-card {
+        background: linear-gradient(170deg, var(--surface) 60%, var(--ice) 140%);
+        border: 1px solid var(--line); border-radius: var(--r-tile); padding: 13px 14px;
+        box-shadow: var(--shadow-sm); margin-top: 10px;
+      }
+      .field-card h4, .cheat-card h4 { margin: 0 0 4px; font-size: var(--text-body); }
+      .field-card h4 code { font-family: "JetBrains Mono", monospace; font-size: var(--text-caption); color: var(--accent-deep); }
+      :where(:root[data-mode="dark"]) .field-card h4 code { color: var(--accent-bright); }
+      .field-card p, .cheat-card p { margin: 0; font-size: var(--text-caption); line-height: 1.55; color: var(--muted); }
+      .field-card .fx, .cheat-card .fx {
+        display: block; margin-top: 8px; font-family: "JetBrains Mono", monospace; font-size: var(--text-small);
+        background: var(--world-bg); color: var(--con-ink-2); border-radius: var(--r-row); padding: 9px 11px;
+        overflow-wrap: anywhere; white-space: pre-wrap; line-height: 1.55;
+      }

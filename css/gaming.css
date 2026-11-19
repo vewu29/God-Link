@@ -1,0 +1,283 @@
+/* Code Block — the gaming layer. Loads last (after css/themes.css), so
+   everything here is an override, never a replacement: the split
+   stylesheets underneath still own the layout, and this file owns the
+   look — display type, bigger sizes, gradient + glow text, and richer
+   light. Nothing here adds a texture, a picture, or a GPU surface:
+   the 256px block faces and the chunked world build are untouched,
+   and every new animation moves only opacity (the phone-safe kind).
+   Contrast stays high in light and dark: gradient text runs deep blue
+   on light, bright sky on dark, and body copy stays Sora. Code and
+   drill lines stay JetBrains Mono — the one font this file never
+   touches. */
+:root {
+  --font-display: "Chakra Petch", "Sora", system-ui, sans-serif;
+  --font-hud: "Orbitron", "Chakra Petch", "Sora", system-ui, sans-serif;
+  /* Gradient text: deep blues on light so a heading still reads as
+     dark text; bright sky on dark so it still reads as light text. */
+  --grad-text: linear-gradient(92deg, #1e3a8a 0%, #1d4ed8 48%, #0369a1 100%);
+  --grad-text-soft: linear-gradient(92deg, #1e40af 0%, #2563eb 55%, #0284c7 100%);
+}
+:root:where([data-mode="dark"]) {
+  --grad-text: linear-gradient(92deg, #93c5fd 0%, #38bdf8 48%, #7cc4ff 100%);
+  --grad-text-soft: linear-gradient(92deg, #bfdbfe 0%, #7cc4ff 55%, #38bdf8 100%);
+}
+
+/* ---------- Scale: headings get bigger, with room to breathe ---------- */
+:root {
+  --text-hero: clamp(1.9rem, 6vw, 2.6rem);
+  --text-h2: clamp(1.5rem, 4.6vw, 2.05rem);
+  --text-h3: clamp(1.2rem, 3.4vw, 1.45rem);
+  --text-body: 16px;
+}
+
+/* ---------- Display type: every heading is a game title ---------- */
+.sec-title-row h2, #hubView .list-head h2, .shelf-head h3,
+.drill-title, .reader-title, .boot-title, .support-title,
+.masterpiece h2, .pc-project-name, .track-sheet-head h2,
+.track-group h3, .fx-shelf h3, .book-drop h3, .cer-title {
+  font-family: var(--font-display);
+  background: var(--grad-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  filter: drop-shadow(0 2px 10px rgba(var(--sky-rgb), 0.35));
+}
+.sec-title-row h2, #hubView .list-head h2, .shelf-head h3,
+.masterpiece h2, .pc-project-name, .track-group h3, .fx-shelf h3,
+.book-drop h3, .cer-title {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.drill-title, .reader-title, .boot-title, .support-title,
+.track-sheet-head h2 {
+  letter-spacing: 0.01em;
+}
+/* The certificate is paper, not a screen: its heading stays solid navy. */
+.cert-card h2 {
+  background: none;
+  -webkit-text-fill-color: #0a2547;
+  color: #0a2547;
+  filter: none;
+}
+
+/* ---------- HUD numbers: Orbitron, big, glowing ---------- */
+.mastery-pct, .cer-pct, .boot-stat strong {
+  font-family: var(--font-hud);
+}
+.mastery-pct {
+  font-size: clamp(2rem, 8vw, 3rem);
+  font-weight: 800;
+  background: var(--grad-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  filter: drop-shadow(0 0 12px rgba(var(--sky-rgb), 0.5));
+}
+.cer-pct {
+  font-size: clamp(2.6rem, 12vw, 4.2rem);
+  font-weight: 900;
+  background: var(--grad-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  filter: drop-shadow(0 0 18px rgba(var(--sky-rgb), 0.55));
+}
+.boot-stat strong { font-weight: 800; letter-spacing: 0.02em; }
+
+/* ---------- Labels, chips, pills: small caps, display font ---------- */
+.mastery-label, .sec-chip, .session-pill, .music-moods-label,
+.world-modes-label, .bubble-status, .bubble-toggle-mood, .console-name,
+.reader-pos, .block-reps, .vchip, .mode-btn,
+.world-mode-btn, .track-group h3 {
+  font-family: var(--font-display);
+}
+.mastery-label, .sec-chip, .session-pill, .music-moods-label,
+.world-modes-label, .bubble-status, .console-name,
+.reader-pos {
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+}
+.sec-chip, .session-pill { font-weight: 700; }
+.mastery-count strong, .boot-stat strong { font-family: var(--font-hud); }
+
+/* ---------- Buttons: game controls, not web links ---------- */
+.menu-btn, .mode-btn, .mood-btn, .world-mode-btn,
+.next-btn, .compile-btn, .boot-go, .boot-skip, .cer-btn, .play-btn,
+.book-open-btn, .bubble-play, .bubble-toggle, .mp-btn, .hello-btn,
+.continue-btn, .big-btn, .random-btn, .stop-btn, .back-btn, .reset-btn,
+.live-link, .book-ctl, .stage-music-btn, .cer-fanfare-link,
+.pc-type-label, .type-label, .support-btn, .cert-actions .cer-btn {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.menu-btn {
+  font-size: clamp(0.85rem, 2.6vw, 1rem);
+  font-weight: 700;
+}
+.next-btn, .compile-btn, .boot-go, .cer-btn, .play-btn, .book-open-btn,
+.bubble-play, .mp-btn, .hello-btn, .continue-btn, .big-btn, .support-btn {
+  font-weight: 700;
+  box-shadow: var(--edge-light), 0 10px 28px var(--glow-med), 0 0 0 1px rgba(var(--sky-rgb), 0.35);
+}
+.next-btn:hover, .compile-btn:hover, .boot-go:hover, .cer-btn:hover,
+.play-btn:hover, .book-open-btn:hover, .bubble-play:hover, .mp-btn:hover,
+.hello-btn:hover, .continue-btn:hover, .big-btn:hover, .support-btn:hover {
+  box-shadow: var(--edge-light), 0 14px 34px var(--glow-strong), 0 0 0 1px rgba(var(--sky-rgb), 0.55), 0 0 26px var(--glow-med);
+}
+.menu-btn.active {
+  box-shadow: 0 8px 24px var(--glow-strong), var(--edge-light), 0 0 18px var(--glow-med);
+}
+/* The music button, when it is playing, breathes light — the glow
+   lives on its own layer, so the only thing that moves is opacity. */
+.music-btn.on, .bubble-play[aria-pressed="true"] {
+  position: relative;
+  box-shadow: var(--edge-light), 0 0 0 1px rgba(var(--sky-rgb), 0.6), 0 0 14px var(--glow-med);
+}
+.music-btn.on::after, .bubble-play[aria-pressed="true"]::after {
+  content: "";
+  position: absolute; inset: -1px; border-radius: inherit;
+  box-shadow: 0 0 22px var(--glow-strong);
+  opacity: 0.35; pointer-events: none;
+  animation: musicGlow 2.6s ease-in-out infinite;
+}
+@keyframes musicGlow {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}
+
+/* ---------- Tiles: names in display type, glow on the hover ---------- */
+.block-btn .block-name, .lib-card .block-name, .track-tile-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.02rem;
+  letter-spacing: 0.02em;
+}
+.track-tile-prog { font-family: var(--font-hud); font-weight: 800; }
+.block-btn:hover, .lib-card:hover {
+  box-shadow: var(--elev-2), 0 0 0 1px rgba(var(--sky-rgb), 0.5), 0 10px 30px var(--glow-med);
+}
+.vchip {
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.vchip.active {
+  box-shadow: 0 6px 20px var(--glow-strong), 0 0 16px var(--glow-med);
+}
+
+/* ---------- The drill console: the line is the star ---------- */
+.target-line {
+  font-size: clamp(1.05rem, 3.6vw, 1.4rem);
+  line-height: 1.5;
+  text-shadow: 0 0 18px rgba(var(--sky-rgb), 0.25);
+}
+.drill-status, .tap-hint, .pc-type-note {
+  font-family: var(--font-display);
+  letter-spacing: 0.02em;
+}
+.drill-status { font-weight: 600; }
+
+/* ---------- Library story text: readable, but unmistakably game ---------- */
+#storyCard p, #walkCard p, .big-idea span, .stage-caption {
+  font-family: var(--font-display);
+  font-size: 17.5px;
+  line-height: 1.7;
+}
+#storyCard > p:first-of-type::first-letter { font-family: var(--font-display); }
+.reader-chapter, .drill-chapter {
+  font-family: var(--font-display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+/* ---------- The world banner: carved gold, display type ---------- */
+.world-banner {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+.world-hint {
+  font-family: var(--font-display);
+  letter-spacing: 0.04em;
+}
+
+/* ---------- Hero cards: light catches the edge ---------- */
+.world-card, .type-card, .explain-card, .story-card, .pc-frame,
+.stage-card, .masterpiece, .boot-card, .cer-card, .lib-card {
+  box-shadow: var(--elev-2), 0 0 0 1px rgba(var(--sky-rgb), 0.22), 0 12px 40px rgba(var(--shade-2-rgb), 0.18);
+}
+.masterpiece {
+  position: relative;
+  overflow: hidden;
+}
+.masterpiece::after {
+  content: "";
+  position: absolute; inset: -40%;
+  pointer-events: none;
+  background: radial-gradient(420px 200px at 50% 0%, rgba(var(--sky-rgb), 0.28), rgba(var(--sky-rgb), 0) 70%);
+  animation: mpGlow 3.4s ease-in-out infinite;
+}
+@keyframes mpGlow {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+/* ---------- Body: the blue deepens, the light stays ---------- */
+body {
+  background:
+    radial-gradient(1100px 480px at 85% -80px, rgba(var(--sky-rgb), 0.34), rgba(var(--sky-rgb), 0) 60%),
+    radial-gradient(900px 520px at -10% 30%, rgba(var(--brand-rgb), 0.2), rgba(var(--brand-rgb), 0) 55%),
+    linear-gradient(180deg, var(--con-ink-2) 0%, var(--bg) 340px, var(--bg) 100%);
+}
+:where(:root[data-mode="dark"]) body {
+  background:
+    radial-gradient(1100px 480px at 85% -80px, rgba(var(--sky-rgb), 0.22), rgba(var(--sky-rgb), 0) 60%),
+    radial-gradient(900px 520px at -10% 30%, rgba(var(--brand-rgb), 0.18), rgba(var(--brand-rgb), 0) 55%),
+    linear-gradient(180deg, var(--con-mid) 0%, var(--bg) 340px, var(--bg) 100%);
+}
+
+/* ---------- Boot card: the arrival is a title screen ---------- */
+.boot-brand {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 0.85rem;
+}
+.boot-title {
+  font-size: clamp(1.8rem, 6vw, 2.6rem);
+}
+.boot-line { font-size: 1.02rem; }
+.boot-note {
+  font-family: var(--font-display);
+  letter-spacing: 0.02em;
+}
+
+/* ---------- PC: the machine talks in display type ---------- */
+.pc-project-name { font-size: clamp(1.4rem, 4.4vw, 1.9rem); }
+.pc-title, .pc-screen-bar, .pc-bezel, .pc-rail {
+  font-family: var(--font-display);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+/* ---------- Reduced motion and paper: the new light stands still ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .music-btn.on::after, .bubble-play[aria-pressed="true"]::after, .masterpiece::after { animation: none; }
+}
+@media print {
+  .music-btn.on::after, .bubble-play[aria-pressed="true"]::after, .masterpiece::after { animation: none; }
+  .sec-title-row h2, #hubView .list-head h2, .shelf-head h3,
+  .drill-title, .reader-title, .boot-title, .support-title,
+  .masterpiece h2, .pc-project-name, .track-sheet-head h2,
+  .track-group h3, .fx-shelf h3, .book-drop h3, .cer-title,
+  .mastery-pct, .cer-pct {
+    background: none;
+    -webkit-text-fill-color: var(--ink);
+    color: var(--ink);
+    filter: none;
+  }
+}

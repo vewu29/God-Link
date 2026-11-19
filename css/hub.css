@@ -1,0 +1,185 @@
+/* Code Block styles, split from css/app.css — loads after base.css:
+   the Sandbox hub: mastery header, 3D world, masterpiece banner,
+   block list. */
+      /* ---------- Mastery header ---------- */
+      .mastery {
+        background: linear-gradient(165deg, var(--surface) 55%, var(--ice) 130%);
+        border: 1px solid var(--line);
+        border-radius: var(--r-hero);
+        padding: 16px 18px 14px;
+        box-shadow: var(--shadow);
+      }
+      .mastery-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+      .mastery-label { font-size: var(--text-caption); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+      .mastery-pct { font-size: var(--text-hero); font-weight: 800; line-height: 1; color: var(--accent); font-variant-numeric: tabular-nums; }
+      .bar-track {
+        margin-top: 12px; height: 14px; border-radius: 99px;
+        background: var(--surface-2); border: 1px solid var(--line);
+        overflow: hidden;
+      }
+      .bar-fill {
+        height: 100%; width: 0%;
+        background: repeating-linear-gradient(-45deg, var(--sky) 0 14px, var(--accent-bright) 14px 28px);
+        border-radius: 99px;
+        box-shadow: var(--edge-light), 0 0 12px var(--glow-strong);
+        transition: width 0.7s var(--ease);
+      }
+      .mastery-sub { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; gap: 10px; }
+      .mastery-count { font-size: var(--text-caption); color: var(--muted); font-weight: 500; }
+      .mastery-count strong { color: var(--ink); }
+      .music-btn {
+        display: inline-flex; align-items: center; gap: 7px;
+        border: 1px solid var(--line); background: var(--surface-2);
+        color: var(--ink); border-radius: 99px; padding: 8px 14px;
+        font-size: var(--text-caption); font-weight: 700; cursor: pointer; min-height: 38px;
+      }
+      .music-btn.on { background: var(--btn-bg); border-color: var(--accent); color: var(--btn-ink); }
+      .music-btn svg { width: 16px; height: 16px; flex: none; }
+      .music-note { font-size: var(--text-caption); color: var(--muted); margin: 10px 2px 0; line-height: 1.5; }
+
+      /* ---------- World (3D hub) ---------- */
+      .world-card {
+        margin-top: 16px; border-radius: var(--r-hero); overflow: hidden;
+        border: 1px solid var(--con-border);
+        box-shadow: var(--shadow), 0 0 0 4px var(--glow-soft), 0 18px 44px rgba(var(--shade-2-rgb), 0.4);
+        background: var(--world-bg); position: relative;
+      }
+      /* Loop 61 — the canvas rests at grab, not pointer: the Loop 25
+         hover raycast sets an inline pointer cursor over a tappable
+         block and clears it elsewhere, but clearing only ever fell
+         back to this stylesheet value, so the whole board — empty
+         water included — wore the tap cursor and the hover signal
+         was invisible. Grab says what empty board does (drag to
+         look); the inline pointer still wins over a block. */
+      #world { display: block; width: 100%; height: auto; aspect-ratio: 1.488; min-height: 320px; touch-action: none; cursor: grab; }
+      .world-hint {
+        position: absolute; left: 0; right: 0; bottom: 0;
+        padding: 22px 14px 10px; pointer-events: none;
+        background: linear-gradient(to top, rgba(var(--shade-rgb), 0.78), rgba(var(--shade-rgb), 0));
+        color: var(--con-ink); font-size: var(--text-small); font-weight: 500; text-align: center;
+      }
+      .world-fallback { padding: 28px 18px; color: var(--con-ink); font-size: var(--text-caption); line-height: 1.6; text-align: center; }
+      /* The two views of the world: a strip of buttons along the card's
+         top edge, and the stage the canvas and its overlays sit on. */
+      .world-modes {
+        display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+        padding: 8px 10px; background: linear-gradient(180deg, var(--con-top), var(--con-mid));
+        border-bottom: 1px solid rgba(var(--tint-rgb), 0.22);
+      }
+      .world-modes-label {
+        font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+        color: var(--con-muted); margin: 0 4px 0 2px;
+      }
+      .world-mode-btn {
+        min-height: 36px; padding: 6px 14px; border-radius: 999px;
+        border: 1px solid rgba(var(--tint-rgb), 0.45); background: transparent;
+        color: var(--con-ink); font: 600 13px/1 Sora, system-ui, sans-serif; cursor: pointer;
+      }
+      .world-mode-btn:hover { background: rgba(var(--tint-rgb), 0.14); }
+      .world-mode-btn.active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+      .world-mode-btn:focus-visible { outline: 3px solid var(--con-glow); outline-offset: 2px; }
+      .world-stage { position: relative; }
+      /* The Tower of Babel's message, carved in gold across the sky. */
+      .world-banner {
+        position: absolute; left: 12px; right: 12px; top: 10px; z-index: 2; margin: 0;
+        pointer-events: none; text-align: center;
+        font-family: Newsreader, Georgia, serif; font-weight: 700; line-height: 1.1;
+        font-size: clamp(25px, 6.4vw, 42px); letter-spacing: 0.01em;
+        color: #ffe7b8;
+        filter: drop-shadow(0 2px 6px rgba(40, 18, 0, 0.55)) drop-shadow(0 0 18px rgba(255, 196, 110, 0.45));
+        animation: bannerIn 0.7s var(--ease) both;
+      }
+      @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+        .world-banner {
+          background: linear-gradient(180deg, #fffaf0 0%, #ffe2a4 42%, #f0b552 72%, #d18a2e 100%);
+          -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+      }
+      @keyframes bannerIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: none; } }
+      @media (prefers-reduced-motion: reduce) { .world-banner { animation: none; } }
+      @media (forced-colors: active) { .world-banner { background: none; color: CanvasText; filter: none; } }
+      #hubView.world-unavailable .world-modes { display: none; }
+
+      /* ---------- Masterpiece banner ---------- */
+      /* The way into Code Block Studio, between the world and the block list */
+      .studio-card {
+        display: flex; align-items: center; gap: 14px; margin-top: 16px; padding: 14px 16px;
+        border-radius: var(--r-card); border: 1px solid var(--line); background: var(--surface);
+        box-shadow: var(--shadow); color: inherit; text-decoration: none; transition: var(--tap);
+      }
+      .studio-card:hover { border-color: var(--accent); }
+      .studio-card:active { transform: scale(0.99); }
+      .studio-ico {
+        flex: none; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px;
+        background: var(--grad-primary); color: var(--on-accent); box-shadow: 0 5px 16px var(--glow-med);
+      }
+      .studio-ico svg { width: 26px; height: 26px; }
+      .studio-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+      .studio-title { display: flex; align-items: center; gap: 8px; font-size: var(--text-body); font-weight: 800; color: var(--ink); }
+      .studio-chip { font-size: 11px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; padding: 2px 8px; border-radius: 99px; border: 1px solid var(--line); color: var(--muted); }
+      .studio-sub { font-size: var(--text-caption); line-height: 1.45; color: var(--muted); }
+      .studio-go { flex: none; display: inline-flex; align-items: center; gap: 4px; font-weight: 800; font-size: var(--text-caption); color: var(--accent); }
+      .studio-go svg { width: 16px; height: 16px; }
+      @media (max-width: 480px) {
+        .studio-card { flex-wrap: wrap; }
+        .studio-go { width: 100%; justify-content: flex-end; }
+      }
+
+      .masterpiece {
+        margin-top: 16px; border-radius: var(--r-hero); padding: 22px 20px;
+        background: linear-gradient(135deg, var(--b-accent-deep), var(--b-good) 55%, var(--b-accent));
+        color: #ffffff; box-shadow: var(--shadow); text-align: center;
+        border: 1px solid var(--b-accent-deep);
+      }
+      .masterpiece h2 { margin: 0 0 6px; font-size: var(--text-h2); font-weight: 800; }
+      .masterpiece p { margin: 0; font-size: var(--text-caption); line-height: 1.55; opacity: 0.95; }
+
+      /* ---------- Block list ---------- */
+      .list-head { display: flex; align-items: baseline; justify-content: space-between; margin: 24px 2px 10px; }
+      .list-head h2 { margin: 0; font-size: var(--text-h3); font-weight: 800; }
+      .list-head span { font-size: var(--text-small); color: var(--muted); font-weight: 500; }
+      .block-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+      @media (max-width: 380px) { .block-grid { grid-template-columns: 1fr; } }
+      .block-btn {
+        display: flex; align-items: center; gap: 11px; text-align: left;
+        background: linear-gradient(170deg, var(--surface) 60%, var(--ice) 140%);
+        border: 1px solid var(--line);
+        border-radius: var(--r-tile); padding: 12px; cursor: pointer; min-height: 64px;
+        color: var(--ink); width: 100%;
+        box-shadow: var(--shadow-sm);
+        transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+      }
+      @media (hover: hover) {
+        .block-btn:hover, .lib-card:hover { transform: translateY(-2px); border-color: var(--accent-bright); box-shadow: 0 10px 22px rgba(var(--shade-2-rgb), 0.22); }
+      }
+      .block-btn:active { transform: scale(0.98); }
+      .block-chip {
+        position: relative; overflow: hidden;
+        width: 38px; height: 38px; border-radius: var(--r-row); flex: none;
+        display: flex; align-items: center; justify-content: center;
+        font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: var(--text-body);
+        color: #041e3a;
+        border: 1px solid rgba(255, 255, 255, 0.55);
+        box-shadow: inset 0 -5px 0 rgba(var(--shade-rgb), 0.28), inset 0 2px 0 rgba(255, 255, 255, 0.55), 0 4px 10px rgba(var(--shade-2-rgb), 0.35);
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
+      }
+      .block-chip::after {
+        content: ""; position: absolute; inset: 0; pointer-events: none;
+        background: linear-gradient(155deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.08) 42%, rgba(255, 255, 255, 0) 60%, rgba(var(--shade-rgb), 0.16) 100%);
+      }
+      .block-meta { min-width: 0; flex: 1; }
+      .block-name { font-size: var(--text-caption); font-weight: 700; line-height: 1.25; }
+      .block-reps { font-size: var(--text-small); color: var(--muted); margin-top: 3px; font-weight: 500; }
+      .block-btn.done { border-color: var(--accent-bright); background: linear-gradient(170deg, var(--surface) 40%, var(--good-soft) 150%); box-shadow: var(--shadow-sm), 0 0 0 1px var(--accent-bright), 0 6px 18px var(--glow-med); }
+      .block-btn.done .block-reps { color: var(--accent); font-weight: 700; }
+      .block-check { flex: none; width: 22px; height: 22px; color: var(--accent); display: none; }
+      .block-btn.done .block-check { display: block; }
+
+      .reset-row { margin-top: 22px; text-align: center; }
+      .reset-btn {
+        background: none; border: none; color: var(--muted); font-size: var(--text-caption);
+        font-weight: 600; cursor: pointer; padding: 10px 14px; min-height: 40px;
+      }
+      .reset-btn.arm { color: var(--bad); }
+      .source-note { margin-top: 14px; font-size: var(--text-small); color: var(--muted); line-height: 1.6; text-align: center; }
+

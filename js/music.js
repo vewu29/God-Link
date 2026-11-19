@@ -975,6 +975,8 @@
     btn.setAttribute("aria-pressed", String(on));
     btnText.textContent = on ? "Music on" : "Music off";
     if (on) start(); else stop();
+    /* The session keeps where you are: flipping the music saves it. */
+    if (window.cbSessionSave) window.cbSessionSave();
   });
   /* Let the Library's picture music hush this engine when it starts,
      so the two never play over each other. */

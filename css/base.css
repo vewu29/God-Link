@@ -1,0 +1,196 @@
+/* Code Block styles, split from css/app.css — do not edit the order:
+   base.css holds the design tokens (:root) and the base elements
+   (html, body, .wrap, buttons, focus). It loads first. */
+      :root {
+        color-scheme: light dark;
+        --bg: #dbeafe;
+        --surface: #ffffff;
+        --surface-2: #dbeafe;
+        --ink: #071f3d;
+        --muted: #2f4d75;
+        --line: #a8c6ee;
+        --accent: #1d4ed8;
+        --accent-bright: #2f7fe0;
+        --accent-deep: #1e3a8a;
+        --sky: #38bdf8;
+        --ice: #eaf4ff;
+        --on-accent: #ffffff;
+        --good: #034e7d;
+        --good-soft: #d6eafd;
+        --bad: #b3382e;
+        --shadow: 0 14px 34px rgba(10, 42, 90, 0.16), 0 3px 10px rgba(10, 42, 90, 0.08);
+        --shadow-sm: 0 5px 16px rgba(10, 42, 90, 0.12), 0 1px 4px rgba(10, 42, 90, 0.06);
+        --world-bg: #081f3a;
+        /* Loop 17 — light & glow tokens: the blue stops being flat
+           paint and starts behaving like light. Three glow strengths
+           (all sky, named by --accent-glow), two inset edge lights,
+           and the two-tier shadows above form the app's whole
+           glow/shadow vocabulary; surfaces, tiles, chips, bars and
+           focus rings are re-pointed at these tokens below and in
+           the Loop 17 section at the end of this stylesheet. */
+        --accent-glow: var(--sky);
+        --glow-soft: rgba(56, 189, 248, 0.18);
+        --glow-med: rgba(56, 189, 248, 0.32);
+        --glow-strong: rgba(56, 189, 248, 0.5);
+        --edge-light: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        --edge-light-soft: inset 0 1px 0 rgba(255, 255, 255, 0.28);
+        /* Loop 2 — one card system for the whole app: four radii, two
+           elevations, one card gradient. Every surface below maps onto
+           these tokens instead of inventing its own numbers. */
+        --r-row: 12px;
+        --r-tile: 14px;
+        --r-card: 16px;
+        --r-hero: 20px;
+        --elev-1: var(--shadow-sm);
+        --elev-2: var(--shadow);
+        --card-grad: linear-gradient(170deg, var(--surface) 60%, var(--ice) 140%);
+        /* Loop 57 — the one primary-action gradient, named: every
+           call-to-action surface (and the active menu pill) spends
+           this token instead of restating the stops. */
+        --grad-primary: linear-gradient(135deg, var(--sky), var(--accent-bright) 45%, var(--accent));
+        /* Filled buttons: the default is the same ramp the buttons
+           already render (--grad-accent: the deepened blue ramp in
+           light mode, the bright ramp in dark mode) with the theme's
+           on-accent label. The five themes whose label only reaches
+           AA on that ramp override --btn-bg to the deep accent
+           (sunset, candy, galaxy, paper in css/themes.css; Sky light
+           just below) so the label reaches AAA. */
+        --btn-bg: var(--grad-accent);
+        --btn-ink: var(--on-accent);
+        --card-grad-soft: linear-gradient(165deg, var(--surface) 55%, var(--ice) 130%);
+        --tap: transform 0.18s var(--ease), box-shadow 0.18s var(--ease), border-color 0.18s var(--ease);
+        /* Loops 13–18 — one typography scale for the whole framework:
+           six steps, applied per view so a title is a title everywhere. */
+        --text-hero: 30px;
+        --text-h2: 24px;
+        --text-h3: 20px;
+        --text-body: 15.5px;
+        --text-small: 12.5px;
+        --text-caption: 13px;
+        /* Loop 14 — one motion language: a single easing curve, one
+           hover lift, one press scale, shared by every tappable tile. */
+        --ease: cubic-bezier(0.22, 1, 0.36, 1);
+        --lift: translateY(-2px);
+        --press: scale(0.98);
+        /* Visual upgrade — one animation system: four durations and
+           two extra easings spent by every new motion in this file,
+           so the whole site moves on the same clock. Durations stay
+           short (150–560ms) so the app stays snappy on phones, and
+           only transform and opacity are ever animated. The one
+           exception is the mastery bar's width (see .bar-fill),
+           which was already a width transition and is paint-only
+           inside its fixed, overflow-hidden track. */
+        --anim-fast: 150ms;
+        --anim-med: 260ms;
+        --anim-slow: 420ms;
+        --anim-enter: 560ms;
+        --ease-spring: cubic-bezier(0.34, 1.45, 0.64, 1);
+        --ease-io: cubic-bezier(0.65, 0, 0.35, 1);
+        /* Loop 21 — one spacing scale for the whole framework:
+           a 4px base in seven steps. Structural rhythm (the gaps
+           between sections, cards and action rows) is spent only
+           from this scale; in-card micro-detailing (3px, 7px, 9px)
+           stays as detailing and is not rhythm. The structural
+           selectors are re-pointed at these steps in the Loop 21
+           section at the end of this stylesheet. */
+        --sp-1: 4px;
+        --sp-2: 8px;
+        --sp-3: 12px;
+        --sp-4: 16px;
+        --sp-5: 24px;
+        --sp-6: 32px;
+        --sp-7: 48px;
+      }
+      :root:where([data-mode="dark"]) {
+        --bg: #050f1f;
+        --surface: #0d2242;
+        --surface-2: #16335c;
+        --ink: #f0f7ff;
+        --muted: #b9d4f5;
+        --line: #2b5285;
+        --accent: #4da3ff;
+        --accent-bright: #7cc4ff;
+        --accent-deep: #1e40af;
+        --sky: #38bdf8;
+        --ice: #0d2242;
+        --on-accent: #041e3a;
+        --good: #7cc4ff;
+        --good-soft: #0e2f52;
+        --bad: #ff9a8a;
+        --shadow: 0 16px 38px rgba(0, 0, 0, 0.5), 0 4px 12px rgba(0, 0, 0, 0.35);
+        --shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.42), 0 2px 6px rgba(0, 0, 0, 0.3);
+        --world-bg: #050f1f;
+        /* Loop 17 — dark mode glows burn a little brighter against
+           the deep navy, and the edge light dims to a moonlit rim. */
+        --glow-soft: rgba(56, 189, 248, 0.22);
+        --glow-med: rgba(56, 189, 248, 0.38);
+        --glow-strong: rgba(56, 189, 248, 0.55);
+        --edge-light: inset 0 1px 0 rgba(190, 226, 255, 0.16);
+        --edge-light-soft: inset 0 1px 0 rgba(190, 226, 255, 0.09);
+      }
+      /* Sky light spends the deep accent for filled buttons, so the
+         white label reaches AAA (10.36:1) instead of AA (6.70:1) on
+         the sky-to-accent gradient. Sky dark keeps the gradient. */
+      :root[data-theme="auto"]:where([data-mode="light"]), :root[data-theme="daylight"] {
+        --btn-bg: var(--accent-deep);
+      }
+      /* ---------- Theme tokens (js/theme.js, css/themes.css) ----------
+         The page's light or dark mode is set on <html data-mode> by the
+         theme script in <head>: the default Sky theme follows the device,
+         the others choose. The tokens below don't change with the mode —
+         each theme sets them once: the brand colours behind fixed-colour
+         furniture (the masterpiece, the section icons, selections), the
+         navy console's shades and pale text, and the RGB triplets behind
+         every glow, tint and shadow. Defaults are the Sky palette. */
+      :root {
+        --sky-rgb: 56, 189, 248;
+        --brand-rgb: 37, 99, 235;
+        --tint-rgb: 140, 200, 255;
+        --shade-rgb: 4, 22, 48;
+        --shade-2-rgb: 8, 47, 99;
+        --con-border-rgb: 43, 82, 133;
+        --b-accent: #1d4ed8;
+        --b-accent-deep: #1e3a8a;
+        --b-accent-mid: #1f6ccf;
+        --b-accent-strong: #1a63c2;
+        --b-good: #0369a1;
+        --b-select: #1e40af;
+        --con-top: #0d3060;
+        --con-mid: #0a2547;
+        --con-deep: #081a30;
+        --con-hi: #14406f;
+        --con-border: #2b5285;
+        --con-ink: #eaf4ff;
+        --con-ink-2: #cfe6ff;
+        --con-muted: #a9c8ee;
+        --con-dim: #93b4d4;
+        --con-glow: #8fd0ff;
+      }
+      :root:where([data-mode="dark"]) { color-scheme: dark; }
+      :root:where([data-mode="light"]) { color-scheme: light; }
+      html { box-sizing: border-box; }
+      *, *::before, *::after { box-sizing: inherit; }
+      body {
+        margin: 0;
+        background:
+          radial-gradient(1100px 480px at 85% -80px, rgba(var(--sky-rgb), 0.28), rgba(var(--sky-rgb), 0) 60%),
+          radial-gradient(900px 520px at -10% 30%, rgba(var(--brand-rgb), 0.16), rgba(var(--brand-rgb), 0) 55%),
+          linear-gradient(180deg, var(--con-ink-2) 0%, var(--bg) 340px, var(--bg) 100%);
+        background-color: var(--bg);
+        color: var(--ink);
+        font-family: "Sora", system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: var(--text-body);
+        -webkit-font-smoothing: antialiased;
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+      :where(:root[data-mode="dark"]) body {
+        background:
+          radial-gradient(1100px 480px at 85% -80px, rgba(var(--sky-rgb), 0.16), rgba(var(--sky-rgb), 0) 60%),
+          radial-gradient(900px 520px at -10% 30%, rgba(var(--brand-rgb), 0.14), rgba(var(--brand-rgb), 0) 55%),
+          linear-gradient(180deg, var(--con-mid) 0%, var(--bg) 340px, var(--bg) 100%);
+        background-color: var(--bg);
+      }
+      button { font-family: inherit; }
+      :focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; border-radius: 6px; }
+      .wrap { max-width: 680px; margin: 0 auto; padding: 14px 16px 40px; }
+

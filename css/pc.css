@@ -1,0 +1,158 @@
+/* Code Block styles, split from css/app.css — loads after library.css:
+   the PC (virtual computer) and My Book (PDF reader). */
+      /* ---------- PC ---------- */
+      .pc-intro h2 { margin: 4px 2px 6px; font-size: var(--text-h2); font-weight: 800; }
+      .pc-intro p { margin: 0 2px; font-size: var(--text-body); line-height: 1.6; color: var(--muted); }
+      .pc-frame {
+        margin-top: 16px; border-radius: var(--r-hero); overflow: hidden;
+        border: 1px solid var(--line); box-shadow: var(--shadow); background: var(--surface);
+      }
+      .pc-bar {
+        display: flex; align-items: center; gap: 8px; padding: 11px 14px;
+        background: var(--surface-2); border-bottom: 1px solid var(--line);
+      }
+      .pc-dot { width: 12px; height: 12px; border-radius: 50%; }
+      .pc-title { font-family: "JetBrains Mono", monospace; font-size: var(--text-caption); font-weight: 700; margin-left: 4px; color: var(--muted); }
+      .pc-body { padding: 16px; }
+      .pc-project-name { font-size: var(--text-h3); font-weight: 800; margin: 0 0 4px; }
+      .pc-project-about { font-size: var(--text-caption); line-height: 1.6; color: var(--muted); margin: 0 0 14px; }
+      .pc-code {
+        background: var(--con-deep); color: var(--con-ink); border-radius: var(--r-row); padding: 14px 15px;
+        font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 13.5px;
+        line-height: 1.75; white-space: pre; overflow-x: auto;
+      }
+      .pc-code .hl { color: var(--con-glow); font-weight: 700; }
+      .pc-vars { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+      .pc-var {
+        flex: 1; min-width: 100px; background: var(--surface-2); border: 1px solid var(--line);
+        border-radius: var(--r-row); padding: 10px 12px;
+      }
+      .pc-var label { display: block; font-family: "JetBrains Mono", monospace; font-size: var(--text-small); font-weight: 700; color: var(--accent); margin-bottom: 6px; }
+      .pc-var input {
+        width: 100%; font-family: "JetBrains Mono", monospace; font-size: 17px; font-weight: 700;
+        color: var(--ink); background: var(--surface); border: 1.5px solid var(--line);
+        border-radius: 8px; padding: 8px 10px; outline: none;
+      }
+      .pc-var input:focus { border-color: var(--accent); }
+      .pc-type-label { margin-top: 16px; }
+      #pcType {
+        width: 100%; min-height: 118px; resize: vertical; margin-top: 4px;
+        font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 14px; line-height: 1.7;
+        color: var(--ink); background: var(--surface-2); border: 1.5px solid var(--line);
+        border-radius: var(--r-row); padding: 12px 13px; outline: none; caret-color: var(--good);
+      }
+      #pcType:focus { border-color: var(--good); }
+      .pc-type-progress { height: 9px; border-radius: 99px; background: var(--surface-2); border: 1px solid var(--line); overflow: hidden; margin-top: 10px; }
+      .pc-type-fill { height: 100%; width: 0%; background: var(--good); transition: width 0.25s ease; }
+      .pc-type-note { font-size: var(--text-small); color: var(--muted); margin-top: 7px; font-weight: 500; }
+      .pc-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+      .compile-btn {
+        flex: 1; min-width: 150px; min-height: 52px; border: none; border-radius: var(--r-tile);
+        background: var(--btn-bg); color: var(--btn-ink); font-size: var(--text-body); font-weight: 800; cursor: pointer;
+        display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        box-shadow: 0 6px 18px var(--glow-med), var(--edge-light);
+        text-shadow: 0 1px 2px rgba(var(--shade-rgb), 0.35);
+      }
+      .compile-btn svg { width: 17px; height: 17px; }
+      .compile-btn:active { transform: scale(0.99); }
+      .stop-btn {
+        min-height: 52px; border-radius: var(--r-tile); padding: 0 20px;
+        background: var(--surface); border: 1.5px solid var(--bad); color: var(--bad);
+        font-size: var(--text-body); font-weight: 800; cursor: pointer;
+      }
+      .stop-btn:disabled { opacity: 0.35; cursor: default; }
+      /* Choosing a project by name; 16px text keeps iPhones from
+         zooming in when the list opens. */
+      .pc-pick { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+      .pc-pick label {
+        flex: none; font-size: var(--text-caption); font-weight: 800; letter-spacing: 0.12em;
+        text-transform: uppercase; color: var(--muted);
+      }
+      .pc-pick select {
+        flex: 1; min-width: 0; min-height: 44px; padding: 0 12px; border-radius: var(--r-row);
+        background: var(--surface-2); border: 1px solid var(--line); color: var(--ink);
+        font: inherit; font-size: var(--text-body); font-weight: 700; cursor: pointer;
+      }
+      .pc-pick select:focus-visible { outline: 3px solid var(--accent-bright); outline-offset: 2px; }
+      .random-btn {
+        width: 100%; margin-top: 10px; min-height: 46px; border-radius: var(--r-row);
+        background: var(--surface-2); border: 1px solid var(--line); color: var(--ink);
+        font-size: var(--text-caption); font-weight: 700; cursor: pointer;
+      }
+      .pc-screen {
+        background: var(--con-deep); border-top: 1px solid var(--line); padding: 15px 16px; min-height: 132px;
+        font-family: "JetBrains Mono", ui-monospace, monospace; font-size: var(--text-caption); line-height: 1.8; color: var(--con-glow);
+      }
+      .pc-screen .dim { color: var(--con-dim); }
+      .pc-screen .warn { color: var(--con-glow); }
+      .pc-screen .err { color: #ff9a8a; }
+      .pc-explain {
+        margin-top: 14px; background: var(--surface); border: 1px solid var(--line);
+        border-radius: var(--r-tile); padding: 15px 17px; font-size: var(--text-caption); line-height: 1.65;
+      }
+      .pc-explain strong { display: block; font-size: var(--text-small); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 5px; }
+
+      /* ---------- My Book (PDF reader) ---------- */
+      .book-intro h2 { margin: 4px 2px 6px; font-size: var(--text-h2); font-weight: 800; }
+      .book-intro p { margin: 0 2px; font-size: var(--text-body); line-height: 1.6; color: var(--muted); }
+      .book-drop {
+        margin-top: 16px; border-radius: var(--r-hero); padding: 26px 20px; text-align: center;
+        background: linear-gradient(170deg, var(--surface) 55%, var(--ice) 150%);
+        border: 2px dashed var(--accent-bright); box-shadow: var(--shadow);
+      }
+      .book-drop svg { width: 44px; height: 44px; color: var(--accent-bright); }
+      .book-drop h3 { margin: 10px 0 6px; font-size: var(--text-h3); font-weight: 800; }
+      .book-drop p { margin: 0 auto 16px; font-size: var(--text-caption); line-height: 1.6; color: var(--muted); max-width: 420px; }
+      .book-open-btn {
+        display: inline-flex; align-items: center; gap: 8px;
+        min-height: 52px; padding: 0 24px; border: none; border-radius: var(--r-tile); cursor: pointer;
+        background: var(--btn-bg);
+        color: var(--btn-ink); font-size: var(--text-body); font-weight: 800;
+        box-shadow: 0 6px 18px var(--glow-med), var(--edge-light);
+        text-shadow: 0 1px 2px rgba(var(--shade-rgb), 0.35);
+      }
+      .book-open-btn:active { transform: scale(0.99); }
+      .book-frame {
+        margin-top: 16px; border-radius: var(--r-hero); overflow: hidden;
+        border: 1px solid var(--line); box-shadow: var(--shadow); background: var(--surface);
+      }
+      .book-bar {
+        display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+        padding: 10px 12px; background: var(--surface-2); border-bottom: 1px solid var(--line);
+      }
+      .book-name {
+        flex: 1 1 140px; min-width: 0; font-size: var(--text-caption); font-weight: 700; color: var(--ink);
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      .book-ctl {
+        display: inline-flex; align-items: center; justify-content: center;
+        min-width: 42px; min-height: 42px; padding: 0 10px;
+        border: 1px solid var(--line); border-radius: var(--r-row); cursor: pointer;
+        background: var(--surface); color: var(--ink); font-size: var(--text-body); font-weight: 800;
+      }
+      .book-ctl:disabled { opacity: 0.4; cursor: default; }
+      .book-ctl svg { width: 16px; height: 16px; }
+      .book-pagebox { display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-caption); font-weight: 700; color: var(--muted); }
+      .book-pagebox input {
+        width: 58px; padding: 9px 8px; text-align: center;
+        font-family: "JetBrains Mono", monospace; font-size: var(--text-body); font-weight: 700;
+        color: var(--ink); background: var(--surface); border: 1.5px solid var(--line); border-radius: var(--r-row); outline: none;
+      }
+      .book-pagebox input:focus { border-color: var(--accent); }
+      .book-stage {
+        background: linear-gradient(180deg, var(--con-mid), var(--con-deep));
+        padding: 14px 10px; text-align: center; overflow: hidden;
+      }
+      .book-stage canvas {
+        max-width: 100%; height: auto; border-radius: 6px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); background: #ffffff;
+      }
+      .book-status { padding: 12px 16px; font-size: var(--text-caption); line-height: 1.55; color: var(--muted); border-top: 1px solid var(--line); }
+      .book-status strong { color: var(--ink); }
+      .book-change {
+        width: 100%; margin-top: 10px; min-height: 46px; border-radius: var(--r-row); cursor: pointer;
+        background: var(--surface-2); border: 1px solid var(--line); color: var(--ink);
+        font-size: var(--text-caption); font-weight: 700;
+      }
+      .book-fallback { width: 100%; height: 70vh; min-height: 420px; border: 0; background: #ffffff; }
+

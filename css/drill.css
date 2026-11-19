@@ -1,0 +1,122 @@
+/* Code Block styles, split from css/app.css — loads after hub.css:
+   the drill view, plus the top menu (its original position, between
+   the drill rules and the Library rules). */
+      /* ---------- Drill view ---------- */
+      .hidden { display: none !important; }
+      /* Loop 24 — visually hidden but announced: the app's one
+         polite live region lives on this class. */
+      .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); border: 0; white-space: nowrap; }
+      .back-btn {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: var(--surface); border: 1px solid var(--line); color: var(--ink);
+        border-radius: 99px; padding: 9px 16px 9px 12px; font-size: var(--text-caption); font-weight: 700;
+        cursor: pointer; min-height: 42px;
+      }
+      .back-btn svg { width: 16px; height: 16px; }
+      .drill-head { display: flex; align-items: center; gap: 13px; margin-top: 16px; }
+      .drill-chip { width: 52px; height: 52px; border-radius: var(--r-tile); font-size: var(--text-h3); }
+      .drill-title { font-size: var(--text-h3); font-weight: 800; margin: 0; line-height: 1.15; }
+      .drill-chapter { font-size: var(--text-caption); color: var(--muted); margin-top: 3px; font-weight: 500; }
+      .explain-card {
+        margin-top: 16px; background: var(--card-grad-soft); border: 1px solid var(--line);
+        border-radius: var(--r-card); padding: 16px 18px; box-shadow: var(--shadow);
+      }
+      .explain-card h3 { display: inline-block; margin: 0 0 9px; padding: 4px 11px; border-radius: 99px; background: var(--good-soft); font-size: 11.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+      .explain-card p { margin: 0; font-size: var(--text-body); line-height: 1.65; }
+      .explain-card code, .target-line { font-family: "JetBrains Mono", ui-monospace, monospace; }
+      .explain-card code { background: var(--surface-2); padding: 1px 5px; border-radius: 5px; font-size: 0.92em; }
+
+      .type-card {
+        margin-top: 14px; color: var(--con-ink);
+        background: linear-gradient(180deg, var(--con-top) 0%, var(--world-bg) 135%);
+        border: 1px solid var(--con-border);
+        border-radius: var(--r-card); padding: 16px 18px 18px;
+        box-shadow: 0 18px 38px rgba(var(--shade-rgb), 0.45);
+      }
+      .console-bar { display: flex; align-items: center; gap: 7px; margin-bottom: 14px; }
+      .cdot { width: 11px; height: 11px; border-radius: 50%; background: var(--con-border); flex: none; }
+      .cdot:first-child { background: var(--sky); box-shadow: 0 0 8px var(--glow-strong); }
+      .console-name { margin-left: 5px; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: var(--text-small); color: var(--con-muted); }
+      .type-label { font-size: var(--text-small); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--con-muted); margin-bottom: 10px; }
+      .target-line {
+        font-size: clamp(16px, 4.7vw, 21px); font-weight: 500; line-height: 1.9;
+        word-break: break-all; cursor: text; min-height: 40px;
+      }
+      .target-line .ch { border-radius: 4px; padding: 1px 0; }
+      .target-line .ch.ok { color: var(--con-glow); font-weight: 700; text-shadow: 0 0 10px rgba(var(--sky-rgb), 0.45); }
+      .target-line .ch.next { background: rgba(var(--sky-rgb), 0.16); box-shadow: inset 0 -3px 0 var(--sky); animation: caretPulse 1.5s ease-in-out infinite; }
+      .target-line .ch.todo { color: var(--con-ink-2); opacity: 0.5; }
+      .target-line .ch.err { color: #ffb0a2; background: rgba(255, 110, 90, 0.3); text-shadow: none; }
+      .target-line.all-ok .ch { color: var(--con-glow); }
+      .line-progress { height: 5px; border-radius: 99px; background: rgba(var(--tint-rgb), 0.18); margin-top: 12px; overflow: hidden; }
+      #lineProgressFill { height: 100%; width: 0; border-radius: 99px; background: linear-gradient(90deg, var(--sky), var(--accent-bright)); transition: width 0.18s ease; }
+      .console-input {
+        display: flex; align-items: center; gap: 9px; margin-top: 12px;
+        background: rgba(var(--shade-rgb), 0.6); border: 1.5px solid var(--con-border); border-radius: var(--r-row); padding: 0 14px;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      }
+      .console-input:focus-within { border-color: var(--sky); box-shadow: 0 0 0 3px var(--glow-med); }
+      .console-prompt { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 17px; font-weight: 700; color: var(--sky); flex: none; }
+      #typeInput {
+        flex: 1; min-width: 0; padding: 13px 0;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 16px; font-weight: 500; color: var(--con-ink);
+        background: transparent; border: none;
+        outline: none; caret-color: var(--sky);
+      }
+      .tap-hint { margin-top: 10px; font-size: var(--text-caption); line-height: 1.55; color: var(--con-muted); }
+      .type-card.shake { animation: shake 0.32s ease; }
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); box-shadow: none; }
+        25% { transform: translateX(-6px); box-shadow: 0 0 0 2px rgba(255, 154, 138, 0.4); }
+        55% { transform: translateX(5px); box-shadow: 0 0 0 2px rgba(255, 154, 138, 0.4); }
+        80% { transform: translateX(-3px); box-shadow: 0 0 0 2px rgba(255, 154, 138, 0.4); }
+      }
+      .rep-row { display: flex; align-items: center; gap: 12px; margin-top: 16px; }
+      .rep-dots { display: flex; gap: 5px; flex: 1; }
+      .rep-dot { flex: 1; height: 10px; border-radius: 99px; background: rgba(var(--tint-rgb), 0.16); transition: background 0.25s ease, box-shadow 0.25s ease; }
+      .rep-dot.filled { background: linear-gradient(90deg, var(--sky), var(--accent-bright)); box-shadow: 0 0 9px var(--glow-strong); }
+      .rep-dot.next-seg { animation: segPulse 1.6s ease-in-out infinite; }
+      @keyframes segPulse {
+        0%, 100% { background: rgba(var(--tint-rgb), 0.16); }
+        50% { background: rgba(var(--sky-rgb), 0.45); }
+      }
+      .drill-status { margin-top: 12px; font-size: var(--text-caption); font-weight: 600; min-height: 22px; }
+      .drill-status.good { color: var(--con-glow); }
+      .drill-status.bad { color: #ffb0a2; }
+      .next-btn {
+        margin-top: 14px; width: 100%; min-height: 52px; border: none; border-radius: var(--r-tile);
+        background: var(--btn-bg); color: var(--btn-ink); font-size: var(--text-body); font-weight: 800; cursor: pointer;
+        box-shadow: 0 8px 22px var(--glow-med);
+        animation: nextIn 0.35s ease;
+      }
+      @keyframes nextIn {
+        from { opacity: 0; transform: translateY(6px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .next-btn:active { transform: scale(0.99); }
+      @media (prefers-reduced-motion: reduce) {
+        .type-card.shake { animation: none; }
+        .bar-fill { transition: none; }
+        .target-line .ch.next, .rep-dot.next-seg, .next-btn { animation: none; }
+        #lineProgressFill { transition: none; }
+      }
+
+      /* ---------- Top menu ---------- */
+      .menu {
+        position: sticky; top: 8px; z-index: 60;
+        display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap;
+        background: linear-gradient(170deg, var(--surface) 55%, var(--ice) 150%);
+        border: 1px solid var(--line);
+        border-radius: var(--r-card); padding: 6px; box-shadow: var(--shadow);
+      }
+      .menu-btn {
+        flex: 1 1 64px; display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+        border: none; background: transparent; color: var(--muted);
+        border-radius: var(--r-row); padding: 11px 4px; font-size: var(--text-caption); font-weight: 800;
+        cursor: pointer; min-height: 46px; white-space: nowrap;
+      }
+      .menu-btn svg { width: 18px; height: 18px; flex: none; }
+      .menu-btn.active { background: var(--btn-bg); color: var(--btn-ink); box-shadow: 0 5px 16px var(--glow-med), var(--edge-light); text-shadow: 0 1px 2px rgba(var(--shade-rgb), 0.35); }
+      .menu-btn:active { transform: scale(0.98); }
+

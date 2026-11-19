@@ -1,0 +1,104 @@
+/* Code Block styles, split from css/app.css — loads after drill.css:
+   the Library: home, reader, text and picture modes, stage. */
+      /* ---------- Library ---------- */
+      .lib-intro { margin: 4px 2px 0; }
+      .lib-intro h2 { margin: 0 0 6px; font-size: var(--text-h2); font-weight: 800; line-height: 1.2; }
+      .lib-intro p { margin: 0; font-size: var(--text-body); line-height: 1.6; color: var(--muted); }
+      .lib-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+      @media (max-width: 380px) { .lib-grid { grid-template-columns: 1fr; } }
+      .lib-card {
+        display: flex; align-items: center; gap: 11px; text-align: left; width: 100%;
+        background: linear-gradient(170deg, var(--surface) 60%, var(--ice) 140%);
+        border: 1px solid var(--line); border-radius: var(--r-tile);
+        padding: 12px; cursor: pointer; min-height: 66px; color: var(--ink);
+        box-shadow: var(--shadow-sm);
+        transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+      }
+      .lib-card:active { transform: scale(0.98); }
+      .lib-card .block-name { font-size: var(--text-caption); }
+      .lib-card .block-reps { font-size: var(--text-small); }
+      .reader-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+      .mode-toggle { display: flex; background: var(--surface); border: 1px solid var(--line); border-radius: 99px; padding: 4px; gap: 4px; }
+      .mode-btn {
+        border: none; background: transparent; color: var(--muted); font-size: var(--text-caption); font-weight: 800;
+        border-radius: 99px; padding: 8px 16px; cursor: pointer; min-height: 38px;
+      }
+      .mode-btn.active { background: var(--btn-bg); color: var(--btn-ink); }
+      .reader-title { font-size: var(--text-h2); font-weight: 800; margin: 16px 0 2px; line-height: 1.2; }
+      .reader-chapter { font-size: var(--text-caption); color: var(--muted); font-weight: 500; }
+      .story-card {
+        margin-top: 14px; background: var(--surface); border: 1px solid var(--line);
+        border-radius: var(--r-card); padding: 18px; box-shadow: var(--shadow);
+      }
+      .story-card p { margin: 0 0 12px; font-size: var(--text-body); line-height: 1.7; }
+      .story-card p:last-child { margin-bottom: 0; }
+      .big-idea {
+        margin-top: 14px; border-radius: var(--r-tile); padding: 15px 17px;
+        background: var(--good-soft); border: 1px solid var(--line);
+        font-size: var(--text-body); line-height: 1.6; font-weight: 600;
+      }
+      .big-idea strong { display: block; font-size: var(--text-small); letter-spacing: 0.08em; text-transform: uppercase; color: var(--good); margin-bottom: 5px; }
+      .story-code {
+        margin-top: 14px; background: var(--world-bg); color: var(--con-ink); border-radius: var(--r-tile);
+        padding: 16px; font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: var(--text-caption); line-height: 1.7; overflow-x: auto; white-space: pre;
+      }
+      .story-code .cm { color: var(--con-dim); }
+      .reader-nav { display: flex; gap: 10px; margin-top: 18px; }
+      .reader-nav button {
+        flex: 1; min-height: 50px; border-radius: var(--r-tile); font-size: var(--text-body); font-weight: 800; cursor: pointer;
+        border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+      }
+      .reader-nav button.primary { background: var(--btn-bg); border-color: var(--accent); color: var(--btn-ink); }
+      .reader-nav button:disabled { opacity: 0.4; cursor: default; }
+      .reader-pos { text-align: center; font-size: var(--text-small); color: var(--muted); margin-top: 12px; font-weight: 600; }
+      .shelf-head { margin: 28px 2px 0; }
+      .shelf-head h3 { margin: 0 0 6px; font-size: var(--text-h3); font-weight: 800; line-height: 1.25; }
+      .shelf-head p { margin: 0; font-size: var(--text-body); line-height: 1.6; color: var(--muted); }
+
+      /* Picture mode stage */
+      .stage-card {
+        margin-top: 14px; border-radius: var(--r-hero); overflow: hidden;
+        border: 1px solid var(--line); box-shadow: var(--shadow);
+        background: linear-gradient(180deg, var(--con-glow) 0%, var(--con-ink-2) 55%, var(--con-ink) 100%);
+      }
+      :where(:root[data-mode="dark"]) .stage-card { background: linear-gradient(180deg, var(--con-top) 0%, var(--con-hi) 55%, var(--con-mid) 100%); }
+      .stage-svg { display: block; width: 100%; height: auto; }
+      .stage-controls { display: flex; gap: 10px; padding: 12px; background: var(--surface); flex-wrap: wrap; }
+      .play-btn {
+        flex: 1; min-height: 50px; border: none; border-radius: var(--r-tile); min-width: 150px;
+        background: var(--btn-bg); color: var(--btn-ink); font-size: var(--text-body); font-weight: 800; cursor: pointer;
+        box-shadow: 0 6px 18px var(--glow-med);
+      }
+      .play-btn:active { transform: scale(0.99); }
+      .stage-music-btn {
+        display: inline-flex; align-items: center; gap: 7px;
+        border: 1px solid var(--line); background: var(--surface-2); color: var(--ink);
+        border-radius: var(--r-tile); padding: 8px 16px; font-size: var(--text-caption); font-weight: 700; cursor: pointer; min-height: 50px;
+      }
+      .stage-music-btn.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+      .stage-music-btn svg { width: 16px; height: 16px; }
+      .stage-console {
+        background: var(--con-deep); color: var(--con-glow); font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: var(--text-caption); line-height: 1.75; padding: 14px 16px; min-height: 96px;
+      }
+      .stage-console .cl { opacity: 0; transform: translateY(4px); }
+      .stage-console .cl.show { opacity: 1; transform: none; transition: opacity 0.3s ease, transform 0.3s ease; }
+      .stage-console .dim { color: var(--con-dim); }
+      .stage-caption { margin-top: 12px; font-size: var(--text-body); line-height: 1.65; color: var(--muted); padding: 0 2px; }
+      @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+      @keyframes sway { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
+      @keyframes spinSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      @keyframes pulseBig { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+      @keyframes dashMove { to { stroke-dashoffset: -26; } }
+      @keyframes twinkle { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
+      .anim-bob { animation: bob 2.6s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+      .anim-sway { animation: sway 3.4s ease-in-out infinite; transform-origin: bottom center; transform-box: fill-box; }
+      .anim-spin { animation: spinSlow 9s linear infinite; transform-origin: center; transform-box: fill-box; }
+      .anim-pulse { animation: pulseBig 2.2s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+      .anim-flow { stroke-dasharray: 7 6; animation: dashMove 1.1s linear infinite; }
+      .anim-twinkle { animation: twinkle 1.8s ease-in-out infinite; }
+      @media (prefers-reduced-motion: reduce) {
+        .anim-bob, .anim-sway, .anim-spin, .anim-pulse, .anim-flow, .anim-twinkle { animation: none; }
+      }
+

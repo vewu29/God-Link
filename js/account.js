@@ -9,7 +9,7 @@
    work on the device alone, exactly as before.
 
    An account is a profile like any other on this device (cbStore, in
-   js/profiles-vault.js) with an `account` field linking it, so the
+   js/profiles.js) with an `account` field linking it, so the
    Vault, the member shelves and saving work just as they always have.
    On top of that:
    - progress — every track's mastered blocks and Vault drills, and the

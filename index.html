@@ -14,7 +14,7 @@
     <title>Code Block</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600;6..72,700&family=Sora:wght@400;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Orbitron:wght@700;800;900&family=Sora:wght@400;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
     <!-- Theme before first paint: the saved theme names its light or dark
          mode; the default Sky theme follows the device (js/theme.js keeps
          it in step afterwards and offers the picker). -->
@@ -29,8 +29,19 @@
         document.documentElement.setAttribute("data-mode", m);
       })();
     </script>
-    <link rel="stylesheet" href="css/app.css" />
+    <!-- app.css, split into focused sheets in the same cascade order:
+         base, hub, drill, library, pc, vault, then the polish passes.
+         The split alone changes nothing visually; the gaming layer
+         below it is the only file that changes how things look. -->
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/hub.css" />
+    <link rel="stylesheet" href="css/drill.css" />
+    <link rel="stylesheet" href="css/library.css" />
+    <link rel="stylesheet" href="css/pc.css" />
+    <link rel="stylesheet" href="css/vault.css" />
+    <link rel="stylesheet" href="css/polish.css" />
     <link rel="stylesheet" href="css/themes.css" />
+    <link rel="stylesheet" href="css/gaming.css" />
   </head>
   <body>
     <!-- Loop 23 — the boot moment: a first-run arrival card over the
@@ -616,11 +627,17 @@
     <script src="js/world.js"></script>
     <script src="js/music.js"></script>
 
+    <!-- views.js, split along its seams: shell, Library, PC.
+         Same order, same globals, same behavior. -->
     <script src="js/views.js"></script>
+    <script src="js/views-library.js"></script>
+    <script src="js/views-pc.js"></script>
 
     <script src="js/book.js"></script>
 
-    <script src="js/profiles-vault.js"></script>
+    <!-- profiles-vault.js, split along its seam: profiles, then Vault. -->
+    <script src="js/profiles.js"></script>
+    <script src="js/vault.js"></script>
 
     <script src="js/typing-fx.js"></script>
 
@@ -681,5 +698,7 @@
     <script src="js/theme.js"></script>
     <script src="js/keyboard.js"></script>
     <script src="js/focus.js"></script>
+    <!-- The session: loaded last, restores where you were on reload. -->
+    <script src="js/session.js"></script>
 </body>
 </html>

@@ -531,6 +531,8 @@ function openBlock(i) {
     setTimeout(function () { try { typeInput.focus({ preventScroll: true }); } catch (e) { typeInput.focus(); } }, 60);
   }
   if (picked) setTimeout(function () { swapToDrill(true); }, 380); else swapToDrill(false);
+  /* The session keeps where you are: opening a block saves it. */
+  if (window.cbSessionSave) window.cbSessionSave();
 }
 function closeDrill() {
   var leaving = current;
