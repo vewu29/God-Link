@@ -180,6 +180,61 @@
 }
 .drill-status { font-weight: 600; }
 
+/* ---------- The two drill boxes: big, round, grid-bright, 3D type ----------
+   The line you read and the box you type in are the stars of the room,
+   so both get the same treatment: much bigger type, tall round boxes,
+   a vivid theme gradient under a faint grid, and extruded 3D letters.
+   The grid is only lines (repeating gradients), never a picture, and
+   the letters stay JetBrains Mono so every character still reads. The
+   console underneath is dark in both modes, so the deep gradient keeps
+   the light letters readable in light and dark. */
+.target-line, .console-input {
+  border-radius: 20px;
+  border: 2px solid rgba(var(--sky-rgb), 0.55);
+  background:
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.08) 0 1px, rgba(255, 255, 255, 0) 1px 26px),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.08) 0 1px, rgba(255, 255, 255, 0) 1px 26px),
+    linear-gradient(135deg, rgba(var(--sky-rgb), 0.38) 0%, rgba(var(--brand-rgb), 0.42) 55%, rgba(var(--sky-rgb), 0.38) 100%);
+  box-shadow: 0 12px 30px rgba(var(--shade-rgb), 0.5), 0 0 0 1px rgba(var(--sky-rgb), 0.25), 0 0 26px var(--glow-med);
+}
+.target-line {
+  font-size: clamp(1.45rem, 7vw, 2rem);
+  font-weight: 700;
+  line-height: 1.6;
+  min-height: 72px;
+  padding: 16px 18px;
+}
+.console-input {
+  min-height: 78px;
+  padding: 0 20px;
+}
+#typeInput {
+  padding: 20px 0;
+  font-size: clamp(1.35rem, 6.4vw, 1.9rem);
+  font-weight: 700;
+}
+.console-prompt { font-size: 1.5rem; }
+/* 3D letters: stacked shadows carve each character out of the box. */
+.target-line, .target-line .ch, #typeInput {
+  text-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.4),
+    0 2px 0 rgba(0, 0, 0, 0.32),
+    0 3px 0 rgba(0, 0, 0, 0.25),
+    0 8px 16px rgba(0, 0, 0, 0.5),
+    0 0 24px rgba(var(--sky-rgb), 0.55);
+}
+.target-line .ch.ok {
+  text-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.4),
+    0 2px 0 rgba(0, 0, 0, 0.32),
+    0 3px 0 rgba(0, 0, 0, 0.25),
+    0 8px 16px rgba(0, 0, 0, 0.5),
+    0 0 18px rgba(var(--sky-rgb), 0.75);
+}
+/* The not-yet-typed letters stay dimmer than the typed ones, but on a
+   bright box they need more body than the old half-faded look. */
+.target-line .ch.todo { opacity: 0.8; }
+
 /* ---------- Library story text: readable, but unmistakably game ---------- */
 #storyCard p, #walkCard p, .big-idea span, .stage-caption {
   font-family: var(--font-display);
@@ -270,6 +325,8 @@ body {
 }
 @media print {
   .music-btn.on::after, .bubble-play[aria-pressed="true"]::after, .masterpiece::after { animation: none; }
+  .target-line, .console-input { background: none; box-shadow: none; }
+  .target-line, .target-line .ch, #typeInput { text-shadow: none; }
   .sec-title-row h2, #hubView .list-head h2, .shelf-head h3,
   .drill-title, .reader-title, .boot-title, .support-title,
   .masterpiece h2, .pc-project-name, .track-sheet-head h2,
