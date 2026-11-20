@@ -127,7 +127,31 @@ function save() {
   if (!storeOK) return;
   try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) { storeOK = false; }
 }
-function repsOf(i) { return Math.min(state.reps[i] || 0, REPS_GOAL); }
+/* Progress is keyed by the drill line itself on tracks that carry
+   categories (English++): a line never moves when the list is
+   re-cut, so a future trim can never attach old reps to the wrong
+   drill. Other tracks keep the plain block index. The first time a
+   categorized track is used after a cut, any index-keyed reps left
+   from the old list are cleared once, along with the old ceremony
+   flags — the curated set starts fresh. */
+var repMigrated = false;
+function repKey(i) {
+  if (hasCats() && BLOCKS[i] && BLOCKS[i].line) {
+    if (!repMigrated) { repMigrated = true; migrateReps(); }
+    return BLOCKS[i].line;
+  }
+  return i;
+}
+function migrateReps() {
+  var hadOld = false;
+  for (var k in state.reps) { if (/^\d+$/.test(k)) { hadOld = true; break; } }
+  if (!hadOld) return;
+  state.reps = {};
+  state.celebrated = false;
+  try { localStorage.removeItem(EPP_CELEB_KEY); } catch (e) {}
+  save();
+}
+function repsOf(i) { return Math.min(state.reps[repKey(i)] || 0, REPS_GOAL); }
 function isDone(i) { return repsOf(i) >= REPS_GOAL; }
 
 /* ================= Categories (English++) =================
@@ -605,7 +629,7 @@ typeInput.addEventListener("input", function () {
     if (window.CBFX) window.CBFX.correct(typeCard, targetLine, b.line.length - prevOk, b.line.length);
     var wasDone = isDone(current);
     if (!wasDone) {
-      state.reps[current] = repsOf(current) + 1;
+      state.reps[repKey(current)] = repsOf(current) + 1;
       save();
     }
     var nowDone = isDone(current);
