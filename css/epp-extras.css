@@ -1,0 +1,95 @@
+/* English++ extras: the Mastery Path, the Root Finder and the full
+   lessons (js/epp-extras.js). Built only on the theme's own variables,
+   so every theme (light and dark) colours it; no textures, no canvas,
+   and motion is opacity/transform only and turned off when the device
+   asks for less motion. */
+.epp-path, .epp-finder { margin: 22px 0; }
+.epp-head h3, .epp-lesson-head h3 {
+  font-family: var(--font-display, inherit); font-size: var(--text-h3, 1.3rem); margin: 0 0 6px;
+  background: var(--grad-text, none); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.epp-head p, .epp-lesson-head p { margin: 0 0 12px; color: var(--muted); line-height: 1.55; }
+.epp-kicker { font-family: var(--font-hud, inherit); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent-deep); margin-bottom: 4px; }
+html[data-mode="dark"] .epp-kicker { color: var(--accent-bright); }
+.epp-dim { color: var(--muted); font-size: 0.88rem; line-height: 1.5; }
+
+/* Mastery Path */
+.epp-stage {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-card, 16px);
+  padding: 14px; margin: 0 0 12px; box-shadow: var(--shadow-sm); position: relative; overflow: hidden;
+}
+.epp-stage::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: linear-gradient(var(--accent), var(--sky)); }
+.epp-stage-top { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 10px; }
+.epp-stage-num {
+  flex: none; width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center;
+  font-family: var(--font-hud, inherit); font-weight: 700; color: var(--on-accent); background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+  box-shadow: 0 0 14px var(--glow-soft);
+}
+.epp-stage-name { font-family: var(--font-display, inherit); font-weight: 700; font-size: 1.08rem; color: var(--ink); }
+.epp-stage-goal { color: var(--muted); font-size: 0.92rem; line-height: 1.45; }
+.epp-stage-row { display: flex; gap: 10px; align-items: flex-start; margin-top: 8px; flex-wrap: wrap; }
+.epp-stage-label { flex: none; width: 88px; font-family: var(--font-hud, inherit); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-deep); padding-top: 6px; }
+html[data-mode="dark"] .epp-stage-label { color: var(--accent-bright); }
+.epp-stage-text { flex: 1 1 200px; color: var(--ink); line-height: 1.5; }
+.epp-chips { display: flex; flex-wrap: wrap; gap: 6px; flex: 1 1 200px; }
+.epp-chip, .epp-link, .epp-fam button {
+  font: inherit; cursor: pointer; border-radius: 999px; border: 1px solid var(--line);
+  background: var(--surface-2); color: var(--ink); transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.epp-chip { padding: 6px 11px; font-size: 0.85rem; font-weight: 700; text-align: left; }
+.epp-chip small { display: block; font-weight: 400; color: var(--muted); font-size: 0.74rem; max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.epp-link { padding: 7px 12px; font-size: 0.88rem; font-weight: 700; color: var(--accent-deep); border-color: var(--accent); text-align: left; max-width: 100%; overflow-wrap: anywhere; }
+html[data-mode="dark"] .epp-link { color: var(--accent-bright); }
+.epp-chip:hover, .epp-link:hover, .epp-fam button:hover { transform: translateY(-1px); box-shadow: 0 0 12px var(--glow-soft); }
+.epp-chip:focus-visible, .epp-link:focus-visible, .epp-fam button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* Root Finder — the family filter is one swipeable row on a phone */
+.epp-fam { display: flex; gap: 6px; margin: 10px 0; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 6px; scrollbar-width: thin; }
+.epp-fam button { flex: none; white-space: nowrap; padding: 6px 11px; font-size: 0.84rem; }
+.epp-fam button.active { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.epp-words { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.epp-word { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-tile, 14px); padding: 12px; box-shadow: var(--shadow-sm); min-width: 0; }
+.epp-word-top { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; margin-bottom: 4px; }
+.epp-w { font-family: "JetBrains Mono", ui-monospace, monospace; font-weight: 800; font-size: 1.25rem; color: var(--accent-deep); }
+html[data-mode="dark"] .epp-w { color: var(--accent-bright); }
+.epp-tag { font-size: 0.74rem; color: var(--muted); text-align: right; }
+.epp-says { color: var(--ink); font-weight: 600; margin-bottom: 6px; }
+.epp-pair { display: flex; gap: 8px; align-items: baseline; margin: 4px 0; min-width: 0; }
+.epp-pair span { flex: none; width: 74px; font-family: var(--font-hud, inherit); font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.epp-pair code { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.86rem; color: var(--ink); overflow-wrap: anywhere; min-width: 0; }
+.epp-read { background: var(--surface); border: 2px solid var(--accent); border-radius: var(--r-card, 16px); padding: 14px; margin: 0 0 12px; box-shadow: 0 0 18px var(--glow-soft); color: var(--ink); }
+.epp-spots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 6px 0 10px; }
+.epp-spots span { background: var(--surface-2); border-radius: 10px; padding: 8px; text-align: center; min-width: 0; }
+.epp-spots b { display: block; font-family: var(--font-hud, inherit); font-size: 0.64rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.epp-spots code { display: block; font-family: "JetBrains Mono", ui-monospace, monospace; font-weight: 800; font-size: 1.05rem; color: var(--ink); overflow-wrap: anywhere; }
+.epp-spots i { display: block; font-style: normal; font-size: 0.76rem; color: var(--muted); }
+.epp-rules { margin-top: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-tile, 14px); padding: 10px 14px; color: var(--ink); }
+.epp-rules summary { cursor: pointer; font-weight: 700; }
+.epp-rules li { margin: 6px 0; line-height: 1.5; }
+
+/* Full lesson */
+.epp-lesson { margin-top: 18px; border-top: 2px solid var(--line); padding-top: 16px; }
+.epp-lesson.hidden { display: none; }
+.epp-sec { margin: 16px 0; }
+.epp-sec h4 { font-family: var(--font-display, inherit); font-size: 1.08rem; margin: 0 0 6px; color: var(--ink); }
+.epp-sec p { line-height: 1.6; margin: 0 0 8px; color: var(--ink); }
+.epp-prog { margin: 8px 0; }
+.epp-prog-label { font-family: var(--font-hud, inherit); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 6px 0 4px; }
+.epp-lesson .story-code.epp-code { margin-top: 0; }
+.epp-out { margin: 0; background: #020b18; color: #c9f1ff; border-radius: var(--r-tile, 14px); padding: 12px 16px; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.9rem; }
+.epp-lines { display: grid; gap: 8px; }
+.epp-line { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-tile, 14px); padding: 10px 12px; color: var(--ink); min-width: 0; }
+.epp-en { display: block; font-family: "JetBrains Mono", ui-monospace, monospace; font-weight: 800; font-size: 1.05rem; color: var(--accent-deep); margin-bottom: 2px; overflow-wrap: anywhere; }
+html[data-mode="dark"] .epp-en { color: var(--accent-bright); }
+.epp-mistake { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--bad); border-radius: var(--r-tile, 14px); padding: 10px 12px; margin: 0 0 10px; color: var(--ink); }
+.epp-says-box { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.9rem; background: var(--surface-2); border-radius: 10px; padding: 8px 10px; margin: 6px 0; overflow-wrap: anywhere; }
+.epp-says-box span { display: block; font-family: var(--font-hud, inherit); font-size: 0.64rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bad); margin-bottom: 2px; }
+.epp-fix { margin: 6px 0; line-height: 1.5; }
+.epp-practice { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-tile, 14px); padding: 10px 12px; margin: 0 0 8px; color: var(--ink); }
+.epp-practice summary { cursor: pointer; font-weight: 600; line-height: 1.5; }
+.epp-pnum { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 7px; margin-right: 8px; background: var(--accent); color: var(--on-accent); font-family: var(--font-hud, inherit); font-size: 0.8rem; }
+.epp-answer { margin-top: 8px; }
+/* Long lines wrap inside code boxes on a phone instead of running off the edge; indents stay. */
+.epp-lesson pre, .epp-finder pre, .epp-lesson .epp-code { white-space: pre-wrap; overflow-wrap: anywhere; }
+@media (max-width: 420px) { .epp-stage-label { width: 100%; padding-top: 0; } .epp-pair span { width: 64px; } }
+@media (prefers-reduced-motion: reduce) { .epp-chip, .epp-link, .epp-fam button { transition: none; } .epp-chip:hover, .epp-link:hover, .epp-fam button:hover { transform: none; } }
