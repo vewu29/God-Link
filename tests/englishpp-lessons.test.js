@@ -113,8 +113,8 @@ test("the mastery path covers every chapter and names real projects", () => {
   assert.strictEqual(seen.size, nums.size, "the path skips a chapter");
 });
 
-test("the drill set is the curated 303 and the registry agrees", () => {
-  assert.strictEqual(T.blocks.length, 303);
+test("the drill set is the curated 303 plus one drill per new Chart word, and the registry agrees", () => {
+  assert.strictEqual(T.blocks.length, 452);
   const reg = fs.readFileSync(path.join(__dirname, "..", "js", "tracks.js"), "utf8");
-  assert.match(reg, /englishpp[\s\S]{0,400}blocks: 303/);
+  assert.match(reg, /englishpp[\s\S]{0,400}blocks: 452,/);
 });

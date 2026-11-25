@@ -1,0 +1,60 @@
+/* English++ drill extras (js/epp-drills.js): the "Inside this line"
+   panel under each drill and the Fix the Line trainer under the block
+   grid. Theme variables only, so every theme (light and dark) colours
+   it. No canvas, no textures, and motion is off when the device asks
+   for less. It reuses the lesson styles in epp-extras.css. */
+.epp-drill-more, .epp-fixline {
+  margin: 16px 0; background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--r-card, 18px); padding: 14px; box-shadow: var(--shadow-sm); color: var(--ink); min-width: 0;
+}
+.epp-drill-more[hidden], .epp-fx-body[hidden] { display: none; }
+.epp-dm-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.epp-dm-spots span { background: var(--surface-2); }
+.epp-dm-fam { display: flex; gap: 10px; align-items: center; margin: 4px 0 10px; line-height: 1.5; }
+.epp-fam-badge {
+  flex: none; display: inline-grid; place-items: center; min-width: 34px; height: 34px; padding: 0 6px; border-radius: 10px;
+  background: var(--accent); color: var(--on-accent); font-family: var(--font-hud, inherit); font-weight: 800; font-size: 0.95rem;
+  box-shadow: 0 0 12px var(--glow-soft);
+}
+.epp-dm-words { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); margin: 10px 0; }
+.epp-dm-word { background: var(--surface-2); border-radius: 12px; padding: 8px 10px; line-height: 1.45; min-width: 0; overflow-wrap: anywhere; }
+.epp-dm-word > code { font-family: "JetBrains Mono", ui-monospace, monospace; font-weight: 800; font-size: 1.02rem; color: var(--accent-deep); margin-right: 8px; }
+html[data-mode="dark"] .epp-dm-word > code { color: var(--accent-bright); }
+.epp-dm-mistake { border-left: 4px solid var(--bad); padding: 6px 0 2px 12px; margin: 12px 0; }
+.epp-dcode {
+  margin: 6px 0; background: #020b18; color: #c9f1ff; border-radius: var(--r-tile, 14px); padding: 10px 14px;
+  font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.9rem; white-space: pre-wrap; overflow-wrap: anywhere;
+}
+.epp-dcode.bad { box-shadow: inset 3px 0 0 var(--bad); }
+.epp-dm-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+
+/* Fix the Line */
+.epp-fx-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.epp-fx-chips { display: flex; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; gap: 6px; padding-bottom: 6px; }
+.epp-fx-chips .vchip { flex: none; min-width: 40px; justify-content: center; }
+.epp-fx-chips .vchip.epp-fx-solved { border-color: var(--good, var(--accent)); box-shadow: inset 0 -3px 0 var(--good, var(--accent)); }
+.epp-fx-top { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; flex-wrap: wrap; margin-top: 8px; }
+.epp-fx-done { font-size: 0.8rem; font-weight: 700; color: var(--good, var(--accent)); }
+.epp-fx-ln { display: block; }
+.epp-fx-ln i { display: inline-block; width: 1.8em; font-style: normal; opacity: 0.55; }
+.epp-fx-ln.bad { background: rgba(255, 92, 92, 0.18); border-radius: 6px; box-shadow: inset 3px 0 0 var(--bad); }
+.epp-fx-label { display: block; margin: 10px 0 4px; font-family: var(--font-hud, inherit); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.epp-fx-input { margin: 0; }
+.epp-fx-btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.epp-fx-status { margin-top: 10px; line-height: 1.5; min-height: 1.5em; }
+.epp-fx-status.good { color: var(--ink); border-left: 4px solid var(--good, var(--accent)); padding-left: 10px; }
+.epp-fx-status.bad { color: var(--ink); border-left: 4px solid var(--bad); padding-left: 10px; }
+@media (max-width: 420px) { .epp-drill-more, .epp-fixline { padding: 12px; } .epp-dm-words { grid-template-columns: 1fr; } }
+.epp-fx-ln.bad { padding-left: 6px; }
+/* The fix box looks like the drill's own big typing box. */
+.epp-fx-input input {
+  flex: 1 1 auto; width: 100%; min-width: 0; padding: 16px 0;
+  font-family: "JetBrains Mono", ui-monospace, monospace; font-size: clamp(1.15rem, 5.4vw, 1.6rem); font-weight: 700;
+  color: var(--ink); background: transparent; border: none; outline: none; caret-color: var(--sky, var(--accent));
+}
+.epp-fx-btns .epp-fx-btn {
+  font: inherit; font-weight: 700; cursor: pointer; padding: 10px 16px; border-radius: 999px;
+  background: var(--surface); color: var(--accent-deep); border: 2px solid var(--accent);
+}
+html[data-mode="dark"] .epp-fx-btns .epp-fx-btn { color: var(--accent-bright); }
+.epp-fx-btns .epp-fx-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
