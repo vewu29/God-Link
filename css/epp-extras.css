@@ -93,3 +93,7 @@ html[data-mode="dark"] .epp-en { color: var(--accent-bright); }
 .epp-lesson pre, .epp-finder pre, .epp-lesson .epp-code { white-space: pre-wrap; overflow-wrap: anywhere; }
 @media (max-width: 420px) { .epp-stage-label { width: 100%; padding-top: 0; } .epp-pair span { width: 64px; } }
 @media (prefers-reduced-motion: reduce) { .epp-chip, .epp-link, .epp-fam button { transition: none; } .epp-chip:hover, .epp-link:hover, .epp-fam button:hover { transform: none; } }
+
+/* English++ Web Studio card — wears the hub's .studio-card look */
+.epp-studio-card { margin: 14px 0; }
+.epp-studio-card .studio-ico { color: var(--accent); }

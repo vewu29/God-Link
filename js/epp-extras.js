@@ -9,6 +9,8 @@
    - the Root Finder (#eppFinder) above the reference shelves: every
      word in the frozen Chart, searchable, with its plain meaning, its
      C++ and an example — type a whole line and it reads it back;
+   - a card (#eppStudioHub on the home screen, #eppStudioLib in the
+     Library) that opens the English++ Web Studio page, epp-studio.html;
    - a full lesson (#eppLesson) under each chapter's Text mode: the
      idea, the Book's programs and what they print, the key lines with
      the C++ each one becomes, the Studio's own messages for common
@@ -248,6 +250,22 @@
     };
   }
 
-  function start() { try { buildPath(); } catch (e) {} try { buildFinder(); } catch (e) {} try { hookReader(); } catch (e) {} }
+  /* ---------- English++ Web Studio card (a link to its own page) ---------- */
+  function studioCard(id) {
+    var a = el("a", "studio-card epp-studio-card"); a.id = id; a.href = "epp-studio.html";
+    a.innerHTML = '<span class="studio-ico" aria-hidden="true"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-braces"/></svg></span>' +
+      '<span class="studio-text"><span class="studio-title">English++ Web Studio <span class="studio-chip">Write &amp; run</span></span>' +
+      '<span class="studio-sub">Write English++ and run it right here, on your phone or computer — roots in colour, the C++ it becomes, and raylib games.</span></span>' +
+      '<span class="studio-go">Open the Web Studio<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-chev-right"/></svg></span>';
+    return a;
+  }
+  function buildStudioCards() {
+    var hub = document.querySelector("#hubView .studio-card");
+    if (hub && !$("eppStudioHub")) hub.parentNode.insertBefore(studioCard("eppStudioHub"), hub.nextSibling);
+    var intro = document.querySelector("#libHome .lib-intro");
+    if (intro && !$("eppStudioLib")) intro.parentNode.insertBefore(studioCard("eppStudioLib"), intro.nextSibling);
+  }
+
+  function start() { try { buildPath(); } catch (e) {} try { buildFinder(); } catch (e) {} try { hookReader(); } catch (e) {} try { buildStudioCards(); } catch (e) {} }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
 })();

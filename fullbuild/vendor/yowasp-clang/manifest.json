@@ -1,0 +1,43 @@
+{
+ "package": "@yowasp/clang@22.0.0-git20695-13",
+ "eh_libs": "wasi-sdk-33 (wasi-sysroot-33.0+m, LLVM 22.1.0) lib/wasm32-wasip1/eh",
+ "files": {
+  "llvm-resources.tar": {
+   "bytes": 23879680,
+   "gz": 5126577,
+   "sha256": "550d9a619c084e0b",
+   "b64_chunks": 2,
+   "b64": 6835436
+  },
+  "llvm.core.wasm": {
+   "bytes": 74467624,
+   "gz": 22481098,
+   "sha256": "543493113384141e",
+   "b64_chunks": 8,
+   "b64": 29974800
+  },
+  "llvm.core2.wasm": {
+   "bytes": 37626,
+   "gz": 13745,
+   "sha256": "960c326eb9b5db7a",
+   "b64_chunks": 1,
+   "b64": 18328
+  },
+  "llvm.core3.wasm": {
+   "bytes": 5458,
+   "gz": 1590,
+   "sha256": "63680c043192abac",
+   "b64_chunks": 1,
+   "b64": 2120
+  },
+  "llvm.core4.wasm": {
+   "bytes": 787,
+   "gz": 467,
+   "sha256": "f544dc9cc46f88a0",
+   "b64_chunks": 1,
+   "b64": 624
+  }
+ },
+ "uncompressed_total": 98391175,
+ "encoding": "Each <file>.gz is stored as base64 text chunks <file>.gz.b64.000, .001, ... (GitHub text-only push); the worker joins and decodes them."
+}
