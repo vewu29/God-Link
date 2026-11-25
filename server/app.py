@@ -144,6 +144,13 @@ async def studio():
     return HTMLResponse(versioned((ROOT / "studio.html").read_text(encoding="utf-8")), headers={"Cache-Control": "no-cache"})
 
 
+# English++ Web Studio: a page of its own, like Code Block Studio; its
+# programs and saved files stay on the visitor's device.
+@app.api_route("/epp-studio.html", methods=["GET", "HEAD"])
+async def epp_studio():
+    return HTMLResponse(versioned((ROOT / "epp-studio.html").read_text(encoding="utf-8")), headers={"Cache-Control": "no-cache"})
+
+
 # Only the folders the page loads are served — never the server's own code,
 # the tests or the repository's other files.
 # They are sent with no-cache, so a browser checks for a newer copy on
@@ -157,3 +164,8 @@ class FreshStaticFiles(StaticFiles):
 
 for folder in ASSET_FOLDERS:
     app.mount("/" + folder, FreshStaticFiles(directory=ROOT / folder), name=folder)
+
+# The Web Studio's engine, its data and the optional Full build compiler.
+# Kept out of ASSET_FOLDERS so the 37 MB compiler isn't hashed on every start.
+for folder in ("data/epp-studio", "engine", "fullbuild"):
+    app.mount("/" + folder, FreshStaticFiles(directory=ROOT / folder), name=folder.replace("/", "-"))
