@@ -21,12 +21,17 @@ function post(msg, transfer) { self.postMessage(msg, transfer || []); }
 function sendProgress(phase) { post({ type: 'progress', phase, loaded: progress.loaded, total: progress.total }); }
 
 // Track every wasm Memory the toolchain creates, to report clang's linear-memory peak.
+// v4: weak references only. v3 kept every Memory in a Set until the build ended, so the compile step's whole linear
+// memory (hundreds of MB) could not be collected while the linker ran. Each tool run is a new instance with a new memory.
 const memories = new Set();
-function noteInstance(inst) {
-  try { for (const v of Object.values(inst.exports)) if (v instanceof WebAssembly.Memory) memories.add(v); } catch (_) {}
-}
+const HAS_WEAK = typeof WeakRef === 'function';
 function sampleMemories() {
-  for (const m of memories) stats.maxWasmMemory = Math.max(stats.maxWasmMemory, m.buffer.byteLength);
+  for (const r of memories) { const m = HAS_WEAK ? r.deref() : r; if (!m) { memories.delete(r); continue; } stats.maxWasmMemory = Math.max(stats.maxWasmMemory, m.buffer.byteLength); }
+}
+function noteInstance(inst) {
+  sampleMemories(); // the previous tool run has finished by the time the next one is made
+  if (!HAS_WEAK) return; // no WeakRef: don't hold memories at all (the peak figure is then only partial)
+  try { for (const v of Object.values(inst.exports)) if (v instanceof WebAssembly.Memory) memories.add(new WeakRef(v)); } catch (_) {}
 }
 {
   const OrigInstance = WebAssembly.Instance;
@@ -200,7 +205,8 @@ function loadBinaryen() {
   binaryenP.catch(() => { binaryenP = null; });
   return binaryenP;
 }
-async function asyncify(bytes) {
+function binaryenHeap(b) { try { return (b.HEAP8 || b.HEAPU8).buffer.byteLength; } catch (e) { return 0; } }
+async function asyncify(bytes, imports) {
   const binaryen = await loadBinaryen();
   const t0 = performance.now();
   const m = binaryen.readBinary(bytes);
@@ -209,32 +215,42 @@ async function asyncify(bytes) {
     // which browsers reject: "Invalid import kind 127")
     const F = binaryen.Features;
     m.setFeatures(F.MutableGlobals | F.NontrappingFPToInt | F.BulkMemory | F.BulkMemoryOpt | F.SignExt | F.ReferenceTypes | F.Multivalue | F.CallIndirectOverlong);
-    binaryen.setPassArgument('asyncify-imports', 'env.rlw_present,env.rlw_sleep');
+    binaryen.setPassArgument('asyncify-imports', imports || 'env.rlw_present,env.rlw_sleep');
     binaryen.setOptimizeLevel(1); binaryen.setShrinkLevel(0);
     m.runPasses(['asyncify']);
     const out = m.emitBinary();
-    return { wasm: out, ms: Math.round(performance.now() - t0) };
+    return { wasm: out, ms: Math.round(performance.now() - t0), heap: binaryenHeap(binaryen) };
   } finally { m.dispose(); }
 }
 
 const RAYLIB_RE = /#\s*include\s*[<"](raylib|raymath|rlgl|rcamera)\.h[>"]/;
 /** files: {name: text}. Builds every .cpp/.cc/.cxx file; headers are available to #include. */
-async function buildCpp({ files, opt }) {
+// Interactive console programs (v4): built without exceptions against the no-exceptions libc++ (the raylib pack's), plus
+// this unit, and Asyncify'd on fd_read so std::cin / getline can wait for the Studio console while the program runs.
+const IO_UNIT = '__epp_io.cpp';
+const IO_SRC = 'static char epp_io_buf[262144] __attribute__((aligned(16)));\n' +
+  'extern "C" __attribute__((export_name("epp_io_data"))) void *epp_io_data() { return epp_io_buf; }\n' +
+  'extern "C" __attribute__((export_name("epp_io_size"))) unsigned epp_io_size() { return sizeof epp_io_buf; }\n';
+async function buildCpp({ files, opt, interactive, asyncifyHere }) {
   const t0 = performance.now();
   const names = Object.keys(files);
   const units = names.filter(n => /\.(cpp|cc|cxx|c\+\+)$/i.test(n));
   if (!units.length) return { result: { ok: false, errors: [{ file: null, line: null, column: null, message: 'There is no .cpp file to build.' }], warnings: [], raw: '', ms: 0 } };
   const raylib = names.some(n => RAYLIB_RE.test(files[n]));
+  const live = !raylib && !!interactive;
   const clang = await loadClang();
   const tree = {};
   for (const n of names) tree[n] = files[n];
-  if (raylib) { tree.raylib = await loadRaylib(); sendProgress('raylib'); }
+  if (raylib || live) { tree.raylib = await loadRaylib(); sendProgress('raylib'); }
+  if (live) { tree[IO_UNIT] = IO_SRC; units.push(IO_UNIT); }
   const t1 = performance.now();
   sendProgress('compile');
   const args = raylib
     ? ['clang++', '-std=c++20', opt || '-O2', '-fno-exceptions', '-fno-color-diagnostics', '-Wall', '-Iraylib/include', '-nostdlib++',
        ...units, 'raylib/lib/libraylib.a', 'raylib/lib/libc++.a', 'raylib/lib/libc++abi.a', '-o', 'main.wasm',
        '-Wl,--allow-undefined-file=raylib/lib/gl.syms', '-Wl,--strip-all', '-Wl,-z,stack-size=1048576']
+    : live ? ['clang++', '-std=c++20', opt || '-O2', '-fno-exceptions', '-fno-color-diagnostics', '-Wall', '-nostdlib++',
+       ...units, 'raylib/lib/libc++.a', 'raylib/lib/libc++abi.a', '-o', 'main.wasm', '-Wl,--strip-all', '-Wl,-z,stack-size=4194304']
     : ['clang++', '-std=c++20', opt || '-O2', '-fwasm-exceptions', '-mllvm', '-wasm-use-legacy-eh=false', '-fno-color-diagnostics', '-Wall',
        '-Wl,--strip-all', '-Wl,-z,stack-size=4194304', ...units, '-o', 'main.wasm', '-lunwind'];
   let raw = '';
@@ -246,20 +262,23 @@ async function buildCpp({ files, opt }) {
   sampleMemories();
   const compileMs = Math.round(performance.now() - t1);
   const { errors, warnings } = parseDiagnostics(raw);
-  const s = { ...stats, loadMs: Math.round(t1 - t0), buildMs: compileMs, raylib };
+  const s = { ...stats, loadMs: Math.round(t1 - t0), buildMs: compileMs, raylib, interactive: live };
   memories.clear();
   if (failed || !out || !out['main.wasm']) {
     if (!errors.length) errors.push({ file: null, line: null, column: null, message: raw.trim() || 'build failed' });
     return { result: { ok: false, errors, warnings, raw, ms: compileMs, raylib, stats: s } };
   }
   let bytes = out['main.wasm'];
-  if (raylib) {
+  const needs = raylib ? 'env.rlw_present,env.rlw_sleep' : live ? 'wasi_snapshot_preview1.fd_read' : null;
+  // v4: by default the Asyncify pass is NOT run here: the page ends this (Clang) worker first and runs binaryen in a
+  // fresh worker, so Clang's memory and binaryen's memory are never held at the same time.
+  if (needs && asyncifyHere) {
     sendProgress('asyncify');
-    const a = await asyncify(bytes);
+    const a = await asyncify(bytes, needs);
     bytes = a.wasm; s.asyncifyMs = a.ms;
   }
   const wasm = bytes.byteOffset === 0 && bytes.byteLength === bytes.buffer.byteLength ? bytes.buffer : bytes.slice().buffer;
-  return { result: { ok: true, wasm, raylib, ms: Math.round(performance.now() - t1), warnings, raw, stats: s }, transfer: [wasm] };
+  return { result: { ok: true, wasm, raylib, interactive: live, needsAsyncify: needs && !asyncifyHere ? needs : null, ms: Math.round(performance.now() - t1), warnings, raw, stats: s }, transfer: [wasm] };
 }
 
 self.onmessage = async (ev) => {
@@ -268,6 +287,11 @@ self.onmessage = async (ev) => {
     if (msg.type === 'build') {
       const { result, transfer } = await buildCpp(msg);
       post({ type: 'result', id: msg.id, result }, transfer);
+    } else if (msg.type === 'asyncify') {
+      sendProgress('asyncify');
+      const a = await asyncify(new Uint8Array(msg.wasm), msg.imports);
+      const out = a.wasm, wasm = out.byteOffset === 0 && out.byteLength === out.buffer.byteLength ? out.buffer : out.slice().buffer;
+      post({ type: 'result', id: msg.id, result: { ok: true, wasm, ms: a.ms } }, [wasm]);
     } else if (msg.type === 'preload') {
       await loadClang(); if (msg.raylib) { await loadRaylib(); await loadBinaryen(); }
       post({ type: 'result', id: msg.id, result: { ok: true, stats } });

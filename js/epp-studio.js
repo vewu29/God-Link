@@ -311,7 +311,7 @@
     if (!/^\s*now\s+xlb\s+(raylib|qt)\b/mi.test(main)) showPane("console");
     setRunning(true);
     var t0 = performance.now(), r;
-    try { r = await M.run(main); }
+    try { r = await (window.EppDebug && EppDebug.active() ? EppDebug.go(M, main) : M.run(main)); }
     catch (e) { r = { exitCode: 1, error: { line: 0, message: "The engine stopped: " + (e && e.message || e) } }; conWrite(r.error.message + "\n", "err"); }
     if (pendingInput) pendingInput(null);
     editor.setRunLine(0);
@@ -322,6 +322,7 @@
       conNote("Stopped at line " + (r.error.line || "?") + ": " + r.error.message, "bad");
       if (r.error.line && active === 0) editor.showRuntimeError(r.error);
       else if (r.error.line) { openTab(0); editor.showRuntimeError(r.error); }
+      if (r.error.line && window.EppFixIt && !r.error.file) try { EppFixIt.offerRun(r.error); } catch (e) {}
     } else conNote("Finished" + (r && r.exitCode ? " with exit code " + r.exitCode : "") + " · " + ms + " ms", r && r.exitCode ? "bad" : "ok");
     if (qt.win) qt.win.classList.add("closed");
   }
@@ -344,6 +345,7 @@
   function mb(n) { return (n / 1048576).toFixed(1) + " MB"; }
   async function fullBuild() {
     if (!M || running || fbBusy) return;
+    if (window.EppCppMode && EppCppMode.fullBuildEpp) { var fbv4 = EppCppMode.fullBuildEpp(); if (fbv4) return fbv4; }
     syncActive();
     var list = fileList(), main = list[0].text;
     showPane("console");
@@ -761,13 +763,14 @@
     CM.setData(data);
     editor = CM.createEditor({
       parent: $("esEditor"), doc: "",
-      check: function (src) { if (!M) return null; try { return M.check(src); } catch (e) { return null; } },
+      check: function (src) { if (!M) return null; try { if (window.EppDebug) EppDebug.syncFiles(M); return M.check(src); } catch (e) { return null; } },
       onChange: function () { saveDraft(); if (running) return; },
       onCursor: onCursor,
       onRun: run,
       fileName: function () { return files[active] ? files[active].name : "main.epp"; },
-      otherFiles: function () { return files.map(function (f, i) { return i === active ? null : { name: f.name, text: f.state ? f.state.doc.toString() : (f.text || "") }; }).filter(Boolean); },
+      otherFiles: function () { return files.map(function (f, i) { return i === active ? null : { name: f.name, doc: f.state ? f.state.doc : null, get text() { return f.state ? f.state.doc.toString() : (f.text || ""); } }; }).filter(Boolean); },
       onRootTable: function (w) { openRootTable(w); },
+      fixesFor: function (d) { return window.EppFixIt ? EppFixIt.fixesFor(d) : null; },
       onRename: function (n) { askRename(n); },
       openFile: function (name, line) { var i = files.findIndex(function (f) { return f.name === name; }); if (i < 0) return; openTab(i); editor.goToLine(line); }
     });
@@ -786,6 +789,9 @@
       showPane: showPane, setBusy: function (on) { setRunning(on); if (!on) $("esRun").disabled = !M && !EppCppMode.isActive(); }, running: function () { return running; },
       load: load, store: store, sheetOpen: sheetOpen, sheetClose: sheetClose, saveDraft: saveDraft, touch: function () { return touch; }, eppEvent: eppEvent,
       pendingInput: function () { return pendingInput; } });
+    if (window.EppCore) EppCore.init({ editor: editor, files: function () { syncActive(); return fileList(); }, setFiles: setFiles, openTab: openTab,
+      toast: toast, sheetOpen: sheetOpen, sheetClose: sheetClose });
+    if (window.EppDebug) setTimeout(function () { EppDebug.init({ setRunning: setRunning, conClear: conClear, conNote: conNote, conWrite: conWrite, syncActive: syncActive, fileList: fileList, files: function () { return files; }, active: function () { return active; }, openTab: openTab, showPane: showPane, status: status, touch: function () { return touch; }, qtReset: qtReset, running: function () { return running; } }); }, 0);
     window.EppStudio = { cppMode: window.EppCppMode, editor: editor, files: function () { syncActive(); return fileList(); }, shareURL: shareURL, run: run, stop: stop, engine: function () { return M; }, showPane: showPane, blocks: BLOCKS, insertBlock: insertBlock, openRootTable: openRootTable, rootTable: function () { return RT; }, openOutline: openOutline, rename: doRename, setTouch: setTouch, openTab: openTab };
   }
   Promise.all(["roots", "raylib", "qt"].map(function (n) { return fetch("data/epp-studio/" + n + ".json").then(function (r) { if (!r.ok) throw new Error(n + ".json " + r.status); return r.json(); }); }))

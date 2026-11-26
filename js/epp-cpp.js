@@ -198,7 +198,7 @@
     var first = errors.filter(function (e) { return e.line; })[0];
     if (first) { var fi = S.files().findIndex(function (f) { return f.name === (first.file && lastErrors[first.file] ? first.file : main); }); if (fi >= 0 && fi !== S.active()) S.openTab(fi); try { var ln = S.editor.view.state.doc.line(Math.max(1, Math.min(S.editor.view.state.doc.lines, first.line))); S.editor.view.dispatch({ selection: { anchor: ln.from }, scrollIntoView: true }); } catch (er) {} }
   }
-  var busy = false, warmT = 0, WARM_MS = 120000;
+  var busy = false;
   async function run() {
     if (busy || S.running()) return;
     var files = cppFiles();
@@ -207,11 +207,14 @@
     var raylib = Object.keys(map).some(function (k) { return /#\s*include\s*[<"](raylib|raymath|rlgl|rcamera)\.h[>"]/.test(map[k]); });
     if (!S.load("fullbuild-ok") && !confirm("C++ Run downloads the real Clang compiler once (about 37 MB" + (raylib ? ", plus about 5 MB for raylib" : "") + ") and keeps it on this device. While it builds it needs a lot of memory. Go ahead?")) return;
     S.store("fullbuild-ok", "1");
-    var reads = Object.keys(map).some(function (k) { return /\b(std::)?(cin|getline|scanf|getchar|fgets)\b/.test(map[k]); });
-    var stdin = "";
     S.showPane("console"); S.conClear();
-    if (reads && !raylib) {
-      var ans = await S.readLine("This program reads input. Type all of it first — separate lines with |");
+    var cppm = await loadCpp();
+    var reads = !raylib && cppm.readsInput(map), live = reads && !cppm.usesExceptions(map);
+    var stdin = "";
+    if (reads && !live) {
+      // Asyncify (how a program waits for typing here) can't be combined with C++ exceptions, so a program that uses
+      // try / throw / catch gets its input up front, exactly as in v3
+      var ans = await S.readLine("This program reads input and uses try/catch, so type all of its input first — separate lines with |");
       if (ans == null) return;
       stdin = ans.split("|").map(function (x) { return x.trim(); }).join("\n") + "\n";
     }
@@ -219,14 +222,8 @@
     S.conNote("C++: " + files.map(function (f) { return f.name; }).join(", ") + " → Clang 22 → WebAssembly" + (raylib ? " → raylib canvas" : ""), "");
     var t0 = performance.now(), lastPct = -1;
     try {
-      var cpp = await loadCpp();
-      clearTimeout(warmT);
-      var r = await cpp.build(map, { keepWarm: true, onProgress: function (ph, a, b) {
-        if (ph === "download" && b) { var pc = Math.floor(a * 100 / b); if (pc !== lastPct && pc % 10 === 0) { lastPct = pc; S.status("Clang " + pc + "%", "run"); } }
-        else if (/^download-/.test(ph)) S.status("raylib download…", "run");
-        else if (ph === "compile") S.status("Compiling…", "run");
-        else if (ph === "asyncify") S.status("Preparing the game…", "run");
-      } });
+      var cpp = cppm;
+      var r = await cpp.build(map, { interactive: live, keepWarm: false, onProgress: progress(function () { return lastPct; }, function (v) { lastPct = v; }) });
       if (!r.ok) {
         S.conNote("Clang found " + (r.errors || []).length + " problem" + ((r.errors || []).length === 1 ? "" : "s") + " (" + Math.round(r.totalMs || 0) + " ms):", "bad");
         showErrors(r.errors || [], files);
@@ -237,14 +234,57 @@
       S.conNote("Built by Clang in " + (r.totalMs / 1000).toFixed(1) + " s · " + Math.round(r.wasm.byteLength / 1024) + " KB of wasm. Running:", "ok");
       window.EppCppLast = { totalMs: r.totalMs, stats: r.stats, bytes: r.wasm.byteLength, raylib: r.raylib };
       if (r.raylib) await runRaylib(r.wasm, t0);
+      else if (r.interactive) await runLive(r.wasm, t0);
       else await runConsole(r.wasm, stdin, t0);
     } catch (e) {
       S.conNote("C++ Run stopped: " + (e && e.message || e), "bad");
     } finally {
-      // keep Clang loaded for 2 minutes so the next Run is quick; then give the memory back
-      clearTimeout(warmT); warmT = setTimeout(function () { try { if (CPP && !busy) CPP.release(); } catch (e) {} }, WARM_MS);
+      // v4: Clang is ended as soon as the build is done (keepWarm:false), so a running game or program never shares
+      // memory with the compiler. (v3 kept it loaded for 2 minutes.)
       busy = false; cur = null; S.setBusy(false);
     }
+  }
+  function progress(getPct, setPct) {
+    return function (ph, a, b) {
+      if (ph === "download" && b) { var pc = Math.floor(a * 100 / b); if (pc !== getPct() && pc % 10 === 0) { setPct(pc); S.status("Clang " + pc + "%", "run"); } }
+      else if (/^download-/.test(ph)) S.status("raylib download…", "run");
+      else if (ph === "compile") S.status("Compiling…", "run");
+      else if (ph === "asyncify") S.status("Preparing…", "run");
+    };
+  }
+  /* ---------- v4: input typed while the program runs ---------- */
+  var liveIn = null;   // the open input row's finish(), so Stop can close it
+  function liveRead() {
+    return new Promise(function (resolve) {
+      var con = S.con(), last = con.lastElementChild; if (last) last.dataset.closed = "1";
+      var row = document.createElement("div"); row.className = "es-in-row es-in-live";
+      row.innerHTML = '<span class="es-in-p">›</span><input class="es-in" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="send" aria-label="The program is waiting: type a line, then press Enter" />' +
+        '<button type="button" class="es-btn es-sm es-in-send">Enter</button><button type="button" class="es-btn es-sm es-in-eof" title="End of input (Ctrl+D): tells the program there is nothing more to read">End</button>';
+      con.appendChild(row); con.scrollTop = con.scrollHeight;
+      var inp = row.querySelector("input");
+      function finish(v) {
+        if (liveIn !== finish) return; liveIn = null;
+        row.innerHTML = '<span class="es-in-p">›</span><span class="es-in-done">' + esc(v == null ? "(end of input)" : v) + "</span>";
+        resolve(v);
+      }
+      liveIn = finish;
+      inp.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") { e.preventDefault(); finish(inp.value); }
+        else if ((e.key === "d" || e.key === "D") && e.ctrlKey) { e.preventDefault(); finish(null); }
+      });
+      row.querySelector(".es-in-send").addEventListener("click", function () { finish(inp.value); });
+      row.querySelector(".es-in-eof").addEventListener("click", function () { finish(null); });
+      S.status("Waiting for you to type…", "run");
+      setTimeout(function () { try { inp.focus({ preventScroll: true }); } catch (e) { inp.focus(); } }, 30);
+    }).then(function (v) { S.status("Running…", "run"); return v; });
+  }
+  async function runLive(wasm, t0, label) {
+    S.status("Running…", "run");
+    cur = { kind: "console" };
+    var code = await CPP.runConsoleLive(wasm, { readLine: liveRead, print: function (t) { S.conWrite(String(t), "out"); }, printErr: function (t) { S.conWrite(String(t), "err"); }, timeoutMs: 60000 });
+    if (liveIn) liveIn(null);
+    S.conNote((label || "Finished") + (code ? " with exit code " + code : "") + " · " + Math.round(performance.now() - t0) + " ms total", code ? "bad" : "ok");
+    return code;
   }
   async function runConsole(wasm, stdin, t0) {
     S.status("Running…", "run");
@@ -275,10 +315,85 @@
   function stop() {
     if (!cur) { if (busy && CPP) { CPP.release(); return true; } return false; }   // stopping during a build cancels it
     if (cur.kind === "raylib" && cur.ctl) cur.ctl.stop();
-    else if (cur.kind === "console" && CPP) CPP.stopConsole();
+    else if (cur.kind === "console" && CPP) { CPP.stopConsole(); if (liveIn) liveIn(null); }
     return true;
   }
   function handlesRun() { return isActive(); }
+
+  /* ---------- v4: English++ Full build (console, live input, and raylib games) ----------
+     English++ -> the engine's C++ View -> real Clang 22 -> console runner or the raylib canvas. epp-studio.js calls
+     fullBuildEpp() first; it returns a promise when it takes the build (every program today). */
+  var BAD_VIEW = /^\/\/ (line \d+:|The C\+\+ View (is|stopped|is made)|C\+\+ View:)/;
+  // the C++ View ends each line with "// <the English++ line>": find which English++ line a C++ line came from
+  function eppLineOf(cppText, cppLine, main) {
+    var L = cppText.split("\n")[cppLine - 1] || "", m = /\/\/ (.*)$/.exec(L);
+    if (!m) return null;
+    var want = m[1].trim(), src = main.split("\n");
+    for (var i = 0; i < src.length; i++) if (src[i].trim() === want) return { line: i + 1, text: want };
+    return { line: null, text: want };
+  }
+  function fullBuildEpp() {
+    var M = S.engine();
+    if (!M) return null;
+    if (busy || S.running()) return Promise.resolve();
+    S.syncActive();
+    var list = S.fileList(), main = list[0].text;
+    S.showPane("console");
+    if (/^\s*now\s+xlb\s+qt\b/mi.test(main)) {
+      S.conClear(); S.conNote("Full build: Qt is a look-alike here, so it has no C++ to build. Use Run.", "bad");
+      return Promise.resolve();
+    }
+    // imported files (xim) are written to the engine's disk first, exactly as Run does, so the C++ View can bring them in
+    try { (M.fsList() || []).forEach(function (p) { if (/\.epp$/.test(p) && !list.some(function (f) { return f.name === p; })) M.fsRemove(p); }); } catch (e) {}
+    list.forEach(function (f) { if (!isCppName(f.name)) try { M.fsWrite(f.name, f.text); } catch (e) {} });
+    var cpp = "";
+    try { cpp = M.cpp(main) || ""; } catch (e) { cpp = "// C++ View: " + (e && e.message || e); }
+    if (!cpp || BAD_VIEW.test(cpp)) { S.conClear(); S.conNote("Full build needs a complete C++ View. " + cpp.split("\n").slice(0, 2).join(" ").replace(/\/\/ /g, ""), "bad"); return Promise.resolve(); }
+    return fullBuildRun(cpp, main);
+  }
+  async function fullBuildRun(cpp, main) {
+    var raylib = /#\s*include\s*[<"](raylib|raymath|rlgl|rcamera)\.h[>"]/.test(cpp);
+    if (!S.load("fullbuild-ok") && !confirm("Full build downloads the real Clang compiler once (about 37 MB" + (raylib ? ", plus about 5 MB for raylib" : "") + ") and keeps it on this device. While it builds it needs a lot of memory. Go ahead?")) return;
+    S.store("fullbuild-ok", "1");
+    var fbBtn = $("esFullBuild");
+    busy = true; S.setBusy(true); if (fbBtn) fbBtn.disabled = true;
+    S.conClear(); S.conNote("Full build: English++ → C++ → Clang → WebAssembly" + (raylib ? " → raylib canvas" : ""), "");
+    var t0 = performance.now(), lastPct = -1, stdin = "", map = { "main.cpp": cpp };
+    try {
+      var cppm = await loadCpp();
+      var reads = !raylib && cppm.readsInput(map), live = reads && !cppm.usesExceptions(map);
+      if (reads && !live) {
+        var ans = await S.readLine("This program reads input. Full build needs all of it first — type the answers separated by | ");
+        stdin = ans == null ? "" : ans.split("|").map(function (x) { return x.trim(); }).join("\n") + "\n";
+      }
+      var f = cppm.features(raylib, live);
+      if (!f.ok) { S.conNote("This browser can't do Full build: missing " + f.missing.join(", ") + ". Run still works.", "bad"); return; }
+      S.status("Building…", "run");
+      var r = await cppm.build(map, { interactive: live, keepWarm: false, onProgress: progress(function () { return lastPct; }, function (v) { lastPct = v; }) });
+      if (!r.ok) {
+        S.conNote("Clang refused the C++ (" + Math.round(r.totalMs || 0) + " ms):", "bad");
+        (r.errors || []).slice(0, 12).forEach(function (e) {
+          var at = e.line ? eppLineOf(cpp, e.line, main) : null;
+          S.conWrite((e.line ? "C++ line " + e.line + (e.column ? ":" + e.column : "") + "  " : "") + e.message + "\n" + (at ? "   from English++ " + (at.line ? "line " + at.line + ": " : "") + at.text + "\n" : ""), "err");
+        });
+        window.EppFullBuildLast = { ok: false, errors: r.errors, raylib: raylib };
+        return;
+      }
+      S.conNote("Built by Clang in " + (r.totalMs / 1000).toFixed(1) + " s · " + Math.round(r.wasm.byteLength / 1024) + " KB of wasm. Running" + (live ? " (type when it asks)" : "") + ":", "ok");
+      window.EppFullBuildLast = { ok: true, totalMs: r.totalMs, stats: r.stats, bytes: r.wasm.byteLength, raylib: r.raylib, interactive: r.interactive };
+      if (r.raylib) { await runRaylib(r.wasm, t0); S.conNote("Full build finished · " + Math.round(performance.now() - t0) + " ms total", "ok"); }
+      else if (r.interactive) await runLive(r.wasm, t0, "Full build finished");
+      else {
+        S.status("Running…", "run"); cur = { kind: "console" };
+        var code = await cppm.runConsole(r.wasm, { stdin: stdin, print: function (t) { S.conWrite(String(t), "out"); }, printErr: function (t) { S.conWrite(String(t), "err"); }, timeoutMs: 30000 });
+        S.conNote("Full build finished" + (code ? " with exit code " + code : "") + " · " + Math.round(performance.now() - t0) + " ms total", code ? "bad" : "ok");
+      }
+    } catch (e) {
+      S.conNote("Full build stopped: " + (e && e.message || e) + ". Run still works.", "bad");
+    } finally {
+      busy = false; cur = null; S.setBusy(false); if (fbBtn) fbBtn.disabled = false;
+    }
+  }
 
   function outline() {
     if (!isActive()) return false;
@@ -313,6 +428,6 @@
     onTab();
   }
   window.EppCppMode = { init: init, onTab: onTab, isActive: isActive, isCppName: isCppName, run: run, stop: stop, handlesRun: handlesRun, openBlocks: openBlocks, outline: outline,
-    examples: examples, loadExample: loadExample, openFromEnglish: openFromEnglish, newProgram: newProgram, blocks: BLOCKS, insertBlock: insertBlock, plain: plain,
+    examples: examples, loadExample: loadExample, openFromEnglish: openFromEnglish, fullBuildEpp: fullBuildEpp, newProgram: newProgram, blocks: BLOCKS, insertBlock: insertBlock, plain: plain,
     busy: function () { return busy; }, current: function () { return cur; } };
 })();

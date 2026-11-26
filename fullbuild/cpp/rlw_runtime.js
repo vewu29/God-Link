@@ -47,7 +47,7 @@ export function runRaylib(wasm, opts) {
   let ex = null, mem = null, gl = null;
   let stopReq = false, finished = false, frames = 0, t0 = performance.now(), fpsWin = [], lastFrame = 0;
   let debt = 0, lastTs = 0, ivs = [], drawn = false, holdMs = 0;   // drawn: GL drawing since the last EndDrawing
-  let sleeps = 0, sleepMs = 0, busyMs = 0, stepT = 0;
+  let sleeps = 0, sleepMs = 0, busyMs = 0, stepT = 0, midYields = 0;
   let pending = null, timer = 0, raf = 0, killT = 0;
   let stdinBuf = enc.encode(opts.stdin || '');
   const queue = [];           // input events waiting for rlw_poll()
@@ -284,6 +284,7 @@ export function runRaylib(wasm, opts) {
   function suspend(kind, ms) {
     if (ex.asyncify_get_state() === 2) { ex.asyncify_stop_rewind(); return; }   // resumed: carry on
     const v = I32(); v[DATA >> 2] = DATA + 8; v[(DATA >> 2) + 1] = DATA + SIZE;
+    if (drawn) midYields++;   // v4: counted for the tests; the rules above keep it at 0 (a yield only after EndDrawing)
     pending = { kind, ms };
     ex.asyncify_start_unwind(DATA);
   }
@@ -392,7 +393,7 @@ export function runRaylib(wasm, opts) {
     key(k, down) { queue.push(['key', k, down ? 1 : 0]); },
     stats() {
       const avg = fpsWin.length ? fpsWin.reduce((a, b) => a + b, 0) / fpsWin.length : 0;
-      return { sleeps, sleepMs: Math.round(sleepMs), busyMs: Math.round(busyMs), frames, fps: avg ? 1000 / avg : 0, ms: performance.now() - t0, memoryBytes: mem ? mem.buffer.byteLength : 0, finished };
+      return { sleeps, midYields, sleepMs: Math.round(sleepMs), busyMs: Math.round(busyMs), frames, fps: avg ? 1000 / avg : 0, ms: performance.now() - t0, memoryBytes: mem ? mem.buffer.byteLength : 0, finished };
     },
     get gl() { return gl; }
   };
