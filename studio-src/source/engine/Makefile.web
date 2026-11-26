@@ -1,0 +1,20 @@
+# Web build: em++ -> dist/epp_engine.js + .wasm  (run: source ~/workspace/.emsdk/emsdk_env.sh; make -f Makefile.web)
+CORE=$(filter-out src/native_none.cpp src/main_native.cpp,$(wildcard src/*.cpp))
+WEB=$(wildcard src_web/*.cpp)
+OBJ=$(patsubst src/%.cpp,obj_web/%.o,$(CORE)) $(patsubst src_web/%.cpp,obj_web/web_%.o,$(WEB))
+RL=$(HOME)/workspace/.raylib-web
+CXXFLAGS=-std=c++20 -O2 -fexceptions -I$(RL) -DPLATFORM_WEB -Wno-unused-function
+LDFLAGS=-O2 -fexceptions -sASYNCIFY -sASYNCIFY_STACK_SIZE=1048576 -sSTACK_SIZE=8388608 -sALLOW_MEMORY_GROWTH=1 \
+  -sINITIAL_MEMORY=67108864 -sUSE_GLFW=3 -sMAX_WEBGL_VERSION=2 -sMIN_WEBGL_VERSION=2 -sFULL_ES3=1 \
+  -sMODULARIZE=1 -sEXPORT_NAME=createEppEngine -sENVIRONMENT=web \
+  -sEXPORTED_RUNTIME_METHODS=ccall,UTF8ToString,stringToNewUTF8 -sEXPORTED_FUNCTIONS=_malloc,_free \
+  -sFILESYSTEM=1 --post-js src_web/post.js
+dist/epp_engine.js: $(OBJ) src_web/post.js
+	mkdir -p dist
+	em++ -o $@ $(OBJ) $(RL)/libraylib.a $(LDFLAGS)
+obj_web/%.o: src/%.cpp src/*.h
+	@mkdir -p obj_web
+	em++ $(CXXFLAGS) -c $< -o $@
+obj_web/web_%.o: src_web/%.cpp src/*.h src_web/*.inc
+	@mkdir -p obj_web
+	em++ $(CXXFLAGS) -c $< -o $@

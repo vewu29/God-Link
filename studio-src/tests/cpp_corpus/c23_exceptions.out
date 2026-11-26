@@ -1,0 +1,19 @@
+result unwind risky
+20
+result unwind risky
+invalid_argument: negative
+result unwind risky
+MyError: zero not allowed code 42
+result unwind risky
+int thrown: 7
+unwind risky
+rethrowing 42
+outer got: zero not allowed
+out_of_range caught
+inner caught: inner
+outer caught: from inner handler
+catch-all
+substr out_of_range
+stoi invalid_argument
+rethrown ptr: stored 9
+noexcept lambda 1 1

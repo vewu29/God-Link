@@ -1,0 +1,13 @@
+rect area 6
+square area 16
+shape area 3
+total 25
+woof meow ... 
+is rect? 1 is circle? 0
+~Shape
+~Square
+~Rect
+~Shape
+~Rect
+~Shape
+done

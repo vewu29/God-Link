@@ -1,0 +1,159 @@
+// wasm_api.cpp — the engine's face to the Web Studio page (see ENGINE_API.md).
+#include "../src/eh.h"
+#include "../src/interp.h"
+#include <emscripten.h>
+#include <emscripten/html5.h>
+#include <string>
+
+EM_JS(void, js_print, (const char* s, int len, int isErr), {
+  var t = UTF8ToString(s, len);
+  if (isErr) { if (Module.printErr) Module.printErr(t); }
+  else if (Module.print) Module.print(t);
+});
+EM_JS(void, js_event, (const char* json), {
+  if (Module.eppEvent) { try { Module.eppEvent(JSON.parse(UTF8ToString(json))); } catch (e) { console.error(e); } }
+});
+EM_ASYNC_JS(char*, js_read_line, (const char* prompt), {
+  var r = Module.eppReadLine ? await Module.eppReadLine(UTF8ToString(prompt)) : null;
+  if (r === null || r === undefined) return 0;
+  return stringToNewUTF8(String(r));
+});
+EM_ASYNC_JS(void, js_sleep, (int ms), {
+  await new Promise(function (res) { setTimeout(res, ms); });
+});
+// wait for the next screen frame (or more, when the game asked for a lower frame rate)
+EM_ASYNC_JS(void, js_wait_frame, (double minMs), {
+  var start = Module.__eppLastFrame || 0;
+  await new Promise(function (res) {
+    function tick(t) {
+      if (Module.__eppStop || !start || t - start >= minMs - 2) { Module.__eppLastFrame = t; res(); }
+      else requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+});
+EM_ASYNC_JS(void, js_yield, (), {
+  await new Promise(function (res) { setTimeout(res, 0); });
+});
+EM_JS(int, js_stop_flag, (), { return Module.__eppStop ? 1 : 0; });
+EM_JS(double, js_now, (), { return performance.now(); });
+
+namespace epp {
+void QtReset();
+void WebEvent(const std::string& json) { js_event(json.c_str()); }
+bool WebStopRequested() { return js_stop_flag() != 0; }
+void WebWaitFrame(double fps) {
+  if (g_interp) g_interp->Flush();
+  js_wait_frame(fps > 0 ? 1000.0 / fps : 0);
+}
+
+__attribute__((weak)) std::string ToCpp(const std::string&) { return "// The C++ View is not in this build yet.\n"; }
+
+static std::string Json(const std::string& s) {
+  std::string o = "\"";
+  for (unsigned char c : s) {
+    switch (c) {
+      case '"': o += "\\\""; break;
+      case '\\': o += "\\\\"; break;
+      case '\n': o += "\\n"; break;
+      case '\r': o += "\\r"; break;
+      case '\t': o += "\\t"; break;
+      default:
+        if (c < 32) { char b[8]; snprintf(b, sizeof b, "\\u%04x", c); o += b; }
+        else o += (char)c;
+    }
+  }
+  return o + "\"";
+}
+static std::string g_ret;
+static bool g_busy = false;   // a program is running: checks wait, so they can't disturb its kinds and classes
+static double g_lastYield = 0;
+
+static void SetupHost() {
+  g_host.out = [](const std::string& s) { js_print(s.data(), (int)s.size(), 0); };
+  g_host.err = [](const std::string& s) { js_print(s.data(), (int)s.size(), 1); };
+  g_host.readLine = [](const std::string& prompt, std::string& line) {
+    char* r = js_read_line(prompt.c_str());
+    if (!r) return false;
+    line = r; free(r);
+    if (!line.empty() && line.back() == '\n') line.pop_back();
+    return true;
+  };
+  g_host.sleep = [](int ms) { if (g_interp) g_interp->Flush(); js_sleep(ms < 0 ? 0 : ms); g_lastYield = js_now(); };
+  g_host.stopRequested = [] { return js_stop_flag() != 0; };
+  g_host.yield = [] {
+    double t = js_now();
+    if (t - g_lastYield > 40) {      // keep the page alive during long loops
+      if (g_interp) g_interp->Flush();
+      js_yield();
+      g_lastYield = js_now();
+    }
+  };
+  g_host.event = [](const std::string& j) { js_event(j.c_str()); };
+}
+}  // namespace epp
+
+using namespace epp;
+extern "C" {
+EMSCRIPTEN_KEEPALIVE const char* epp_check(const char* src) {
+  if (g_busy) { g_ret = "{\"ok\":true,\"errors\":[],\"busy\":true}"; return g_ret.c_str(); }
+  CheckResult r = Check(src);
+  std::string o = "{\"ok\":" + std::string(r.errors.empty() ? "true" : "false") + ",\"errors\":[";
+  for (size_t k = 0; k < r.errors.size(); ++k) {
+    if (k) o += ",";
+    o += "{\"line\":" + std::to_string(r.errors[k].line) + ",\"message\":" + Json(r.errors[k].msg) + ",\"file\":" + Json(r.errors[k].file) + "}";
+  }
+  g_ret = o + "]}";
+  return g_ret.c_str();
+}
+EMSCRIPTEN_KEEPALIVE const char* epp_cpp(const char* src) {
+  if (g_busy) { g_ret = "// The C++ View is made when the program isn't running. Press Stop, then look again.\n"; return g_ret.c_str(); }
+  std::string out;
+  Caught c = Protect([&] { out = ToCpp(src); });
+  if (c.k == CK_PROBLEM) out = "// line " + std::to_string(c.p.line) + ": " + c.p.msg + "\n";
+  else if (c.k != CK_NONE) out = "// The C++ View stopped on this program.\n";
+  g_ret = out;
+  return g_ret.c_str();
+}
+EMSCRIPTEN_KEEPALIVE const char* epp_run(const char* src) {
+  SetupHost();
+  g_lastYield = js_now();
+  std::string s = src;
+  Problem p{"", 0, ""};
+  QtReset();
+  // the page shows the right pane before the program starts
+  {
+    bool rl = s.find("xlb raylib") != std::string::npos || s.find("\"raylib.h\"") != std::string::npos;
+    bool qt = s.find("xlb qt") != std::string::npos;
+    if (rl) WebEvent("{\"type\":\"library\",\"name\":\"raylib\"}");
+    if (qt) WebEvent("{\"type\":\"library\",\"name\":\"qt\"}");
+  }
+  g_busy = true;
+  int code = RunProgram(s, &p);
+  g_busy = false;
+  NativeReset();
+  if (code == -1 || code == -2) {
+    if (code == -1) { std::string m = "line " + std::to_string(p.line) + ": " + p.msg + "\n"; js_print(m.c_str(), (int)m.size(), 1); }
+    g_ret = "{\"exitCode\":1,\"error\":{\"line\":" + std::to_string(p.line) + ",\"message\":" + Json(p.msg) + ",\"stopped\":" + (code == -2 ? "true" : "false") + "}}";
+  } else {
+    g_ret = "{\"exitCode\":" + std::to_string(code) + "}";
+  }
+  WebEvent("{\"type\":\"done\",\"exitCode\":" + std::to_string(code < 0 ? 1 : code) + "}");
+  return g_ret.c_str();
+}
+EMSCRIPTEN_KEEPALIVE void epp_fs_write(const char* path, const char* text) { g_disk.files[path] = text; }
+EMSCRIPTEN_KEEPALIVE const char* epp_fs_read(const char* path) {
+  auto it = g_disk.files.find(path);
+  if (it == g_disk.files.end()) return nullptr;
+  g_ret = it->second;
+  return g_ret.c_str();
+}
+EMSCRIPTEN_KEEPALIVE const char* epp_fs_list() {
+  std::string o = "[";
+  bool first = true;
+  for (auto& f : g_disk.files) { if (!first) o += ","; first = false; o += Json(f.first); }
+  g_ret = o + "]";
+  return g_ret.c_str();
+}
+EMSCRIPTEN_KEEPALIVE void epp_fs_remove(const char* path) { g_disk.files.erase(path); }
+}

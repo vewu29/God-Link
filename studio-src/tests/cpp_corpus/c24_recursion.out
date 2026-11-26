@@ -1,0 +1,13 @@
+fib(0)=0
+fib(5)=5
+fib(10)=55
+fib(15)=610
+fib(20)=6765
+fib(90)=2880067194370816120
+move disk 3 A->B
+move disk 4 A->C
+move disk 3 B->C
+hanoi(4) moves 15
+ackermann(2,3)=9
+abc acb bac bca cba cab 
+depth 10000

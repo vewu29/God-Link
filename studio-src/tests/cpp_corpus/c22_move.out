@@ -1,0 +1,17 @@
+alloc 4
+copy 4
+move 4
+a 0 b 4 c 4
+move 4
+took 4 sum 6
+free 4
+alloc 3
+copy 4
+assign 4
+free 3
+d 4
+t len 51
+2 x
+end
+free 4
+free 4

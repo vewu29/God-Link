@@ -1,0 +1,24 @@
+acquire U1
+u empty 1 u2 U1
+acquire U3
+release U1
+after reset
+release U3
+--- shared
+acquire S
+use_count 2
+weak expired 0
+use_count 1
+release S
+weak expired 1 lock null 1
+--- list
+b.prev = a count 2
+~Node a
+~Node b
+--- array
+16
+acquire P1
+acquire P2
+release P1
+end main
+release P2

@@ -1,0 +1,10 @@
+1     2|3    |00004
+ff FF 0xff 10
+3.14    2.718 1.234568e+04 0.0001 1e+08
+abc|     right|left      |
+xyz
+-9000000000 18000000000
+%literal%
+count me
+printed 9 chars
+id-007

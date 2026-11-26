@@ -1,0 +1,5 @@
+[the quick brown fox] 19
+<the><quick><brown><fox>
+110
+quick 10
+constexpr view

@@ -1,0 +1,36 @@
+
+/* ================= v3: C++ mode ================= */
+.es-app { --cpp-kw: #7c1d9e; --cpp-type: #0b5cad; --cpp-str: #0b6b3a; --cpp-num: #9a3412; --cpp-com: #5b6b82; --cpp-pp: #8a4b00; --cpp-fn: #1d4ed8; --cpp-prop: #0f5f7a; --cpp-op: #3b5b85; }
+:root[data-mode="dark"] .es-app { --cpp-kw: #e6b3ff; --cpp-type: #8fd0ff; --cpp-str: #a7f3c4; --cpp-num: #ffb38a; --cpp-com: #9fb3cf; --cpp-pp: #ffd27a; --cpp-fn: #93c5fd; --cpp-prop: #7ff0dd; --cpp-op: #a9c8ee; }
+.cpp-kw { color: var(--cpp-kw); font-weight: 700; }
+.cpp-type { color: var(--cpp-type); font-weight: 600; }
+.cpp-str { color: var(--cpp-str); }
+.cpp-num { color: var(--cpp-num); }
+.cpp-com { color: var(--cpp-com); font-style: italic; }
+.cpp-pp { color: var(--cpp-pp); font-weight: 600; }
+.cpp-fn { color: var(--cpp-fn); }
+.cpp-prop { color: var(--cpp-prop); }
+.cpp-op { color: var(--cpp-op); }
+.es-editor .cm-cpp .cm-matchingBracket { background: rgba(56, 189, 248, 0.25); outline: 1px solid rgba(56, 189, 248, 0.6); }
+.es-lang-badge[hidden] { display: none !important; }
+.es-lang-badge { flex: none; align-self: center; margin: 0 2px 0 auto; position: sticky; right: 0; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--line); font: 700 12px/1.2 var(--es-mono); color: var(--muted); white-space: nowrap; }
+.es-lang-cpp .es-lang-badge { color: #fff; background: linear-gradient(135deg, #2f7fe0, #1e3a8a); border-color: #2f7fe0; }
+/* the English++ word card and English++ keys row stay with English++ files */
+.es-lang-cpp .es-card { display: none !important; }
+.es-acc-cpp { display: none !important; }
+.es-touch.es-lang-cpp .es-acc-cpp { display: flex !important; }
+.es-touch.es-lang-cpp #esAcc { display: none !important; }
+.es-app.game-on:not(.kb-up) .es-acc-cpp { display: none !important; }
+.es-lang-cpp #esRoots { opacity: 0.55; }
+/* the C++ game canvas sits in the same box as the English++ one */
+#esCppCanvas { display: none; }
+.es-cpp-game #esCppCanvas { display: block; }
+.es-cpp-game #epp-canvas { display: none; }
+/* compiler errors in the console: tap one to jump to its line */
+.es-cpp-err { display: block; width: 100%; text-align: left; margin: 4px 0; padding: 8px 10px; min-height: 44px; border-radius: 10px; border: 1px solid rgba(255, 140, 120, 0.45); background: rgba(255, 90, 70, 0.10); color: #ffd6cf; font: 14px/1.45 var(--es-mono); cursor: pointer; white-space: pre-wrap; word-break: break-word; }
+.es-cpp-err b { color: #fff; }
+.es-cpp-plain { display: block; margin-top: 3px; color: #ffe9a8; font: 600 13.5px/1.4 "Sora", sans-serif; }
+.es-cpp-label { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.es-cpp-open { margin-left: auto; }
+.cm-cpp .cm-lintRange-error { background-image: none; text-decoration: underline wavy #ef4444; text-decoration-skip-ink: none; text-underline-offset: 3px; }
+.cm-cpp .cm-lintRange-warning { background-image: none; text-decoration: underline wavy #f59e0b; text-underline-offset: 3px; }

@@ -1,0 +1,12 @@
+alice=31
+bob=25
+carol=41
+dave=19
+count bob 1 count zed 0
+found carol
+size 3 first alice
+1 3 5 9 
+5 9 1
+bc 2
+3 4
+3:9 2:4 1:1 

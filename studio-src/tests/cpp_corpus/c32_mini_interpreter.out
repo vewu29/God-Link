@@ -1,0 +1,27 @@
+> 1 + 2 * 3
+7
+> (1 + 2) * 3
+9
+> x = 10
+x = 10
+> y = x * x - 1
+y = 99
+> y / 3
+33
+> y % 7
+1
+> 2 ^ 3 ^ 2
+512
+> -x + 4
+-6
+> z + 1
+error: undefined variable 'z'
+> 10 / (x - 10)
+error: division by zero
+> 3 +
+error: unexpected token ''
+> total = x + y + 2^10
+total = 1133
+> total
+1133
+stack top 140

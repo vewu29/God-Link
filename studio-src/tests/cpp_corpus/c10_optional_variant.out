@@ -1,0 +1,14 @@
+'42' -> 42 or 42
+'x1' -> none or -1
+'' -> none or -1
+'007' -> 7 or 7
+0
+1 now 3
+bad_optional_access
+int 1
+double 2.5
+string hi
+IDS
+0 1 5
+1 five 1
+bad_variant_access

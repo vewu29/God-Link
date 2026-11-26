@@ -1,0 +1,23 @@
+ctor global
+main start
+ctor x
+ctor y
+inner scope end
+dtor y
+ctor member-a
+ctor member-b
+Holder body
+~Holder body
+dtor member-b
+dtor member-a
+copy x'
+ctor static-local
+ctor vec0
+ctor vec1
+dtor vec1
+dtor vec0
+main end
+dtor x'
+dtor x
+dtor static-local
+dtor global

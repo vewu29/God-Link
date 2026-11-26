@@ -1,0 +1,9 @@
+ok alice->bob 1999
+failed: insufficient funds for bob
+failed: insufficient funds for carol
+failed: no account dave
+ok alice->carol 4005
+failed: deposit must be positive
+ alice $39.96 (3 ops)
+   bob $45.49 (2 ops)
+ carol $40.05 (1 ops)

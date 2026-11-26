@@ -1,0 +1,24 @@
+{
+  "name": "ui",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@codemirror/autocomplete": "6.20.4",
+    "@codemirror/commands": "6.11.2",
+    "@codemirror/language": "6.13.1",
+    "@codemirror/lint": "6.9.8",
+    "@codemirror/search": "6.7.3",
+    "@codemirror/state": "6.7.6",
+    "@codemirror/view": "6.44.0",
+    "@lezer/highlight": "1.2.5",
+    "codemirror": "6.0.1",
+    "esbuild": "0.28.2"
+  }
+}

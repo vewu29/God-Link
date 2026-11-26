@@ -1,0 +1,3633 @@
+=== #0 [2.  Hello!]
+out prn "Hello, V!"
+--- out
+Hello, V!
+=== #1 [2.  Hello!]
+x is 6
+x add 1
+out prn x
+--- out
+7
+=== #2 [3.  Your First Program]
+out prn "One"
+out prn "Two"
+out prn "Three"
+--- out
+One
+Two
+Three
+=== #3 [3.  Your First Program]
+note This program counts to two.
+out prn 1
+note Now the second one.
+out prn 2
+--- out
+1
+2
+=== #4 [4.  The Three Words]
+a is 2
+b is 3
+c is a+b
+out prn c
+--- out
+5
+=== #5 [4.  The Three Words]
+n is 0
+now wfv now
+  n add 1
+  now ebk n==3
+out prn n
+--- out
+3
+=== #6 [4.  The Three Words]
+x is 6
+x igt 3
+  out prn "big"
+  out prn "wow"
+out prn "done"
+--- out
+big
+wow
+done
+=== #7 [4.  The Three Words]
+scores is 90&72&85
+out prn scores@0
+out prn nsq&16
+--- out
+90
+4
+=== #8 [6.  Names and Values]
+score is 7
+pet is "Rex"
+happy is yes
+out prn score
+out prn pet
+out prn happy
+--- out
+7
+Rex
+yes
+=== #9 [6.  Names and Values]
+score is 7
+out prn score
+out prn "score"
+--- out
+7
+score
+=== #10 [6.  Names and Values]
+x is 6
+out prn x
+x is 7
+out prn x
+--- out
+6
+7
+=== #11 [6.  Names and Values]
+apples is 3
+pears is apples+2
+out prn pears
+--- out
+5
+=== #12 [6.  Names and Values]
+age is 7
+price is 2.5
+name is "Ada"
+first is 'A'
+ready is yes
+out prn age
+out prn price
+out prn name
+out prn first
+out prn ready
+--- out
+7
+2.5
+Ada
+A
+yes
+=== #13 [6.  Names and Values]
+x is 6.0
+x is 2.5
+out prn x
+--- out
+2.5
+=== #14 [6.  Names and Values]
+score mak num
+name mak txt
+ready mak yno
+out prn score
+out prn "[@name]"
+out prn ready
+--- out
+0
+[]
+nay
+=== #15 [6.  Names and Values]
+stars mak big
+stars is 9000000000
+tiny mak sml
+tiny is 30000
+count mak pos
+count is 12
+level mak byt
+level is 200
+half mak flo
+half is 0.5
+out prn stars
+out prn tiny
+out prn count
+out prn level
+out prn half
+--- out
+9000000000
+30000
+12
+200
+0.5
+=== #16 [6.  Names and Values]
+out prn num&2.9
+out prn dec&3
+out prn txt&42
+out prn ltr&65
+out prn yno&0
+out prn big&5
+out prn flo&0.5
+--- out
+2
+3
+42
+A
+nay
+5
+0.5
+=== #17 [6.  Names and Values]
+DAYS mkn 7
+out prn DAYS
+--- out
+7
+=== #18 [7.  Printing]
+out put "one "
+out put "two "
+out prn "three"
+out prn "four"
+--- out
+one two three
+four
+=== #19 [7.  Printing]
+name is "Ada"
+age is 36
+out prn "@name is @age years old."
+--- out
+Ada is 36 years old.
+=== #20 [7.  Printing]
+scores is 90&72
+out prn "The first score is @scores@0."
+out prn "All of them: @scores"
+--- out
+The first score is 90.
+All of them: [90, 72]
+=== #21 [7.  Printing]
+out prn "Mail me @@ home."
+--- out
+Mail me @ home.
+=== #22 [7.  Printing]
+name is "Ada"
+age is 36
+out prn name&age
+out prn name&age&"years"
+--- out
+Ada 36
+Ada 36 years
+=== #23 [7.  Printing]
+out prn "She said \"hello\"."
+out prn "line one\nline two"
+out prn "a\tb"
+out prn "C:\\games"
+--- out
+She said "hello".
+line one
+line two
+a	b
+C:\games
+=== #24 [7.  Printing]
+err prn "That file is missing."
+--- out
+That file is missing.
+=== #25 [7.  Printing]
+price is 2.5
+out prn tfx&price&2
+name is tpa&"Ada"&6
+out prn "[@name]"
+--- out
+2.50
+[Ada   ]
+=== #26 [8.  Math]
+x is 10
+x add 5
+out prn x
+x asb 3
+out prn x
+x aml 2
+out prn x
+x adv 4
+out prn x
+--- out
+15
+12
+24
+6
+=== #27 [8.  Math]
+x is 17
+x amd 5
+out prn x
+y is 2.0
+y apw 10
+out prn y
+--- out
+2
+1024
+=== #28 [8.  Math]
+a is 2
+b is 3
+total is a+b
+out prn total
+out prn a*b
+out prn 10-a
+--- out
+5
+6
+8
+=== #29 [8.  Math]
+y is 1+2*3
+out prn y
+--- out
+7
+=== #30 [8.  Math]
+sum is 1+2
+area is sum*4
+out prn area
+--- out
+12
+=== #31 [8.  Math]
+out prn 7/2
+out prn 7.0/2
+out prn 7%2
+--- out
+3
+3.5
+1
+=== #32 [8.  Math]
+out prn nsq&16
+out prn npw&2&10
+out prn nab&-5
+out prn nmx&3&8
+out prn nmn&3&8
+--- out
+4
+1024
+5
+8
+3
+=== #33 [8.  Math]
+out prn nro&2.5
+out prn ndn&2.9
+out prn nup&2.1
+out prn nwh&-2.9
+--- out
+3
+2
+3
+-2
+=== #34 [8.  Math]
+out prn nkb&5&0&10
+out prn nkb&50&0&10
+out prn nkb&-2&0&10
+--- out
+5
+10
+0
+=== #35 [8.  Math]
+out prn ngd&12&18
+out prn nmu&4&6
+out prn nfc&5
+out prn npe&7
+out prn nhi
+--- out
+6
+12
+120
+yes
+2147483647
+=== #36 [8.  Math]
+out prn npi
+out prn ncr&27
+out prn nhy&3&4
+out prn nsn&0
+out prn nco&0
+out prn ntn&0
+out prn nas&0
+out prn nac&1
+out prn nat&0
+out prn nep&0
+out prn nlg&1
+out prn nlx&100
+--- out
+3.14159
+3
+5
+0
+1
+0
+0
+0
+0
+1
+0
+2
+=== #37 [8.  Math]
+now rsd 7
+first is nra&1&100
+now rsd 7
+second is nra&1&100
+first seq second
+out prn "They match!"
+--- out
+They match!
+=== #38 [8.  Math]
+x is 6
+x and 3
+out prn x
+x is 6
+x aor 3
+out prn x
+x is 6
+x axr 3
+out prn x
+x is 6
+x asl 2
+out prn x
+x is 6
+x asr 1
+out prn x
+x ant 0
+out prn x
+--- out
+2
+7
+5
+24
+3
+-1
+=== #39 [9.  Text]
+first is "Ada"
+last is "Lovelace"
+whole is first+" "+last
+out prn whole
+--- out
+Ada Lovelace
+=== #40 [9.  Text]
+n is 42
+line is "n is "+txt&n
+out prn line
+--- out
+n is 42
+=== #41 [9.  Text]
+back is tnm&"7"
+out prn back+1
+half is tdc&"2.5"
+out prn half*2
+out prn tfx&3.14159&2
+--- out
+8
+5
+3.14
+=== #42 [9.  Text]
+word is "Hello"
+out prn tsz&word
+out prn word@0
+out prn word@4
+--- out
+5
+H
+o
+=== #43 [9.  Text]
+t is "Hi there"
+out prn tuc&t
+out prn tlc&t
+out prn ttc&"hi there"
+out prn tti&"  hi  "
+out prn trv&"abc"
+pad is tpa&"hi"&5
+out prn "[@pad]"
+--- out
+HI THERE
+hi there
+Hi There
+hi
+cba
+[hi   ]
+=== #44 [9.  Text]
+t is "Hello"
+out prn ths&t&"lo"
+out prn tbg&t&"He"
+out prn ted&t&"x"
+out prn tps&t&"l"
+out prn tps&t&"z"
+--- out
+yes
+yes
+nay
+2
+-1
+=== #45 [9.  Text]
+t is "Hello World"
+out prn tcu&t&0&5
+out prn trp&t&"World"&"You"
+out prn twd&t
+out prn tsp&"a,b,c"&","
+out prn tln&"one\ntwo"
+--- out
+Hello
+Hello You
+[Hello, World]
+[a, b, c]
+[one, two]
+=== #46 [9.  Text]
+out prn tmt&"a2"&"[0-9]+"
+out prn tmt&"ab"&"[0-9]+"
+out prn tmt&"a2"&"^[0-9]+$"
+t is "I have 2 cats and 10 fish"
+out prn tma&t&"[0-9]+"
+out prn trx&t&"[0-9]+"&"some"
+--- out
+yes
+nay
+nay
+[2, 10]
+I have some cats and some fish
+=== #47 [10.  Yes, No and Tests]
+age is 7
+old_enough is age>=6
+out prn old_enough
+out prn age==8
+--- out
+yes
+nay
+=== #48 [10.  Yes, No and Tests]
+name is "Ada"
+out prn name=="Ada"
+out prn name!="Bob"
+out prn "apple"<"pear"
+--- out
+yes
+yes
+yes
+=== #49 [10.  Yes, No and Tests]
+age is 7
+tall is yes
+out prn age>5&&tall
+out prn age>9||tall
+out prn !tall
+--- out
+yes
+yes
+nay
+=== #50 [10.  Yes, No and Tests]
+door_open is nay
+out prn door_open
+out prn !door_open
+out prn yno&5
+out prn yno&0
+--- out
+nay
+yes
+yes
+nay
+=== #51 [11.  If and Otherwise]
+x is 6
+x igt 3
+  out prn "big"
+out prn "done"
+--- out
+big
+done
+=== #52 [11.  If and Otherwise]
+x is 2
+x igt 3
+  out prn "big"
+out prn "done"
+--- out
+done
+=== #53 [11.  If and Otherwise]
+x is 3
+x ieq 3
+  out prn "equal"
+x ine 3
+  out prn "not equal"
+x ile 3
+  out prn "less or equal"
+x ige 3
+  out prn "greater or equal"
+--- out
+equal
+less or equal
+greater or equal
+=== #54 [11.  If and Otherwise]
+name is "Ada"
+name ieq "Ada"
+  out prn "Hi, Ada!"
+--- out
+Hi, Ada!
+=== #55 [11.  If and Otherwise]
+x is 2
+x igt 3
+  out prn "big"
+now oth now
+  out prn "small"
+--- out
+small
+=== #56 [11.  If and Otherwise]
+x is 4
+x ilt 2
+  out prn "small"
+x olt 5
+  out prn "medium"
+now oth now
+  out prn "large"
+--- out
+medium
+=== #57 [11.  If and Otherwise]
+age is 13
+age ilt 13
+  out prn "a child"
+age oeq 13
+  out prn "just turned teen"
+age ole 19
+  out prn "a teen"
+age oge 100
+  out prn "wow"
+age ogt 60
+  out prn "over sixty"
+age one 50
+  out prn "a grown-up"
+now oth now
+  out prn "exactly fifty"
+--- out
+just turned teen
+=== #58 [11.  If and Otherwise]
+sunny is yes
+warm is nay
+sunny ieq yes
+  warm ieq yes
+    out prn "Go swimming!"
+  now oth now
+    out prn "Bring a coat."
+now oth now
+  out prn "Stay in and code."
+--- out
+Bring a coat.
+=== #59 [11.  If and Otherwise]
+x is 6
+name is "Ada"
+x>3&&name=="Ada" ieq yes
+  out prn "both"
+x%2 ieq 0
+  out prn "even"
+--- out
+both
+even
+=== #60 [11.  If and Otherwise]
+x is 6
+size is iff&x>3&"big"&"small"
+out prn size
+--- out
+big
+=== #61 [11.  If and Otherwise]
+day is 6
+day bsw now
+  now bcs 6&7
+    out prn "the weekend"
+  now bcs 1
+    out prn "Monday"
+  now bdf now
+    out prn "a work day"
+--- out
+the weekend
+=== #62 [12.  Loops]
+i flt 3
+  out prn i
+--- out
+0
+1
+2
+=== #63 [12.  Loops]
+i fle 3
+  out prn i
+--- out
+0
+1
+2
+3
+=== #64 [12.  Loops]
+i fne 2
+  out prn i
+--- out
+0
+1
+=== #65 [12.  Loops]
+k is 1
+k fle 3
+  out prn k
+--- out
+1
+2
+3
+=== #66 [12.  Loops]
+count is 3
+count fgt 0
+  out prn count
+out prn "Blast off!"
+d is 2
+d fge 0
+  out prn d
+--- out
+3
+2
+1
+Blast off!
+2
+1
+0
+=== #67 [12.  Loops]
+n is 1
+n wlt 100
+  n aml 2
+out prn n
+--- out
+128
+=== #68 [12.  Loops]
+a is 0
+a weq 0
+  a is 1
+b is 0
+b wne 2
+  b add 1
+c is 0
+c wle 2
+  c add 1
+d is 5
+d wgt 2
+  d asb 1
+e is 5
+e wge 2
+  e asb 1
+out prn a&b&c&d&e
+--- out
+1 2 3 2 1
+=== #69 [12.  Loops]
+n is 0
+now wfv now
+  n add 1
+  n ieq 3
+    now ebk now
+out prn n
+--- out
+3
+=== #70 [12.  Loops]
+n is 0
+now wfv now
+  n add 1
+  now ebk n==3
+out prn n
+--- out
+3
+=== #71 [12.  Loops]
+i flt 5
+  i enx i==1
+  now ebk i==3
+  out prn i
+--- out
+0
+2
+=== #72 [12.  Loops]
+row flt 2
+  seat flt 3
+    out put "*"
+  out prn ""
+--- out
+***
+***
+=== #73 [12.  Loops]
+a flt 3
+  b flt 3
+    a*b ieq 2
+      a ebk now
+    out prn a*10+b
+out prn "done"
+--- out
+0
+1
+2
+10
+11
+done
+=== #74 [12.  Loops]
+scores is 90&72&85
+s fea scores
+  out prn s
+--- out
+90
+72
+85
+=== #75 [12.  Loops]
+letter fea "abc"
+  out prn letter
+--- out
+a
+b
+c
+=== #76 [12.  Loops]
+n is 0
+now bdo now
+  n add 2
+n uge 6
+out prn n
+--- out
+6
+=== #77 [12.  Loops]
+a is 0
+now bdo now
+  a add 1
+a ueq 2
+b is 0
+now bdo now
+  b add 1
+b une 0
+c is 3
+now bdo now
+  c asb 1
+c ult 2
+d is 3
+now bdo now
+  d asb 1
+d ule 2
+e is 0
+now bdo now
+  e add 1
+e ugt 1
+out prn a&b&c&d&e
+--- out
+2 1 1 2 2
+=== #78 [13.  More Ways With Text]
+out prn tre&"ha"&3
+song is "la la la"
+out prn tct&song&"la"
+--- out
+hahaha
+3
+=== #79 [13.  More Ways With Text]
+s is "Room 12"
+letters is 0
+digits is 0
+spaces is 0
+c fea s
+  tlr&c ieq yes
+    letters add 1
+  tdg&c ieq yes
+    digits add 1
+  tws&c ieq yes
+    spaces add 1
+out prn letters
+out prn digits
+out prn spaces
+--- out
+4
+2
+1
+=== #80 [13.  More Ways With Text]
+name is "Ada"
+score is 9
+out prn tfa&"{} has {} points"&name&score
+out prn tfa&"{:.2f}"&3.14159
+out prn tfa&"[{:>5}]"&42
+out prn tfa&"[{:<5}]"&42
+--- out
+Ada has 9 points
+3.14
+[   42]
+[42   ]
+=== #81 [13.  More Ways With Text]
+x is 5
+y is "hi"
+out prn ttp&x
+out prn ttp&y
+--- out
+num
+txt
+=== #82 [15.  Watching Your Program Run]
+total is 0
+i flt 5
+  total add i
+out prn total
+--- out
+10
+=== #83 [15.  Watching Your Program Run]
+total is 0
+i flt 5
+  total add i+1
+out prn total
+--- out
+15
+=== #84 [15.  Watching Your Program Run]
+n is 5
+n wgt 1
+  out prn n
+  n asb 1
+--- out
+5
+4
+3
+2
+=== #85 [17.  Lists]
+scores is 90&72&85
+out prn scores
+--- out
+[90, 72, 85]
+=== #86 [17.  Lists]
+scores is 90&72&85
+out prn scores@0
+out prn scores@2
+scores@1 is 75
+out prn scores
+--- out
+90
+85
+[90, 75, 85]
+=== #87 [17.  Lists]
+scores is 90&72&85
+i is 1
+out prn scores@i
+--- out
+72
+=== #88 [17.  Lists]
+scores is 90&72&85
+out prn cct&scores
+last is cct&scores
+last asb 1
+out prn scores@last
+--- out
+3
+85
+=== #89 [17.  Lists]
+scores mak vec@num
+names mak vec@txt
+out prn scores
+out prn names
+scores add 90
+scores add 72
+names add "Ada"
+out prn scores
+out prn names
+--- out
+[]
+[]
+[90, 72]
+[Ada]
+=== #90 [17.  Lists]
+v is 5&3&9
+v add 4
+out prn v
+v lin 0&8
+out prn v
+v lrm 3
+out prn v
+v ldx 0
+out prn v
+v lpl now
+out prn v
+--- out
+[5, 3, 9, 4]
+[8, 5, 3, 9, 4]
+[8, 5, 9, 4]
+[5, 9, 4]
+[5, 9]
+=== #91 [17.  Lists]
+v is 5&3&9&3
+v lso now
+out prn v
+v lrv now
+out prn v
+v luq now
+out prn v
+--- out
+[3, 3, 5, 9]
+[9, 5, 3, 3]
+[3, 5, 9]
+=== #92 [17.  Lists]
+v is 1&2&3
+v lfl 7
+out prn v
+v lrs 5
+out prn v
+v lrs 2
+out prn v
+v lwp now
+out prn v
+--- out
+[7, 7, 7]
+[7, 7, 7, 0, 0]
+[7, 7]
+[]
+=== #93 [17.  Lists]
+names is "Ada"&"Bob"&"Cy"
+name fea names
+  out prn "Hello, @name!"
+--- out
+Hello, Ada!
+Hello, Bob!
+Hello, Cy!
+=== #94 [17.  Lists]
+names is "Ada"&"Bob"
+i flt cct&names
+  out prn "@i: @names@i"
+--- out
+0: Ada
+1: Bob
+=== #95 [17.  Lists]
+scores is 1&2&3
+s fea scores
+  s aml 10
+out prn scores
+--- out
+[10, 20, 30]
+=== #96 [17.  Lists]
+grid mak vec@vec@num
+grid add 1&2
+grid add 3&4
+out prn grid
+out prn grid@1@0
+grid@1@0 is 9
+out prn grid
+--- out
+[[1, 2], [3, 4]]
+3
+[[1, 2], [9, 4]]
+=== #97 [18.  Asking a List]
+v is 2&4&6
+out prn cct&v
+out prn csm&v
+out prn cpd&v
+out prn cmx&v
+out prn cmn&v
+--- out
+3
+12
+48
+6
+2
+=== #98 [18.  Asking a List]
+v is 2&4&9
+out prn cav&v
+out prn cme&v
+w is 2&4&6
+out prn cde&w
+--- out
+5
+4
+1.63299
+=== #99 [18.  Asking a List]
+v is 5&9&2&9
+out prn chs&v&9
+out prn chs&v&7
+out prn chm&v&9
+out prn cps&v&9
+out prn cps&v&7
+out prn cfr&v
+out prn cla&v
+--- out
+yes
+nay
+2
+1
+-1
+5
+9
+=== #100 [18.  Asking a List]
+v is 3&1&2
+out prn cso&v
+out prn crv&v
+out prn v
+names is "Ada"&"Bob"&"Cy"
+out prn ctx&names&", "
+--- out
+[1, 2, 3]
+[2, 1, 3]
+[3, 1, 2]
+Ada, Bob, Cy
+=== #101 [19.  Maps]
+ages mak map@txt@num
+ages@"Ada" is 36
+ages@"Bob" is 41
+out prn ages
+out prn ages@"Ada"
+--- out
+{Ada: 36, Bob: 41}
+36
+=== #102 [19.  Maps]
+ages is map&"Ada"&36
+ages add "Bob"&41
+out prn ages
+--- out
+{Ada: 36, Bob: 41}
+=== #103 [19.  Maps]
+ages mak map@txt@num
+ages@"Ada" is 36
+out prn chs&ages&"Ada"
+out prn chs&ages&"Zed"
+--- out
+yes
+nay
+=== #104 [19.  Maps]
+ages mak map@txt@num
+out prn ages@"Zed"
+out prn ages
+--- out
+0
+{Zed: 0}
+=== #105 [19.  Maps]
+counts mak map@txt@num
+text is "the cat and the dog and the fish"
+word fea twd&text
+  counts@word add 1
+out prn counts
+--- out
+{and: 2, cat: 1, dog: 1, fish: 1, the: 3}
+=== #106 [19.  Maps]
+ages is map&"Ada"&36
+ages add "Bob"&41
+ages lrm "Ada"
+out prn ages
+out prn cct&ages
+ages lwp now
+out prn ages
+--- out
+{Bob: 41}
+1
+{}
+=== #107 [19.  Maps]
+ages mak map@txt@num
+ages@"Bob" is 41
+ages@"Ada" is 36
+name&age fea ages
+  out prn "@name is @age"
+--- out
+Ada is 36
+Bob is 41
+=== #108 [19.  Maps]
+ages mak map@txt@num
+ages@"Ada" is 36
+ages@"Bob" is 41
+out prn cky&ages
+out prn cvl&ages
+--- out
+[Ada, Bob]
+[36, 41]
+=== #109 [19.  Maps]
+ages mak hsh@txt@num
+ages@"Ada" is 36
+out prn ages@"Ada"
+out prn chs&ages&"Ada"
+--- out
+36
+yes
+=== #110 [20.  Other Collections]
+seen mak set@txt
+seen add "cat"
+seen add "dog"
+seen add "cat"
+out prn seen
+out prn cct&seen
+out prn chs&seen&"dog"
+seen lrm "cat"
+out prn seen
+--- out
+{cat, dog}
+2
+yes
+{dog}
+=== #111 [20.  Other Collections]
+seen mak bag@num
+seen add 5
+seen add 5
+out prn cct&seen
+--- out
+1
+=== #112 [20.  Other Collections]
+plates mak stk@num
+plates add 1
+plates add 2
+plates add 3
+out prn plates@top
+plates lpl now
+out prn plates@top
+out prn cct&plates
+--- out
+3
+2
+2
+=== #113 [20.  Other Collections]
+line mak que@txt
+line add "Ada"
+line add "Bob"
+out prn line@front
+line lpl now
+out prn line@front
+--- out
+Ada
+Bob
+=== #114 [20.  Other Collections]
+jobs mak hep@num
+jobs add 3
+jobs add 9
+jobs add 5
+out prn jobs@top
+jobs lpl now
+out prn jobs@top
+--- out
+9
+5
+=== #115 [20.  Other Collections]
+line mak dqu@num
+line add 2
+line add 3
+line lin 0&1
+out prn line
+line lpf now
+out prn line
+out prn line@0
+--- out
+[1, 2, 3]
+[2, 3]
+2
+=== #116 [20.  Other Collections]
+line mak lst@num
+line add 2
+line add 3
+line lpf now
+out prn line
+--- out
+[3]
+=== #117 [20.  Other Collections]
+days mak arr@num@7
+days@0 is 5
+out prn days
+out prn cct&days
+--- out
+[5, 0, 0, 0, 0, 0, 0]
+7
+=== #118 [20.  Other Collections]
+spot is par&3&4
+out prn spot
+out prn spot@first
+out prn spot@second
+named mak par@txt@num
+named@first is "Ada"
+named@second is 36
+out prn named
+--- out
+(3, 4)
+3
+4
+(Ada, 36)
+=== #119 [20.  Other Collections]
+person is tup&"Ada"&36&yes
+name&age&ok is person
+out prn name
+out prn age
+out prn ok
+--- out
+Ada
+36
+yes
+=== #120 [20.  Other Collections]
+found mak opt@num
+found ieq nil
+  out prn "nothing yet"
+out prn found@value_or&0
+found is 7
+found ine nil
+  out prn found@value
+--- out
+nothing yet
+0
+7
+=== #121 [20.  Other Collections]
+thing mak alt@num@txt
+thing is 5
+out prn thing
+thing is "five"
+out prn thing
+out prn thing@txt
+--- out
+5
+five
+five
+=== #122 [21.  Functions]
+out prn add_up&1&2
+
+add_up dfn num
+  a dpm num
+  b dpm num
+  add_up ert a+b
+--- out
+3
+=== #123 [21.  Functions]
+x is add_up&1&2
+y is add_up&x&10
+out prn y
+
+add_up dfn num
+  a dpm num
+  b dpm num
+  add_up ert a+b
+--- out
+13
+=== #124 [21.  Functions]
+now hello "Ada"
+now hello "Bob"
+
+hello dfn now
+  who dpm txt
+  out prn "Hello, @who!"
+--- out
+Hello, Ada!
+Hello, Bob!
+=== #125 [21.  Functions]
+now greet "Ada"&3
+now beep now
+
+greet dfn now
+  who dpm txt
+  times dpm num
+  i flt times
+    out prn "Hi, @who!"
+
+beep dfn now
+  out prn "Beep!"
+--- out
+Hi, Ada!
+Hi, Ada!
+Hi, Ada!
+Beep!
+=== #126 [21.  Functions]
+now check_age 5
+now check_age 20
+
+check_age dfn now
+  age dpm num
+  age ilt 13
+    out prn "Too young."
+    check_age ert now
+  out prn "Welcome!"
+--- out
+Too young.
+Welcome!
+=== #127 [21.  Functions]
+now hello "Ada"
+now hello "Bob"&"Hi"
+
+hello dfn now
+  who dpm txt
+  word dpm "Hello"
+  out prn "@word @who"
+--- out
+Hello Ada
+Hi Bob
+=== #128 [21.  Functions]
+x is 1
+now bbl now
+  y is 2
+  out prn x+y
+out prn x
+--- out
+3
+1
+=== #129 [21.  Functions]
+now score_up 2
+now score_up 3
+out prn score
+
+score mgl 0
+
+score_up dfn now
+  n dpm num
+  score add n
+--- out
+5
+=== #130 [21.  Functions]
+x is 1
+now try_copy x
+out prn x
+now try_ref x
+out prn x
+
+try_copy dfn now
+  n dpm num
+  n add 1
+
+try_ref dfn now
+  n dpm ref@num
+  n add 1
+--- out
+1
+2
+=== #131 [21.  Functions]
+scores is 1&2&3
+out prn top_of&scores
+
+top_of dfn num
+  v dpm see@vec@num
+  top_of ert cmx&v
+--- out
+3
+=== #132 [21.  Functions]
+x is 1
+also mrf x
+also add 1
+out prn x
+peek mlo x
+x add 1
+out prn peek
+--- out
+2
+3
+=== #133 [21.  Functions]
+q&r is divide&17&5
+out prn "@q, with @r left over"
+
+divide dfn tup@num@num
+  a dpm num
+  b dpm num
+  whole is a/b
+  rest is a%b
+  divide ert whole&rest
+--- out
+3, with 2 left over
+=== #134 [21.  Functions]
+out prn factorial&5
+
+factorial dfn num
+  n dpm num
+  n ile 1
+    factorial ert 1
+  smaller is factorial&n-1
+  factorial ert n*smaller
+--- out
+120
+=== #135 [22.  Functions in a Name]
+twice dlm num
+  n dpm num
+  twice ert n*2
+out prn twice&21
+--- out
+42
+=== #136 [22.  Functions in a Name]
+bonus is 100
+plus_bonus dlm num
+  n dpm num
+  plus_bonus ert n+bonus
+out prn plus_bonus&5
+--- out
+105
+=== #137 [22.  Functions in a Name]
+v is 1&5&2&8
+big dlm yno
+  n dpm num
+  big ert n>2
+out prn cft&v&big
+--- out
+[5, 8]
+=== #138 [22.  Functions in a Name]
+v is 1&2&3
+square dlm num
+  n dpm num
+  square ert n*n
+out prn cmp&v&square
+--- out
+[1, 4, 9]
+=== #139 [22.  Functions in a Name]
+v is 3&1&2
+bigger_first dlm yno
+  a dpm num
+  b dpm num
+  bigger_first ert a>b
+v lso bigger_first
+out prn v
+--- out
+[3, 2, 1]
+=== #140 [22.  Functions in a Name]
+say_size mak fun@num@txt
+sizer dlm num
+  s dpm txt
+  sizer ert tsz&s
+say_size is sizer
+out prn say_size&"hello"
+out prn run_twice&sizer
+
+run_twice dfn num
+  f dpm fun@num@txt
+  a is f&"one"
+  b is f&"three"
+  run_twice ert a+b
+--- out
+5
+8
+=== #141 [23.  Lists and Functions Together]
+scores is 70&85&92
+passed dlm yno
+  n dpm num
+  passed ert n>80
+out prn cea&scores&passed
+out prn can&scores&passed
+out prn cnn&scores&passed
+--- out
+nay
+yes
+nay
+=== #142 [23.  Lists and Functions Together]
+v is 2&3&4
+times dlm num
+  a dpm num
+  b dpm num
+  times ert a*b
+out prn crl&v&1&times
+--- out
+24
+=== #143 [23.  Lists and Functions Together]
+names is "Ada"&"Bo"
+ages is 10&12
+n&a fea czp&names&ages
+  out prn "@n is @a"
+k&n fea cnu&names
+  out prn "@k: @n"
+--- out
+Ada is 10
+Bo is 12
+0: Ada
+1: Bo
+=== #144 [23.  Lists and Functions Together]
+a is 1&2&3
+b is 2&3&4
+out prn cun&a&b
+out prn cbt&a&b
+out prn cot&a&b
+--- out
+[1, 2, 3, 4]
+[2, 3]
+[1]
+=== #145 [23.  Lists and Functions Together]
+v is 5&6&7&8&9
+out prn ccu&v&1&2
+out prn ccu&v&3
+out prn crg&0&5
+out prn crg&0&10&2
+--- out
+[6, 7]
+[8, 9]
+[0, 1, 2, 3, 4]
+[0, 2, 4, 6, 8]
+=== #146 [23.  Lists and Functions Together]
+sorted is 2&4&6&8&10
+out prn cbf&sorted&6
+out prn cbf&sorted&7
+out prn cpb&sorted&6
+--- out
+yes
+nay
+2
+=== #147 [23.  Lists and Functions Together]
+words is "ant"&"bee"&"ape"
+first dlm ltr
+  w dpm txt
+  first ert w@0
+g is cgr&words&first
+k&list fea g
+  out prn "@k: @list"
+one is 1&2
+two is 3&4
+lists mak vec@vec@num
+lists add one
+lists add two
+out prn cjn&lists
+--- out
+a: [ant, ape]
+b: [bee]
+[1, 2, 3, 4]
+=== #148 [23.  Lists and Functions Together]
+cards is 1&2&3&4
+cards lrw 1
+out prn cards
+names is "Bo"&"Al"&"Cy"&"Di"
+shorter dlm yno
+  a dpm txt
+  b dpm txt
+  x is tsz&a
+  y is tsz&b
+  shorter ert x<y
+names lss shorter
+out prn names
+--- out
+[2, 3, 4, 1]
+[Bo, Al, Cy, Di]
+=== #149 [23.  Lists and Functions Together]
+jobs mak mhp@num
+jobs add 5
+jobs add 1
+jobs add 3
+out prn jobs@top&
+jobs lpl now
+out prn jobs@top&
+--- out
+1
+3
+=== #150 [24.  More About Functions]
+out prn add_all&1&2&3&4
+out prn add_all&5
+
+add_all dfn num
+  xs dpm vec@num
+  add_all ert csm&xs
+--- out
+10
+5
+=== #151 [24.  More About Functions]
+out prn tick&
+out prn tick&
+out prn tick&
+
+tick dfn num
+  n msv 0
+  n add 1
+  tick ert n
+--- out
+1
+2
+3
+=== #152 [24.  More About Functions]
+x is 1
+copy dlv num
+  x add 1
+  copy ert x
+out prn copy&
+out prn copy&
+out prn x
+--- out
+2
+3
+1
+=== #153 [24.  More About Functions]
+out prn square&5
+
+square dcx num
+  n dpm num
+  square ert n*n
+--- out
+25
+=== #154 [24.  More About Functions]
+n fea evens&
+  out prn n
+  n igt 4
+    now ebk now
+
+evens dfn gnr@num
+  i is 0
+  now wfv now
+    evens eyd i
+    i add 2
+--- out
+0
+2
+4
+6
+=== #155 [24.  More About Functions]
+now bdr now
+  out prn "this comes last"
+out prn "this comes first"
+--- out
+this comes first
+this comes last
+=== #156 [25.  Checks and Tests]
+x is 3
+x seq 3
+x sgt 2
+out prn "All the checks passed."
+--- out
+All the checks passed.
+=== #157 [25.  Checks and Tests]
+a is 2
+a sne 3
+a slt 3
+a sle 2
+a sge 2
+out prn "Fine."
+--- out
+Fine.
+=== #158 [25.  Checks and Tests]
+out prn add_up&1&2
+
+now bts "adding small numbers"
+  a is add_up&1&2
+  a seq 3
+
+add_up dfn num
+  a dpm num
+  b dpm num
+  add_up ert a+b
+--- out
+3
+=== #159 [26.  Your Own Kinds of Things]
+rex mak Dog
+rex@name is "Rex"
+rex bark now
+out prn rex
+
+Dog dcl now
+  name dfd txt
+  age dfd 3
+  bark dfn now
+    out prn "@name says woof!"
+--- out
+Rex says woof!
+Dog(name: Rex, age: 3)
+=== #160 [26.  Your Own Kinds of Things]
+rex mak Dog
+tom mak Dog
+rex@name is "Rex"
+tom@name is "Tom"
+rex@age is 9
+out prn rex
+out prn tom
+
+Dog dcl now
+  name dfd txt
+  age dfd 3
+--- out
+Dog(name: Rex, age: 9)
+Dog(name: Tom, age: 3)
+=== #161 [26.  Your Own Kinds of Things]
+rex mak Dog
+out prn rex@dog_years
+rex grow 2
+out prn rex@dog_years
+
+Dog dcl now
+  age dfd 3
+  grow dfn now
+    more dpm num
+    age add more
+  dog_years dfn num
+    dog_years ert age*7
+--- out
+21
+35
+=== #162 [26.  Your Own Kinds of Things]
+a mak Dog&"Rex"
+b mak Dog&"Tom"&5
+out prn a
+out prn b
+
+Dog dcl now
+  name dfd txt
+  age dfd 1
+  Dog dmk now
+    n dpm txt
+    y dpm 1
+    name is n
+    age is y
+--- out
+Dog(name: Rex, age: 1)
+Dog(name: Tom, age: 5)
+=== #163 [26.  Your Own Kinds of Things]
+rex is Dog&"Rex"
+out prn rex
+
+Dog dcl now
+  name dfd txt
+  Dog dmk now
+    n dpm txt
+    name is n
+--- out
+Dog(name: Rex)
+=== #164 [26.  Your Own Kinds of Things]
+s mak Spot&3
+out prn s@x
+
+Spot dcl now
+  x dfd 0
+  Spot dmk now
+    x dpm num
+    slf@x is x
+--- out
+3
+=== #165 [26.  Your Own Kinds of Things]
+acct mak Bank
+acct pay_in 50
+out prn acct@balance
+out prn acct
+
+Bank dcl now
+  owner dfd "Ada"
+  money dsc 0
+  pay_in dfn now
+    n dpm num
+    n igt 0
+      money add n
+  balance dfn num
+    balance ert money
+--- out
+50
+Bank(owner: Ada)
+=== #166 [26.  Your Own Kinds of Things]
+r mak Robot
+r start now
+
+Robot dcl now
+  start dfn now
+    now warm_up now
+    out prn "Ready!"
+  warm_up dhd now
+    out prn "Warming up..."
+--- out
+Warming up...
+Ready!
+=== #167 [26.  Your Own Kinds of Things]
+b mak Box
+out prn b@area
+
+Box dcl now
+  w dfd 2
+  h dfd 3
+  area dkn num
+    area ert w*h
+--- out
+6
+=== #168 [26.  Your Own Kinds of Things]
+a mak Dog
+b mak Dog
+out prn Dog@made
+out prn Dog@report&
+
+Dog dcl now
+  made dsh 0
+  Dog dmk now
+    made add 1
+  report dsf txt
+    report ert "Dogs so far: "+txt&made
+--- out
+2
+Dogs so far: 2
+=== #169 [26.  Your Own Kinds of Things]
+now bbl now
+  t mak Torch
+  out prn "using it"
+out prn "done"
+
+Torch dcl now
+  Torch dmk now
+    out prn "on"
+  Torch dds now
+    out prn "off"
+--- out
+on
+using it
+off
+done
+=== #170 [26.  Your Own Kinds of Things]
+a mak Dog
+b mak Dog
+out prn a==b
+b@age is 9
+out prn a==b
+
+Dog dcl now
+  age dfd 3
+--- out
+yes
+nay
+=== #171 [27.  Children]
+d mak Dog
+d@name is "Rex"
+d eat now
+d bark now
+out prn d
+
+Animal dcl now
+  name dfd "?"
+  eat dfn now
+    out prn "@name is eating."
+
+Dog dcl Animal
+  tricks dfd 2
+  bark dfn now
+    out prn "@name says woof!"
+--- out
+Rex is eating.
+Rex says woof!
+Dog(name: Rex, tricks: 2)
+=== #172 [27.  Children]
+d mak Dog
+out prn d@report
+
+Animal dcl now
+  energy dfm 5
+  rest dfy now
+    energy add 1
+
+Dog dcl Animal
+  report dfn num
+    now rest now
+    report ert energy
+--- out
+6
+=== #173 [27.  Children]
+d mak Dog&"Rex"
+out prn d
+
+Animal dcl now
+  name dfd txt
+  Animal dmk now
+    n dpm txt
+    name is n
+    out prn "An animal is made."
+
+Dog dcl Animal
+  tricks dfd 0
+  Dog dmk now
+    given dpm txt
+    now dbs given
+    out prn "A dog is made."
+--- out
+An animal is made.
+A dog is made.
+Dog(name: Rex, tricks: 0)
+=== #174 [27.  Children]
+d mak Dog&"Rex"
+out prn d@name
+out prn d@hugs
+
+Animal dcl now
+  name dfd txt
+  Animal dmk now
+    n dpm txt
+    name is n
+
+Friend dcl now
+  hugs dfd 3
+
+Dog dcl Animal&Friend
+  Dog dmk now
+    given dpm txt
+    Animal dbs given
+--- out
+Rex
+3
+=== #175 [27.  Children]
+a mak Animal
+d mak Dog
+out prn a@sound
+out prn d@sound
+
+Animal dcl now
+  sound dvr txt
+    sound ert "..."
+
+Dog dcl Animal
+  sound dov txt
+    sound ert "Woof"
+--- out
+...
+Woof
+=== #176 [27.  Children]
+c mak Circle
+out prn c@area
+
+Shape dcl now
+  area dmb dec
+
+Circle dcl Shape
+  r dfd 2.0
+  area dov dec
+    area ert npi*r*r
+--- out
+12.5664
+=== #177 [27.  Children]
+pets mak vec@own@Animal
+d mwn Dog
+pets add d
+c mwn Cat
+pets add c
+p fea pets
+  out prn p@sound
+
+Animal dcl now
+  sound dmb txt
+
+Dog dcl Animal
+  sound dov txt
+    sound ert "Woof"
+
+Cat dcl Animal
+  sound dov txt
+    sound ert "Meow"
+--- out
+Woof
+Meow
+=== #178 [28.  More Kinds of Your Own]
+Mood den happy&sad&sleepy
+m is Mood@happy
+out prn m
+m ieq Mood@happy
+  out prn "Smile!"
+m is Mood@sleepy
+m bsw now
+  now bcs happy
+    out prn "Yay"
+  now bcs sad
+    out prn "Oh no"
+  now bcs sleepy
+    out prn "Zzz"
+--- out
+happy
+Smile!
+Zzz
+=== #179 [28.  More Kinds of Your Own]
+a is Spot&1&2
+out prn a
+out prn a@y
+
+Spot dst now
+  x dfd 0
+  y dfd 0
+--- out
+Spot(x: 1, y: 2)
+2
+=== #180 [28.  More Kinds of Your Own]
+a is Spot&1&2
+b is Spot&3&4
+c is a+b
+out prn c
+
+Spot dst now
+  x dfd 0
+  y dfd 0
+  + dop Spot
+    o dpm see@Spot
+    r is Spot&x+o@x&y+o@y
+    + ert r
+--- out
+Spot(x: 4, y: 6)
+=== #181 [28.  More Kinds of Your Own]
+v mak vec@Card
+v add Card&7
+v add Card&2
+v lso now
+out prn v
+
+Card dst now
+  rank dfd 0
+  < dop yno
+    o dpm see@Card
+    < ert rank<o@rank
+--- out
+[Card(rank: 2), Card(rank: 7)]
+=== #182 [28.  More Kinds of Your Own]
+Row dal vec@num
+Grid dal vec@Row
+g mak Grid
+g add 1&2
+out prn g
+--- out
+[[1, 2]]
+=== #183 [28.  More Kinds of Your Own]
+b mak Both
+b@whole is 65
+out prn b@whole
+
+Both dun now
+  whole dfd num
+  part dfd dec
+--- out
+65
+=== #184 [29.  Any Kind]
+out prn biggest&3&9
+out prn biggest&2.5&1.5
+out prn biggest&"apple"&"pear"
+
+T dtp now
+biggest dfn T
+  x dpm T
+  y dpm T
+  x igt y
+    biggest ert x
+  biggest ert y
+--- out
+9
+2.5
+pear
+=== #185 [29.  Any Kind]
+n mak Box@num
+n@item is 7
+out prn n@item
+s mak Box@txt
+s@item is "hello"
+out prn s@item
+
+T dtp now
+Box dst now
+  item dfd T
+--- out
+7
+hello
+=== #186 [29.  Any Kind]
+now show 5
+now show "five"
+
+show dfn now
+  x dpm any
+  out prn "It is: @x"
+--- out
+It is: 5
+It is: five
+=== #187 [30.  Pointers]
+x is 5
+p mpt x
+out prn *p
+*p is 7
+out prn x
+--- out
+5
+7
+=== #188 [30.  Pointers]
+a is 1
+b is 2
+p mpt a
+out prn *p
+p mpt b
+out prn *p
+--- out
+1
+2
+=== #189 [30.  Pointers]
+rex mak Dog
+p mpt rex
+p@age is 5
+out prn rex@age
+
+Dog dst now
+  age dfd 3
+--- out
+5
+=== #190 [30.  Pointers]
+q mak ptr@num
+q ieq nil
+  out prn "q points at nothing"
+x is 5
+q mpt x
+q ine nil
+  out prn *q
+--- out
+q points at nothing
+5
+=== #191 [30.  Pointers]
+now bbl now
+  t mwn Torch
+  t@name is "big"
+  out prn t@name
+out prn "the block is over"
+
+Torch dcl now
+  name dfd txt
+  Torch dds now
+    out prn "cleaned up"
+--- out
+big
+cleaned up
+the block is over
+=== #192 [30.  Pointers]
+a mwn Torch
+a@name is "big"
+b mmv a
+out prn b@name
+a ieq nil
+  out prn "a holds nothing now"
+
+Torch dcl now
+  name dfd txt
+--- out
+big
+a holds nothing now
+=== #193 [30.  Pointers]
+v is 1&2&3
+w mmv v
+out prn w
+--- out
+[1, 2, 3]
+=== #194 [30.  Pointers]
+a msh Torch
+out prn a@use_count
+b is a
+out prn a@use_count
+b@name is "shared"
+out prn a@name
+
+Torch dcl now
+  name dfd txt
+--- out
+1
+2
+shared
+=== #195 [30.  Pointers]
+a msh Torch
+a@name is "big"
+now show_it a
+out prn a@use_count
+
+show_it dfn now
+  t dpm shr@Torch
+  out prn t@name
+  out prn t@use_count
+
+Torch dcl now
+  name dfd txt
+--- out
+big
+2
+1
+=== #196 [30.  Pointers]
+p mnw Torch
+p@name is "hand made"
+out prn p@name
+now edl p
+p ieq nil
+  out prn "p is nil now"
+
+Torch dcl now
+  name dfd txt
+--- out
+hand made
+p is nil now
+=== #197 [31.  More Tricks for Your Classes]
+r mak Row
+r@1 is 4
+out prn r@1
+
+Row dcl now
+  v dfd arr@num@4
+  at dop ref@num
+    i dpm num
+    at ert v@i
+--- out
+4
+=== #198 [31.  More Tricks for Your Classes]
+a mak Adder&5
+out prn a&3
+
+Adder dst now
+  k dfd 0
+  call dop num
+    n dpm num
+    call ert n+k
+--- out
+8
+=== #199 [31.  More Tricks for Your Classes]
+d mak Dot
+d add 3
+d add 4
+out prn d@x
+
+Dot dst now
+  x dfd 0
+  += dop ref@Dot
+    o dpm num
+    x add o
+    += ert slf
+--- out
+7
+=== #200 [31.  More Tricks for Your Classes]
+pet mnw Dog
+other mnw Animal
+p mak ptr@Animal
+p is pet
+dog is ptr@Dog&p
+out prn dog@speak&
+none is ptr@Dog&other
+out prn none==nil
+now edl pet
+now edl other
+
+Animal dcl now
+  speak dvr txt
+    speak ert "?"
+
+Dog dcl Animal
+  speak dov txt
+    speak ert "woof"
+--- out
+woof
+yes
+=== #201 [31.  More Tricks for Your Classes]
+f mak Flags
+f@ok is 1
+f@level is 5
+out prn f@ok
+out prn f@level
+
+Flags dst now
+  ok dbb 1
+  level dbb 3
+--- out
+1
+5
+=== #202 [31.  More Tricks for Your Classes]
+k mak Kept
+w mmv k
+out prn w@x
+
+Kept dcl now
+  x dfd 0
+  Kept dmk now
+    x is 1
+  Kept dmk now
+    o dpm tkn@Kept
+    x is o@x+1
+--- out
+2
+=== #203 [32.  Project: A Pet Shop]
+p mak Pet&"Rex"
+out prn p
+
+Pet dcl now
+  name dfd txt
+  hunger dfd 0
+  Pet dmk now
+    n dpm txt
+    name is n
+--- out
+Pet(name: Rex, hunger: 0)
+=== #204 [32.  Project: A Pet Shop]
+p mak Pet&"Rex"
+p wait now
+p wait now
+out prn p@hunger
+p feed 5
+out prn p@hunger
+
+Pet dcl now
+  name dfd txt
+  hunger dfd 0
+  Pet dmk now
+    n dpm txt
+    name is n
+  wait dfn now
+    hunger add 2
+  feed dfn now
+    food dpm num
+    hunger is nmx&hunger-food&0
+--- out
+4
+0
+=== #205 [32.  Project: A Pet Shop]
+d mak Dog&"Rex"
+c mak Cat&"Tom"
+out prn d@sound
+out prn c@sound
+out prn c@name
+
+Pet dcl now
+  name dfd txt
+  Pet dmk now
+    n dpm txt
+    name is n
+  sound dmb txt
+
+Dog dcl Pet
+  Dog dmk now
+    n dpm txt
+    now dbs n
+  sound dov txt
+    sound ert "Woof"
+
+Cat dcl Pet
+  Cat dmk now
+    n dpm txt
+    now dbs n
+  sound dov txt
+    sound ert "Meow"
+--- out
+Woof
+Meow
+Tom
+=== #206 [32.  Project: A Pet Shop]
+shop mak vec@own@Pet
+d mwn Dog&"Rex"
+shop add d
+c mwn Cat&"Tom"
+shop add c
+p fea shop
+  name is p@name
+  sound is p@sound
+  out prn "@name says @sound"
+
+Pet dcl now
+  name dfd txt
+  Pet dmk now
+    n dpm txt
+    name is n
+  sound dmb txt
+
+Dog dcl Pet
+  Dog dmk now
+    n dpm txt
+    now dbs n
+  sound dov txt
+    sound ert "Woof"
+
+Cat dcl Pet
+  Cat dmk now
+    n dpm txt
+    now dbs n
+  sound dov txt
+    sound ert "Meow"
+--- out
+Rex says Woof
+Tom says Meow
+=== #207 [32.  Project: A Pet Shop]
+note A little pet shop
+shop mak vec@own@Pet
+d mwn Dog&"Rex"
+shop add d
+c mwn Cat&"Tom"
+shop add c
+day fle 3
+  today is day+1
+  out prn "Day @today"
+  p fea shop
+    p wait now
+    now look_after p
+out prn "The shop is closed."
+
+look_after dfn now
+  pet dpm see@own@Pet
+  name is pet@name
+  hunger is pet@hunger
+  hunger ige 6
+    sound is pet@sound
+    out prn "  @name says @sound, and gets fed."
+    pet feed 6
+  now oth now
+    out prn "  @name is fine, with hunger @hunger."
+
+Pet dcl now
+  name dfd txt
+  hunger dfd 0
+  Pet dmk now
+    n dpm txt
+    name is n
+  wait dfn now
+    hunger add 2
+  feed dfn now
+    food dpm num
+    hunger is nmx&hunger-food&0
+  sound dmb txt
+
+Dog dcl Pet
+  Dog dmk now
+    n dpm txt
+    now dbs n
+  sound dov txt
+    sound ert "Woof"
+
+Cat dcl Pet
+  Cat dmk now
+    n dpm txt
+    now dbs n
+  sound dov txt
+    sound ert "Meow"
+--- out
+Day 1
+  Rex is fine, with hunger 2.
+  Tom is fine, with hunger 2.
+Day 2
+  Rex is fine, with hunger 4.
+  Tom is fine, with hunger 4.
+Day 3
+  Rex says Woof, and gets fed.
+  Tom says Meow, and gets fed.
+Day 4
+  Rex is fine, with hunger 2.
+  Tom is fine, with hunger 2.
+The shop is closed.
+=== #208 [33.  When Things Go Wrong]
+now btr now
+  out prn "one"
+  n is tnm&"not a number"
+  out prn "two"
+e bch now
+  out prn "That was not a number."
+out prn "three"
+--- out
+one
+That was not a number.
+three
+=== #209 [33.  When Things Go Wrong]
+now btr now
+  v is 1&2
+  out prn tnm&"oops"
+e bch now
+  out prn "caught: @e"
+--- out
+caught: invalid stoi argument
+=== #210 [33.  When Things Go Wrong]
+now btr now
+  now set_age -3
+  out prn "not reached"
+e bch now
+  out prn "caught: @e"
+
+set_age dfn now
+  age dpm num
+  age ilt 0
+    now etw "An age can't be below zero."
+  out prn "Age set."
+--- out
+caught: An age can't be below zero.
+=== #211 [33.  When Things Go Wrong]
+now btr now
+  now etw Late&5
+e bch Late
+  out prn "Late by @e@mins minutes"
+
+Late dst now
+  mins dfd 0
+--- out
+Late by 5 minutes
+=== #212 [33.  When Things Go Wrong]
+now btr now
+  now etw "plain"
+x bch Late
+  out prn "it was late"
+now bch now
+  out prn "something else went wrong"
+
+Late dst now
+  mins dfd 0
+--- out
+something else went wrong
+=== #213 [33.  When Things Go Wrong]
+now btr now
+  now btr now
+    now etw "bad"
+  e bch now
+    out prn "I saw it first."
+    now etw now
+e bch now
+  out prn "Then me: @e"
+--- out
+I saw it first.
+Then me: bad
+=== #214 [33.  When Things Go Wrong]
+out prn "Bye."
+now ext 0
+out prn "not reached"
+--- out
+Bye.
+=== #215 [33.  When Things Go Wrong]
+out prn "All done."
+main ert 0
+--- out
+All done.
+=== #216 [34.  Bits and Huge Numbers]
+a is 6
+b is 3
+out prn nnd&a&b
+out prn nor&a&b
+out prn nxr&a&b
+out prn nnt&a
+out prn nsl&a&2
+out prn nsr&a&1
+--- out
+2
+7
+5
+-7
+24
+3
+=== #217 [34.  Bits and Huge Numbers]
+x is 5
+y mak big
+out prn nsz&x
+out prn nsz&y
+out prn nlw
+huge mak pbg
+huge is 18446744073709551615
+out prn huge
+--- out
+4
+8
+-2147483648
+18446744073709551615
+=== #218 [34.  Bits and Huge Numbers]
+x mak hug
+x is 1
+i is 2
+i wle 25
+  x aml i
+  i add 1
+out prn x
+--- out
+15511210043330985984000000
+=== #219 [34.  Bits and Huge Numbers]
+x is hug&"123456789012345678901234567890"
+x add 1
+out prn x
+y is hug&2
+y apw 100
+out prn y
+--- out
+123456789012345678901234567891
+1267650600228229401496703205376
+=== #220 [34.  Bits and Huge Numbers]
+p mak cpx&1.0&2.0
+q mak cpx&3.0&4.0
+r is p+q
+out prn r@real&
+out prn r@imag&
+--- out
+4
+6
+=== #221 [35.  Files]
+"notes.txt" hwr "Remember the milk.\n"
+out prn hrd&"notes.txt"
+"notes.txt" hrm now
+--- out
+Remember the milk.
+=== #222 [35.  Files]
+name is "notes.txt"
+name hwr "one\n"
+name hap "two\n"
+out prn hln&name
+name hrm now
+--- out
+[one, two]
+=== #223 [35.  Files]
+name is "notes.txt"
+out prn hex&name
+name hwr "hello"
+out prn hex&name
+out prn hsz&name
+name hrm now
+out prn hex&name
+--- out
+nay
+yes
+5
+nay
+=== #224 [35.  Files]
+now btr now
+  out prn hrd&"missing.txt"
+e bch now
+  out prn "I can't read that file."
+--- out
+I can't read that file.
+=== #225 [35.  Files]
+"box" hmk now
+"box/a.txt" hwr "hi"
+"box/a.txt" hcp "box/b.txt"
+"box/b.txt" hmv "box/c.txt"
+out prn hls&"box"
+"box" hrm now
+out prn hex&"box"
+--- out
+[a.txt, c.txt]
+nay
+=== #226 [35.  Files]
+f mfo "notes.txt"
+f prn "alpha"
+f prn "beta"
+f put "gam"
+f prn "ma"
+f close now
+out prn hln&"notes.txt"
+"notes.txt" hrm now
+--- out
+[alpha, beta, gamma]
+=== #227 [35.  Files]
+"notes.txt" hwr "first line\n7 8\nlast line\n"
+f mfi "notes.txt"
+top gln f
+out prn top
+a mak num
+b mak num
+a get f
+b get f
+out prn a+b
+rest gln f
+line wln f
+  out prn line
+f close now
+"notes.txt" hrm now
+--- out
+first line
+15
+last line
+=== #228 [35.  Files]
+f mfo "log.txt"
+now note_it f&"started"
+now note_it f&"finished"
+f close now
+g mfi "log.txt"
+now show_all g
+g close now
+"log.txt" hrm now
+
+note_it dfn now
+  file dpm ref@ofs
+  what dpm txt
+  file prn "- @what"
+
+show_all dfn now
+  file dpm ref@ifs
+  line wln file
+    out prn line
+--- out
+- started
+- finished
+=== #229 [35.  Files]
+f mak ofs
+f open "later.txt"
+f prn "hi"
+f close now
+out prn hrd&"later.txt"
+"later.txt" hrm now
+--- out
+hi
+=== #230 [36.  Project: A Shopping List That Remembers]
+items is "milk"&"eggs"
+now show items
+
+show dfn now
+  list dpm see@vec@txt
+  list ieq vec@txt&
+    out prn "The list is empty."
+    show ert now
+  i flt cct&list
+    number is i+1
+    out prn "@number. @list@i"
+--- out
+1. milk
+2. eggs
+=== #231 [36.  Project: A Shopping List That Remembers]
+items is "milk"&"eggs"
+now save items
+out prn hrd&"shopping.txt"
+"shopping.txt" hrm now
+
+save dfn now
+  list dpm see@vec@txt
+  "shopping.txt" hwr ctx&list&"\n"
+--- out
+milk
+eggs
+=== #232 [36.  Project: A Shopping List That Remembers]
+"shopping.txt" hwr "milk\neggs\n"
+items is load&
+out prn items
+"shopping.txt" hrm now
+out prn load&
+
+load dfn vec@txt
+  hex&"shopping.txt" ieq nay
+    load ert vec@txt&
+  load ert hln&"shopping.txt"
+--- out
+[milk, eggs]
+[]
+=== #233 [37.  The Clock]
+start is kms
+now rwt 50
+took is kms-start
+took sge 40
+out prn "That took a moment."
+out prn kel>0
+--- out
+That took a moment.
+yes
+=== #234 [37.  The Clock]
+n is 3
+n fgt 0
+  out prn n
+  now rwt 100
+out prn "Go!"
+--- out
+3
+2
+1
+Go!
+=== #235 [38.  At the Same Time]
+t mtd count_to&3
+t rjn now
+out prn "All done."
+
+count_to dfn now
+  n dpm num
+  i flt n
+    out prn i
+--- out
+0
+1
+2
+All done.
+=== #236 [38.  At the Same Time]
+t mtd say_hi&"there"
+t rdt now
+now rwt 300
+out prn "bye"
+
+say_hi dfn now
+  who dpm txt
+  out prn "hi @who"
+--- out
+hi there
+bye
+=== #237 [38.  At the Same Time]
+workers mak vec@thd
+i flt 3
+  t mtd do_nothing&i
+  workers add t
+w fea workers
+  w rjn now
+out prn cct&workers
+
+do_nothing dfn now
+  n dpm num
+--- out
+3
+=== #238 [38.  At the Same Time]
+total mak atm@num
+t1 mtd count_up&total
+t2 mtd count_up&total
+t1 rjn now
+t2 rjn now
+out prn total@load
+
+count_up dfn now
+  c dpm ref@atm@num
+  i flt 1000
+    c add 1
+--- out
+2000
+=== #239 [38.  At the Same Time]
+names mak vec@txt
+guard mak mtx
+t1 mtd add_name&names&guard&"Ada"
+t2 mtd add_name&names&guard&"Bob"
+t1 rjn now
+t2 rjn now
+out prn cct&names
+
+add_name dfn now
+  list dpm ref@vec@txt
+  m dpm ref@mtx
+  who dpm txt
+  m blk now
+    list add who
+--- out
+2
+=== #240 [38.  At the Same Time]
+answer msy slow_add&1&2
+out prn "I can do other things now."
+out prn answer@get
+
+slow_add dfn num
+  a dpm num
+  b dpm num
+  now rwt 20
+  slow_add ert a+b
+--- out
+I can do other things now.
+3
+=== #241 [38.  At the Same Time]
+results mak vec@fut@num
+i flt 3
+  r msy square&i
+  results add r
+r fea results
+  out prn r@get
+
+square dfn num
+  n dpm num
+  square ert n*n
+--- out
+0
+1
+4
+=== #242 [38.  At the Same Time]
+v is 1&2&3&4
+sum mak atm@num
+n fpr v
+  sum add n
+out prn sum@load
+--- out
+10
+=== #243 [38.  At the Same Time]
+v is 1&2&3&4
+n fpr v
+  n aml 10
+out prn v
+--- out
+[10, 20, 30, 40]
+=== #244 [39.  Threads That Talk]
+c mak chn@num
+t mtd feed&c
+total is 0
+n fea c
+  total add n
+t rjn now
+out prn total
+
+feed dfn now
+  c dpm ref@chn@num
+  i flt 5
+    c add i+1
+  c close now
+--- out
+15
+=== #245 [39.  Threads That Talk]
+ready is nay
+g mak mtx
+cv mak cnd
+go dlm now
+  g blk now
+    ready is yes
+  cv notify_one now
+w mtd go
+check dlm yno
+  check ert ready
+g blk now
+  cv wait g&check
+w rjn now
+out prn ready
+--- out
+yes
+=== #246 [39.  Threads That Talk]
+seen add 1
+out prn seen
+v mtd show
+v rjn now
+out prn seen
+
+seen mtl 0
+
+show dfn now
+  seen add 5
+  out prn seen
+--- out
+1
+5
+1
+=== #247 [40.  Groups and Other Files]
+out prn geo@area&3
+out prn cash@area&3
+
+geo dgr now
+  area dfn num
+    side dpm num
+    area ert side*side
+
+cash dgr now
+  area dfn txt
+    code dpm num
+    area ert "region @code"
+--- out
+9
+region 3
+=== #248 [40.  Groups and Other Files]
+b mak zoo@Bear
+out prn b@name
+m is zoo@Mood@calm
+out prn m
+out prn zoo@open_at&8
+
+zoo dgr now
+  Mood den calm&wild
+  Bear dcl now
+    name dfd "Ted"
+  open_at dfn txt
+    hour dpm num
+    open_at ert "Open at @hour"
+--- out
+Ted
+calm
+Open at 8
+=== #249 [40.  Groups and Other Files]
+now xim "tools.epp"
+out prn twice&21
+p mak Pet
+out prn p
+--- out
+42
+Pet(name: ?)
+=== #250 [41.  The World Outside]
+now rcm "echo Hello from Windows"
+--- out
+Hello from Windows
+=== #251 [41.  The World Outside]
+said is xcm&"echo hello"
+out prn tuc&said
+out prn xcd&"exit 3"
+--- out
+HELLO
+3
+=== #252 [41.  The World Outside]
+out prn cct&xag
+w fea xag
+  out prn w
+--- out
+0
+=== #253 [41.  The World Outside]
+out prn xev&"SURELY_NOT_SET"
+where is xev&"USERPROFILE"
+size is tsz&where
+out prn size>0
+--- out
+
+yes
+=== #254 [41.  The World Outside]
+online is nay
+online ieq yes
+  page is xwb&"http://example.com"
+  out prn tsz&page
+out prn "Done."
+--- out
+Done.
+=== #255 [42.  Bytes, Codes and Other Computers]
+bytes mak vec@byt
+bytes add byt&1
+bytes add byt&200
+"bytes.bin" hby bytes
+back is hrb&"bytes.bin"
+out prn cct&back
+out prn num&back@1
+"bytes.bin" hrm now
+--- out
+2
+200
+=== #256 [42.  Bytes, Codes and Other Computers]
+start is kns
+total is 0
+i flt 1000
+  total add i
+stop is kns
+out prn stop>=start
+year is kfa&"%Y"
+out prn tsz&year
+--- out
+yes
+4
+=== #257 [42.  Bytes, Codes and Other Computers]
+out prn xha&"abc"
+code is xbe&"hello"
+out prn code
+out prn xbd&code
+--- out
+ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad
+aGVsbG8=
+hello
+=== #258 [42.  Bytes, Codes and Other Computers]
+j is tjs&"{\"name\": \"Ada\", \"pets\": [\"Rex\", \"Tom\"]}"
+out prn j@"name"@text&
+p is j@"pets"
+out prn p@size&
+out prn p@0@text&
+j@"age" is 36
+out prn num&j@"age"
+n mak jsn
+n add 1
+n add "two"
+out prn n
+--- out
+Ada
+2
+Rex
+36
+[1,"two"]
+=== #259 [42.  Bytes, Codes and Other Computers]
+door mak srv&0
+p is door@port&
+t mtd client&p
+c is door@next&
+out prn c@line&
+c send "hi yourself\n"
+c close now
+t rjn now
+
+client dfn now
+  p dpm num
+  c mak sck&"127.0.0.1"&p
+  c send "hello there\n"
+  out prn c@line&
+--- out
+hello there
+hi yourself
+=== #260 [42.  Bytes, Codes and Other Computers]
+now btr now
+  answer is xpo&"http://127.0.0.1:1/form"&"name=Ada"
+  out prn answer
+e bch now
+  out prn "nobody answered"
+--- out
+nobody answered
+=== #261 [43.  Any C++, Any Library]
+now xic "<vector>"
+v mak std@vector@int
+v push_back 3
+v push_back 4
+out prn v@size&
+n is std@stoi&"12"
+out prn n+1
+--- out
+2
+13
+=== #262 [43.  Any C++, Any Library]
+now xgl "int fromCpp = 5;"
+now xpp "fromCpp = fromCpp * 2;"
+now xpp "std::cout << fromCpp << std::endl;"
+--- out
+10
+=== #263 [43.  Any C++, Any Library]
+now xic "<vector>"
+now xus std
+now xpp "vector<int> v = {7, 8};"
+now xpp "cout << v.back() << endl;"
+--- out
+8
+=== #264 [43.  Any C++, Any Library]
+now xic "shop.h"
+b mak Bag
+b fill 5
+out prn b@total&
+b@open is 9
+out prn b@open
+c mak Bag&10
+out prn c@total&
+t mak shop@Till
+t ring 4
+out prn t@money
+out prn shop@tax&50
+bags mak vec@Bag
+bags add b
+bags add c
+x fea bags
+  out prn x@total&
+now show_it c
+
+show_it dfn now
+  g dpm Bag
+  out prn g@total&
+--- out
+5
+9
+10
+4
+5
+5
+10
+10
+=== #265 [43.  Any C++, Any Library]
+now xgl "class Bag { public: virtual int weight() const { return 1; } virtual ~Bag() = default; int open = 1; };"
+s mak Sack
+out prn s@weight&
+out prn s@open
+
+Sack dcl Bag
+  weight dkn num
+    weight ert 5
+--- out
+5
+1
+=== #266 [46.  When the Studio Says Something]
+v is 3&1&2
+j is 0
+v@j igt v@j+1
+  out prn "bigger"
+out prn "done"
+--- out
+done
+=== #267 [46.  When the Studio Says Something]
+v is 3&1&2
+j is 0
+q is j+1
+v@j igt v@q
+  out prn "bigger"
+out prn "done"
+--- out
+bigger
+done
+=== #268 [46.  When the Studio Says Something]
+i is 0
+i wlt 3
+  i add 1
+i flt 3
+  out prn i
+out prn "done"
+--- out
+done
+=== #269 [47.  Turbo: How Your Programs Get Fast]
+out prn fib&42
+
+fib dfn num
+  n dpm num
+  n ilt 2
+    fib ert n
+  a is fib&n-1
+  b is fib&n-2
+  fib ert a+b
+--- out
+267914296
+=== #270 [47.  Turbo: How Your Programs Get Fast]
+best is 0
+at is 0
+i is 1
+i wlt 30000
+  n mak big
+  n is i
+  steps is 0
+  n wne 1
+    half is n%2
+    half ieq 0
+      n adv 2
+    now oth now
+      n aml 3
+      n add 1
+    steps add 1
+  steps igt best
+    best is steps
+    at is i
+  i add 1
+out prn "Start at @at for @best steps."
+--- out
+Start at 26623 for 307 steps.
+=== #271 [47.  Turbo: How Your Programs Get Fast]
+v is 10&20&30
+total is 0
+i flt cct&v
+  total add v@i
+out prn total
+--- out
+60
+=== #272 [47.  Turbo: How Your Programs Get Fast]
+v is 10&20&30
+n is 1
+n ige 0
+  n ilt cct&v
+    out prn v@n
+--- out
+20
+=== #273 [50.  Answers]
+out prn "I can read this!" says: Print "I can read this!" on the screen. So it prints:
+--- out
+I can read this!
+=== #274 [50.  Answers]
+pets is 3
+pets add 2
+out prn pets
+--- out
+5
+=== #275 [50.  Answers]
+cookies is 12
+FRIENDS mkn 3
+each is cookies/FRIENDS
+out prn each
+--- out
+4
+=== #276 [50.  Answers]
+food is "pizza"
+out prn "I like @food a lot."
+--- out
+I like pizza a lot.
+=== #277 [50.  Answers]
+slices is 8
+friends is 3
+out prn slices/friends
+out prn slices%friends
+--- out
+2
+2
+=== #278 [50.  Answers]
+name is "Ada"
+out prn tuc&name
+out prn tsz&name
+--- out
+ADA
+3
+=== #279 [50.  Answers]
+x is 6
+out prn x%2==0
+--- out
+yes
+=== #280 [50.  Answers]
+score is 85
+score ige 90
+  out prn "A"
+score oge 80
+  out prn "B"
+now oth now
+  out prn "Try again"
+--- out
+B
+=== #281 [50.  Answers]
+i is 1
+i fle 10
+  out prn i*5
+--- out
+5
+10
+15
+20
+25
+30
+35
+40
+45
+50
+=== #282 [50.  Answers]
+row flt 4
+  star fle row
+    out put "*"
+  out prn ""
+--- out
+*
+**
+***
+****
+=== #283 [50.  Answers]
+out prn tre&"-"&20
+out prn tfa&"{} is {}"&"Ada"&10
+--- out
+--------------------
+Ada is 10
+=== #284 [50.  Answers]
+n is 5
+n wge 1
+  out prn n
+  n asb 1
+--- out
+5
+4
+3
+2
+1
+=== #285 [50.  Answers]
+v is 5&2&9&1&7
+v lso now
+out prn cfr&v
+out prn cla&v
+--- out
+1
+9
+=== #286 [50.  Answers]
+friends mak vec@txt
+friends add "Ada"
+friends add "Bob"
+friends add "Cy"
+f fea friends
+  out prn "Hello, @f!"
+--- out
+Hello, Ada!
+Hello, Bob!
+Hello, Cy!
+=== #287 [50.  Answers]
+scores is 70&85&90&60
+out prn cav&scores
+out prn cmx&scores
+out prn cmn&scores
+--- out
+76.25
+90
+60
+=== #288 [50.  Answers]
+prices mak map@txt@num
+prices@"apple" is 2
+prices@"plum" is 3
+prices@"pear" is 4
+food&cost fea prices
+  out prn "@food costs @cost"
+--- out
+apple costs 2
+pear costs 4
+plum costs 3
+=== #289 [50.  Answers]
+letters mak set@ltr
+c fea "banana"
+  letters add c
+out prn cct&letters
+--- out
+3
+=== #290 [50.  Answers]
+out prn twice&21
+
+twice dfn num
+  n dpm num
+  twice ert n*2
+--- out
+42
+=== #291 [50.  Answers]
+v is 3&9&4
+out prn biggest&v
+
+biggest dfn num
+  list dpm see@vec@num
+  best is list@0
+  x fea list
+    x igt best
+      best is x
+  biggest ert best
+--- out
+9
+=== #292 [50.  Answers]
+words is "cat"&"horse"&"dog"&"zebra"
+longer dlm yno
+  w dpm txt
+  size is tsz&w
+  longer ert size>3
+out prn cft&words&longer
+--- out
+[horse, zebra]
+=== #293 [50.  Answers]
+v is 3&4&5
+plus dlm num
+  a dpm num
+  b dpm num
+  plus ert a+b
+out prn crl&v&0&plus
+above dlm yno
+  n dpm num
+  above ert n>0
+out prn cea&v&above
+--- out
+12
+yes
+=== #294 [50.  Answers]
+out prn calls&
+out prn calls&
+out prn calls&
+
+calls dfn num
+  n msv 0
+  n add 1
+  calls ert n
+--- out
+1
+2
+3
+=== #295 [50.  Answers]
+p mak Player
+p@name is "Ada"
+p win now
+p win now
+out prn p
+
+Player dcl now
+  name dfd txt
+  score dfd 0
+  win dfn now
+    score add 10
+--- out
+Player(name: Ada, score: 20)
+=== #296 [50.  Answers]
+shapes mak vec@own@Shape
+s mwn Square&2.0
+shapes add s
+c mwn Circle&1.0
+shapes add c
+x fea shapes
+  out prn x@area
+
+Shape dcl now
+  area dmb dec
+
+Square dcl Shape
+  side dfd 1.0
+  Square dmk now
+    given dpm dec
+    side is given
+  area dov dec
+    area ert side*side
+
+Circle dcl Shape
+  r dfd 1.0
+  Circle dmk now
+    given dpm dec
+    r is given
+  area dov dec
+    area ert npi*r*r
+--- out
+4
+3.14159
+=== #297 [50.  Answers]
+Color den red&green&blue
+c is Color@green
+c bsw now
+  now bcs red
+    out prn "Stop"
+  now bcs green
+    out prn "Go"
+  now bcs blue
+    out prn "Sky"
+--- out
+Go
+=== #298 [50.  Answers]
+now show_twice 5
+now show_twice "hi"
+
+show_twice dfn now
+  x dpm any
+  out prn x
+  out prn x
+--- out
+5
+5
+hi
+hi
+=== #299 [50.  Answers]
+x is 5
+p mpt x
+*p add 1
+out prn x
+--- out
+6
+=== #300 [50.  Answers]
+t mak Times&3
+out prn t&5
+
+Times dst now
+  k dfd 0
+  call dop num
+    n dpm num
+    call ert n*k
+--- out
+15
+=== #301 [50.  Answers]
+shop mak vec@own@Pet
+d mwn Dog&"Rex"
+shop add d
+b mwn Bird&"Kiwi"
+shop add b
+p fea shop
+  p wait now
+  name is p@name
+  sound is p@sound
+  hunger is p@hunger
+  out prn "@name says @sound, with hunger @hunger"
+
+Pet dcl now
+  name dfd txt
+  hunger dfd 0
+  Pet dmk now
+    n dpm txt
+    name is n
+  wait dvr now
+    hunger add 2
+  sound dmb txt
+
+Dog dcl Pet
+  Dog dmk now
+    n dpm txt
+    now dbs n
+  wait dov now
+    hunger add 3
+  sound dov txt
+    sound ert "Woof"
+
+Bird dcl Pet
+  Bird dmk now
+    n dpm txt
+    now dbs n
+  sound dov txt
+    sound ert "Tweet"
+--- out
+Rex says Woof, with hunger 3
+Kiwi says Tweet, with hunger 2
+=== #302 [50.  Answers]
+now btr now
+  n is tnm&"abc"
+  out prn n
+e bch now
+  out prn "Please use only digits."
+--- out
+Please use only digits.
+=== #303 [50.  Answers]
+x is hug&2
+x apw 200
+s is txt&x
+out prn tsz&s
+--- out
+61
+=== #304 [50.  Answers]
+name is "count.txt"
+n is 0
+hex&name ieq yes
+  text is hrd&name
+  n is tnm&text
+n add 1
+name hwr txt&n
+out prn n
+--- out
+1
+=== #305 [50.  Answers]
+items is "pear"&"apple"
+sorted is cso&items
+now show sorted
+out prn items
+
+show dfn now
+  list dpm see@vec@txt
+  i flt cct&list
+    number is i+1
+    out prn "@number. @list@i"
+--- out
+1. apple
+2. pear
+[pear, apple]
+=== #306 [50.  Answers]
+v is 1&2&3&4&5&6&7&8&9&10
+n fpr v
+  n is n*n
+out prn v
+--- out
+[1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+=== #307 [50.  Answers]
+c mak chn@num
+a mtd feed&c&1
+b mtd feed&c&10
+a rjn now
+b rjn now
+c close now
+total is 0
+n fea c
+  total add n
+out prn total
+
+feed dfn now
+  c dpm ref@chn@num
+  k dpm num
+  i flt 3
+    c add k
+--- out
+33
+=== #308 [50.  Answers]
+out prn shout@say&"hello"
+
+shout dgr now
+  say dfn txt
+    s dpm txt
+    say ert tuc&s
+--- out
+HELLO
+=== #309 [50.  Answers]
+out prn xha&"cat"
+out prn xha&"cats"
+--- out
+77af778b51abd4a3c51c5ddd97204a9c3ae614ebccb75a606c3b6865aed6744e
+d936608baaacc6b762c14b0c356026fba3b84e77d5b22e86f2fc29d3da09c675
+=== #310 [78.  Blueprints: Programs You Can See]
+note Add up the odd numbers, and show the even ones.
+make a number called total with 0
+for i from 1 to 10:
+  if i is even:
+    print i
+  otherwise:
+    add i to total
+  end if
+end for
+print "The odd numbers add up to " + (total as text)
+--- out
+2
+4
+6
+8
+10
+The odd numbers add up to 25
+=== #311 [79.  C++ Overpowered: Real C++ You Can See]
+#include <iostream>
+
+int main() {
+    int total = 0;
+    for (int i = 1; i <= 10; ++i) {
+        total += i;
+    }
+    std::cout << total << '\n';
+    return 0;
+}
+--- out
+55
