@@ -43,6 +43,9 @@
           <button type="button" class="es-btn es-run" id="esRun" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4l13 8-13 8z" /></svg>Run</button>
           <button type="button" class="es-btn es-stop" id="esStop" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" /></svg>Stop</button>
           <button type="button" class="es-btn" id="esExamples">Examples</button>
+          <button type="button" class="es-btn" id="esBlocks" title="Drop in a shape: loops, ifs, functions, classes, a game loop">Blocks</button>
+          <button type="button" class="es-btn" id="esRoots" title="Every root in the Chart, explained">Root Table</button>
+          <button type="button" class="es-btn" id="esOutline" title="Your functions and classes">Outline</button>
           <button type="button" class="es-btn" id="esNew">New</button>
           <button type="button" class="es-btn" id="esCppBtn">C++ View</button>
           <button type="button" class="es-btn es-full" id="esFullBuild" title="Builds the C++ View with real Clang in this browser (one-time ~37 MB download)">Full build</button>
@@ -99,6 +102,30 @@
         <div class="es-sheet-head"><h2 id="esExTitle">Examples</h2><button type="button" class="es-icon" id="esExClose" aria-label="Close">×</button></div>
         <input type="search" id="esExSearch" class="es-input" placeholder="Search the Book's programs…" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Search examples" />
         <div class="es-ex-list" id="esExList"></div>
+      </div>
+    </div>
+    <div class="es-sheet hidden" id="esBlkSheet" role="dialog" aria-modal="true" aria-labelledby="esBlkTitle">
+      <div class="es-sheet-card">
+        <div class="es-sheet-head"><h2 id="esBlkTitle">Blocks</h2><button type="button" class="es-icon es-sheet-x" aria-label="Close">×</button></div>
+        <p class="es-dim es-sheet-sub">Drops in at your line's level. Type over a blank, then Tab to the next one.</p>
+        <div class="es-ex-list" id="esBlkList"></div>
+      </div>
+    </div>
+    <div class="es-sheet hidden" id="esRtSheet" role="dialog" aria-modal="true" aria-labelledby="esRtTitle">
+      <div class="es-sheet-card es-rt-card">
+        <div class="es-sheet-head"><h2 id="esRtTitle">Root Table <small id="esRtCount"></small></h2><button type="button" class="es-icon es-sheet-x" aria-label="Close">×</button></div>
+        <input type="search" id="esRtSearch" class="es-input" placeholder="Search: a root, a meaning, or C++ (e.g. push_back)…" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Search the Root Table" />
+        <div class="es-rt-chips" id="esRtChips" role="group" aria-label="Show">
+          <button type="button" class="es-rt-chip" data-f="all" aria-pressed="true">All</button><button type="button" class="es-rt-chip" data-f="root" aria-pressed="false">Roots</button><button type="button" class="es-rt-chip" data-f="value" aria-pressed="false">Value words</button><button type="button" class="es-rt-chip" data-f="kind" aria-pressed="false">Kinds</button><button type="button" class="es-rt-chip" data-f="special" aria-pressed="false">Special words</button>
+        </div>
+        <div class="es-ex-list es-rt-list" id="esRtList"></div>
+        <p class="es-dim es-sheet-sub">Word for word from the frozen English++ Chart. "Try it" puts the Chart's example line in your program; "Book program" loads a Book program that uses the word.</p>
+      </div>
+    </div>
+    <div class="es-sheet hidden" id="esOutSheet" role="dialog" aria-modal="true" aria-labelledby="esOutTitle">
+      <div class="es-sheet-card">
+        <div class="es-sheet-head"><h2 id="esOutTitle">Outline</h2><button type="button" class="es-icon es-sheet-x" aria-label="Close">×</button></div>
+        <div class="es-ex-list" id="esOutList"></div>
       </div>
     </div>
     <div class="es-toast" id="esToast" role="status" aria-live="polite"></div>
