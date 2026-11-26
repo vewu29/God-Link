@@ -212,6 +212,9 @@
     function up(e) { var b = e.target.closest(".es-gk"); if (!b || held[b.dataset.k] == null) return; e.preventDefault(); delete held[b.dataset.k]; b.classList.remove("down"); sendKey("keyup", GK[+b.dataset.k]); }
     g.addEventListener("pointerdown", down); g.addEventListener("pointerup", up); g.addEventListener("pointercancel", up); g.addEventListener("lostpointercapture", up);
     g.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+    /* iPhone: stop the touch itself so Safari/Chrome-iOS never flash, focus, scroll or zoom on a game key */
+    g.addEventListener("touchstart", function (e) { if (e.target.closest(".es-gk")) e.preventDefault(); }, { passive: false });
+    g.addEventListener("touchend", function (e) { if (e.target.closest(".es-gk")) e.preventDefault(); }, { passive: false });
   })();
   function setGameKeys(on) { $("esGameKeys").classList.toggle("hidden", !on); $("esKeysBtn").setAttribute("aria-pressed", on); fitCanvas(); }
   $("esKeysBtn").addEventListener("click", function () { setGameKeys($("esGameKeys").classList.contains("hidden")); });
