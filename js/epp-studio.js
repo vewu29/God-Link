@@ -215,6 +215,16 @@
     /* iPhone: stop the touch itself so Safari/Chrome-iOS never flash, focus, scroll or zoom on a game key */
     g.addEventListener("touchstart", function (e) { if (e.target.closest(".es-gk")) e.preventDefault(); }, { passive: false });
     g.addEventListener("touchend", function (e) { if (e.target.closest(".es-gk")) e.preventDefault(); }, { passive: false });
+    /* iPhone double tap: never start a text selection, word highlight or zoom anywhere in the game area */
+    (function () {
+      var st = $("esStage");
+      function noSel() { try { var sel = window.getSelection(); if (sel && sel.rangeCount && !(editor && editor.view.hasFocus)) sel.removeAllRanges(); } catch (er) {} }
+      st.addEventListener("selectstart", function (e) { e.preventDefault(); });
+      st.addEventListener("dblclick", function (e) { e.preventDefault(); noSel(); });
+      st.addEventListener("touchstart", function (e) { if (e.touches.length === 1 && !e.target.closest("button, input, select, textarea, a, canvas")) e.preventDefault(); }, { passive: false });
+      st.addEventListener("touchend", function (e) { if (!e.target.closest("button, input, select, textarea, a, canvas")) e.preventDefault(); noSel(); }, { passive: false });
+      g.addEventListener("pointerdown", noSel, true);
+    })();
   })();
   function setGameKeys(on) { $("esGameKeys").classList.toggle("hidden", !on); $("esKeysBtn").setAttribute("aria-pressed", on); fitCanvas(); }
   $("esKeysBtn").addEventListener("click", function () { setGameKeys($("esGameKeys").classList.contains("hidden")); });
