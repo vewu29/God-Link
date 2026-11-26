@@ -37,6 +37,8 @@
   var files = [], active = 0, editor = null, M = null, running = false;
   function fileList() { return files.map(function (f) { return { name: f.name, text: f.state ? f.state.doc.toString() : f.text }; }); }
   function syncActive() { if (editor && files[active]) files[active].state = editor.view.state; }
+  function mkState(f) { return window.EppCppMode && EppCppMode.isCppName(f.name) && editor.makeCppState ? editor.makeCppState(f.text || "") : editor.makeState(f.text || ""); }
+  function cppTab() { if (window.EppCppMode) EppCppMode.onTab(); }
   function renderTabs() {
     var h = files.map(function (f, i) {
       return '<div class="es-ftab' + (i === active ? " active" : "") + '" role="presentation"><button type="button" role="tab" aria-selected="' + (i === active) + '" data-i="' + i + '">' + esc(f.name) + "</button>" +
@@ -47,24 +49,27 @@
   function openTab(i) {
     syncActive(); active = i;
     var f = files[i];
-    if (!f.state) f.state = editor.makeState(f.text || "");
+    if (!f.state) f.state = mkState(f);
     editor.view.setState(f.state);
-    renderTabs(); editor.relint();
+    renderTabs(); editor.relint(); cppTab();
   }
   function setFiles(list) {
     files = list.map(function (f) { return { name: f.name, text: f.text, state: null }; });
     if (!files.length || files[0].name !== "main.epp") files.unshift({ name: "main.epp", text: "", state: null });
     active = -1; files.forEach(function (f) { f.state = null; });
-    active = 0; files[0].state = editor.makeState(files[0].text || ""); editor.view.setState(files[0].state);
-    renderTabs(); editor.relint(); saveDraft();
+    active = 0; files[0].state = mkState(files[0]); editor.view.setState(files[0].state);
+    renderTabs(); editor.relint(); saveDraft(); cppTab();
   }
   $("esFiles").addEventListener("click", function (e) {
     var b = e.target.closest("button"); if (!b) return;
     if (b.id === "esFileAdd") {
-      var n = prompt("Name of the new file (it ends in .epp):", "tools.epp");
+      var n = prompt("Name of the new file (it ends in .epp — or .cpp / .h for C++):", "tools.epp");
       if (!n) return; n = n.trim().replace(/\s+/g, "_"); if (!/\.\w+$/.test(n)) n += ".epp";
       if (files.some(function (f) { return f.name === n; })) { toast("There is already a file called " + n); return; }
-      syncActive(); files.push({ name: n, text: "note " + n + "\n", state: null }); openTab(files.length - 1); saveDraft(); editor.focus(); return;
+      var cppNew = window.EppCppMode && EppCppMode.isCppName(n);
+      var hasMainCpp = files.some(function (f) { return /\.(cpp|cc|cxx)$/i.test(f.name) && /\bint\s+main\s*\(/.test(f.state ? f.state.doc.toString() : f.text || ""); });
+      var newText = !cppNew ? "note " + n + "\n" : /\.(h|hpp|hh|hxx)$/i.test(n) ? "// " + n + "\n#pragma once\n\n" : hasMainCpp ? "// " + n + "\n#include <iostream>\n\n" : "#include <iostream>\n\nint main() {\n    std::cout << \"Hello!\" << std::endl;\n    return 0;\n}\n";
+      syncActive(); files.push({ name: n, text: newText, state: null }); openTab(files.length - 1); saveDraft(); editor.focus(); return;
     }
     if (b.dataset.x) {
       var i = +b.dataset.x, name = files[i].name;
@@ -72,8 +77,8 @@
       syncActive(); files.splice(i, 1);
       try { if (M) M.fsRemove(name); } catch (er) {}
       if (active === i) active = Math.max(0, i - 1); else if (active > i) active--;
-      var f = files[active]; if (!f.state) f.state = editor.makeState(f.text || ""); editor.view.setState(f.state);
-      renderTabs(); saveDraft(); editor.relint(); return;
+      var f = files[active]; if (!f.state) f.state = mkState(f); editor.view.setState(f.state);
+      renderTabs(); saveDraft(); editor.relint(); cppTab(); return;
     }
     if (b.dataset.i != null) openTab(+b.dataset.i);
   });
@@ -289,12 +294,13 @@
 
   /* ---------- Run / Stop ---------- */
   function setRunning(on) {
-    running = on; $("esRun").disabled = on || !M; $("esStop").disabled = !on;
+    running = on; $("esRun").disabled = on || (!M && !(window.EppCppMode && EppCppMode.isActive())); $("esStop").disabled = !on;
     $("esApp").classList.toggle("is-running", on);
     status(on ? "Running…" : M ? "Ready" : status_err ? "Engine failed" : "Loading engine…", on ? "run" : M ? "ok" : status_err ? "bad" : "");
   }
   var status_err = false;
   async function run() {
+    if (window.EppCppMode && EppCppMode.handlesRun()) return EppCppMode.run();
     if (!M || running) return;
     syncActive();
     var list = fileList(), main = list[0].text;
@@ -320,6 +326,7 @@
     if (qt.win) qt.win.classList.add("closed");
   }
   function stop() {
+    if (window.EppCppMode && EppCppMode.stop()) return;
     if (fbBusy && FB) { try { FB.stop(); } catch (e) {} }
     if (!M) return;
     try { M.stop(); } catch (e) {}
@@ -385,6 +392,7 @@
 
   /* ---------- New ---------- */
   $("esNew").addEventListener("click", function () {
+    if (window.EppCppMode && EppCppMode.newProgram()) return;
     if (editor.getText().trim() && !confirm("Start a new program? (Save first if you want to keep this one.)")) return;
     setFiles([{ name: "main.epp", text: "note My program\nout prn \"Hello!\"\n" }]);
     history.replaceState(null, "", location.href.split("#")[0]);
@@ -413,7 +421,8 @@
     EX.groups.forEach(function (g, gi) {
       var idx = exItems(g, q);
       if (!idx.length) return;
-      var open = q ? shown < 6 : gi < 1;
+      var cppOn = !!(window.EppCppMode && EppCppMode.isActive());
+      var open = q ? shown < 6 : g.cpp ? cppOn : (gi < 1 && !cppOn);
       h += '<details class="es-exg" data-g="' + gi + '"' + (open ? " open" : "") + "><summary>" + esc(g.name) + ' <span class="es-dim">' + idx.length + '</span></summary><div class="es-exg-body">' + (open ? exButtons(gi, idx) : "") + "</div></details>";
       shown++;
     });
@@ -427,7 +436,7 @@
   }, true);
   function openExamples() {
     $("esExSheet").classList.remove("hidden"); renderExamples($("esExSearch").value);
-    if (!EX) fetch("data/epp-studio/examples.json").then(function (r) { return r.json(); }).then(function (j) { j.groups.forEach(function (g) { g.lc = g.name.toLowerCase(); g.items.forEach(function (it) { it.lc = (it.title + "\n" + it.code).toLowerCase(); it.lines = it.code.split("\n").length; }); }); EX = j; renderExamples($("esExSearch").value); }).catch(function () { $("esExList").innerHTML = '<p class="es-dim">The examples could not load.</p>'; });
+    if (!EX) Promise.all([fetch("data/epp-studio/examples.json").then(function (r) { return r.json(); }), window.EppCppMode ? EppCppMode.examples() : null]).then(function (a) { var j = a[0]; if (a[1] && a[1].items) { a[1].items.forEach(function (it) { it.cpp = true; }); j.groups.push({ name: a[1].name || "C++", items: a[1].items, cpp: true }); } return j; }).then(function (j) { j.groups.forEach(function (g) { g.lc = g.name.toLowerCase(); g.items.forEach(function (it) { it.lc = (it.title + "\n" + it.code).toLowerCase(); it.lines = it.code.split("\n").length; }); }); EX = j; renderExamples($("esExSearch").value); }).catch(function () { $("esExList").innerHTML = '<p class="es-dim">The examples could not load.</p>'; });
   }
   $("esExamples").addEventListener("click", openExamples);
   $("esExClose").addEventListener("click", function () { $("esExSheet").classList.add("hidden"); });
@@ -436,6 +445,7 @@
   $("esExList").addEventListener("click", function (e) {
     var b = e.target.closest(".es-ex"); if (!b) return;
     var it = EX.groups[+b.dataset.g].items[+b.dataset.i];
+    if (it.cpp) { $("esExSheet").classList.add("hidden"); history.replaceState(null, "", location.href.split("#")[0]); EppCppMode.loadExample(it); return; }
     syncActive();
     var code = it.code.replace(/\s+$/, "") + "\n";
     if (files.length === 1 || active === 0) { files[0].state = editor.makeState(code); if (active === 0) editor.view.setState(files[0].state); else openTab(0); }
@@ -537,6 +547,7 @@
     editor.insertBlock(b.make()); return true;
   }
   function openBlocks() {
+    if (window.EppCppMode && EppCppMode.openBlocks()) return;
     $("esBlkList").innerHTML = BLOCKS.map(function (b) { return '<button type="button" class="es-ex es-blk" data-b="' + b.id + '"><b>' + esc(b.title) + "</b><code>" + esc(b.shape) + "</code></button>"; }).join("");
     sheetOpen("esBlkSheet");
     var f = $("esBlkList").querySelector("button"); if (f && !touch) f.focus();
@@ -624,6 +635,7 @@
 
   /* ---------- Outline: your functions and classes ---------- */
   function openOutline() {
+    if (window.EppCppMode && EppCppMode.outline()) return;
     var o = editor.outline();
     $("esOutList").innerHTML = o.length ? o.map(function (n) { return '<button type="button" class="es-ex es-outl" data-l="' + n.line + '"><code>' + (n.owner ? "  " : "") + esc(n.name) + " " + esc(n.root) + "</code><span>" + esc(n.kind + (n.owner ? " of " + n.owner : "")) + " · line " + n.line + "</span></button>"; }).join("")
       : '<p class="es-dim">No functions or classes in this file yet. Blocks has a Function and a Class.</p>';
@@ -768,7 +780,13 @@
     if (from === "hash") toast("Loaded the shared program.");
     layout();
     loadEngine();
-    window.EppStudio = { editor: editor, files: function () { syncActive(); return fileList(); }, shareURL: shareURL, run: run, stop: stop, engine: function () { return M; }, showPane: showPane, blocks: BLOCKS, insertBlock: insertBlock, openRootTable: openRootTable, rootTable: function () { return RT; }, openOutline: openOutline, rename: doRename, setTouch: setTouch, openTab: openTab };
+    if (window.EppCppMode) EppCppMode.init({
+      editor: editor, files: function () { return files; }, active: function () { return active; }, fileList: fileList, syncActive: syncActive, setFiles: setFiles, openTab: openTab,
+      engine: function () { return M; }, toast: toast, status: status, conClear: conClear, conNote: conNote, conWrite: conWrite, con: function () { return con; }, readLine: readLine,
+      showPane: showPane, setBusy: function (on) { setRunning(on); if (!on) $("esRun").disabled = !M && !EppCppMode.isActive(); }, running: function () { return running; },
+      load: load, store: store, sheetOpen: sheetOpen, sheetClose: sheetClose, saveDraft: saveDraft, touch: function () { return touch; }, eppEvent: eppEvent,
+      pendingInput: function () { return pendingInput; } });
+    window.EppStudio = { cppMode: window.EppCppMode, editor: editor, files: function () { syncActive(); return fileList(); }, shareURL: shareURL, run: run, stop: stop, engine: function () { return M; }, showPane: showPane, blocks: BLOCKS, insertBlock: insertBlock, openRootTable: openRootTable, rootTable: function () { return RT; }, openOutline: openOutline, rename: doRename, setTouch: setTouch, openTab: openTab };
   }
   Promise.all(["roots", "raylib", "qt"].map(function (n) { return fetch("data/epp-studio/" + n + ".json").then(function (r) { if (!r.ok) throw new Error(n + ".json " + r.status); return r.json(); }); }))
     .then(function (a) { start({ families: a[0].families, words: a[0].words, kinds: a[0].kinds, special: a[0].special, raylib: a[1], qt: a[2] }); })

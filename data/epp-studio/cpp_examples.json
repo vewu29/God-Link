@@ -1,0 +1,80 @@
+{
+"name": "C++ (real Clang in your browser)",
+"items": [
+{
+"id": "cpp_01_hello",
+"title": "Hello, V! (C++)",
+"code": "// Hello from C++ in the English++ Web Studio\n#include <iostream>\n#include <string>\n\nint main() {\n    std::string name = \"Vewu\";\n    std::cout << \"Hello, V!\" << std::endl;\n    std::cout << \"Hi \" << name << \", this is real C++ built by Clang in your browser.\" << std::endl;\n    return 0;\n}\n",
+"raylib": false,
+"files": [
+{
+"name": "main.cpp",
+"text": "// Hello from C++ in the English++ Web Studio\n#include <iostream>\n#include <string>\n\nint main() {\n    std::string name = \"Vewu\";\n    std::cout << \"Hello, V!\" << std::endl;\n    std::cout << \"Hi \" << name << \", this is real C++ built by Clang in your browser.\" << std::endl;\n    return 0;\n}\n"
+}
+],
+"output": "Hello, V!\nHi Vewu, this is real C++ built by Clang in your browser.\n"
+},
+{
+"id": "cpp_02_loops",
+"title": "Loops, vectors and strings",
+"code": "// Loops, vectors and strings\n#include <algorithm>\n#include <iostream>\n#include <numeric>\n#include <string>\n#include <vector>\n\nint main() {\n    std::vector<int> scores = {7, 3, 9, 4, 10, 6};\n\n    for (int i = 0; i < 3; i++) {\n        std::cout << \"count \" << i << \"\\n\";\n    }\n\n    int total = std::accumulate(scores.begin(), scores.end(), 0);\n    std::cout << \"total = \" << total << \"\\n\";\n\n    std::sort(scores.begin(), scores.end());\n    std::cout << \"sorted:\";\n    for (int s : scores) std::cout << \" \" << s;\n    std::cout << \"\\n\";\n\n    std::string word = \"English++\";\n    std::string backwards(word.rbegin(), word.rend());\n    std::cout << word << \" backwards is \" << backwards << \"\\n\";\n    std::cout << word << \" has \" << word.size() << \" letters\\n\";\n\n    int n = 10;\n    while (n > 1) {\n        n = (n % 2 == 0) ? n / 2 : 3 * n + 1;\n        std::cout << n << (n > 1 ? \" -> \" : \"\\n\");\n    }\n    return 0;\n}\n",
+"raylib": false,
+"files": [
+{
+"name": "main.cpp",
+"text": "// Loops, vectors and strings\n#include <algorithm>\n#include <iostream>\n#include <numeric>\n#include <string>\n#include <vector>\n\nint main() {\n    std::vector<int> scores = {7, 3, 9, 4, 10, 6};\n\n    for (int i = 0; i < 3; i++) {\n        std::cout << \"count \" << i << \"\\n\";\n    }\n\n    int total = std::accumulate(scores.begin(), scores.end(), 0);\n    std::cout << \"total = \" << total << \"\\n\";\n\n    std::sort(scores.begin(), scores.end());\n    std::cout << \"sorted:\";\n    for (int s : scores) std::cout << \" \" << s;\n    std::cout << \"\\n\";\n\n    std::string word = \"English++\";\n    std::string backwards(word.rbegin(), word.rend());\n    std::cout << word << \" backwards is \" << backwards << \"\\n\";\n    std::cout << word << \" has \" << word.size() << \" letters\\n\";\n\n    int n = 10;\n    while (n > 1) {\n        n = (n % 2 == 0) ? n / 2 : 3 * n + 1;\n        std::cout << n << (n > 1 ? \" -> \" : \"\\n\");\n    }\n    return 0;\n}\n"
+}
+],
+"output": "count 0\ncount 1\ncount 2\ntotal = 39\nsorted: 3 4 6 7 9 10\nEnglish++ backwards is ++hsilgnE\nEnglish++ has 9 letters\n5 -> 16 -> 8 -> 4 -> 2 -> 1\n"
+},
+{
+"id": "cpp_03_class",
+"title": "A class: Dog",
+"code": "// A class with a field, a constructor and methods\n#include <iostream>\n#include <string>\n#include <vector>\n\nclass Dog {\npublic:\n    Dog(std::string name, int age) : name_(name), age_(age) {}\n    void bark() const { std::cout << name_ << \" says woof!\\n\"; }\n    void birthday() { age_++; }\n    int age() const { return age_; }\n    const std::string& name() const { return name_; }\n\nprivate:\n    std::string name_;\n    int age_;\n};\n\nint main() {\n    std::vector<Dog> dogs = {Dog(\"Rex\", 3), Dog(\"Bella\", 5)};\n    for (auto& d : dogs) {\n        d.bark();\n        d.birthday();\n        std::cout << d.name() << \" is now \" << d.age() << \"\\n\";\n    }\n    return 0;\n}\n",
+"raylib": false,
+"files": [
+{
+"name": "main.cpp",
+"text": "// A class with a field, a constructor and methods\n#include <iostream>\n#include <string>\n#include <vector>\n\nclass Dog {\npublic:\n    Dog(std::string name, int age) : name_(name), age_(age) {}\n    void bark() const { std::cout << name_ << \" says woof!\\n\"; }\n    void birthday() { age_++; }\n    int age() const { return age_; }\n    const std::string& name() const { return name_; }\n\nprivate:\n    std::string name_;\n    int age_;\n};\n\nint main() {\n    std::vector<Dog> dogs = {Dog(\"Rex\", 3), Dog(\"Bella\", 5)};\n    for (auto& d : dogs) {\n        d.bark();\n        d.birthday();\n        std::cout << d.name() << \" is now \" << d.age() << \"\\n\";\n    }\n    return 0;\n}\n"
+}
+],
+"output": "Rex says woof!\nRex is now 4\nBella says woof!\nBella is now 6\n"
+},
+{
+"id": "cpp_04_ball",
+"title": "raylib: Bouncing ball",
+"code": "// raylib from C++: a bouncing ball (Space reverses it, touch or click moves it)\n#include \"raylib.h\"\n#include <string>\n\nint main() {\n    InitWindow(800, 450, \"Bouncing Ball\");\n    SetTargetFPS(60);\n\n    Vector2 pos = {400, 225};\n    Vector2 speed = {5, 4};\n    float radius = 30;\n    int bounces = 0;\n\n    while (!WindowShouldClose()) {\n        pos.x += speed.x;\n        pos.y += speed.y;\n        if (pos.x < radius || pos.x > GetScreenWidth() - radius) { speed.x = -speed.x; bounces++; }\n        if (pos.y < radius || pos.y > GetScreenHeight() - radius) { speed.y = -speed.y; bounces++; }\n        if (IsKeyPressed(KEY_SPACE)) { speed.x = -speed.x; speed.y = -speed.y; }\n        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) pos = GetMousePosition();\n\n        BeginDrawing();\n        ClearBackground(RAYWHITE);\n        DrawCircleV(pos, radius, MAROON);\n        DrawText((\"Bounces: \" + std::to_string(bounces)).c_str(), 10, 10, 24, DARKGRAY);\n        DrawFPS(GetScreenWidth() - 100, 10);\n        EndDrawing();\n    }\n    CloseWindow();\n    return 0;\n}\n",
+"raylib": true,
+"files": [
+{
+"name": "main.cpp",
+"text": "// raylib from C++: a bouncing ball (Space reverses it, touch or click moves it)\n#include \"raylib.h\"\n#include <string>\n\nint main() {\n    InitWindow(800, 450, \"Bouncing Ball\");\n    SetTargetFPS(60);\n\n    Vector2 pos = {400, 225};\n    Vector2 speed = {5, 4};\n    float radius = 30;\n    int bounces = 0;\n\n    while (!WindowShouldClose()) {\n        pos.x += speed.x;\n        pos.y += speed.y;\n        if (pos.x < radius || pos.x > GetScreenWidth() - radius) { speed.x = -speed.x; bounces++; }\n        if (pos.y < radius || pos.y > GetScreenHeight() - radius) { speed.y = -speed.y; bounces++; }\n        if (IsKeyPressed(KEY_SPACE)) { speed.x = -speed.x; speed.y = -speed.y; }\n        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) pos = GetMousePosition();\n\n        BeginDrawing();\n        ClearBackground(RAYWHITE);\n        DrawCircleV(pos, radius, MAROON);\n        DrawText((\"Bounces: \" + std::to_string(bounces)).c_str(), 10, 10, 24, DARKGRAY);\n        DrawFPS(GetScreenWidth() - 100, 10);\n        EndDrawing();\n    }\n    CloseWindow();\n    return 0;\n}\n"
+}
+]
+},
+{
+"id": "cpp_05_orbit",
+"title": "raylib: 3D orbit camera",
+"code": "// raylib from C++: a 3D orbit camera around a little city of cubes\n#include \"raylib.h\"\n#include <cmath>\n\nint main() {\n    InitWindow(800, 450, \"Orbit Camera\");\n    SetTargetFPS(60);\n\n    Camera3D camera = {};\n    camera.position = {12.0f, 8.0f, 12.0f};\n    camera.target = {0.0f, 1.0f, 0.0f};\n    camera.up = {0.0f, 1.0f, 0.0f};\n    camera.fovy = 45.0f;\n    camera.projection = CAMERA_PERSPECTIVE;\n\n    float angle = 0.0f;\n    while (!WindowShouldClose()) {\n        if (IsKeyDown(KEY_LEFT)) angle -= 0.03f;\n        else if (IsKeyDown(KEY_RIGHT)) angle += 0.03f;\n        else angle += 0.01f;\n        camera.position.x = 17.0f * std::cos(angle);\n        camera.position.z = 17.0f * std::sin(angle);\n\n        BeginDrawing();\n        ClearBackground(SKYBLUE);\n        BeginMode3D(camera);\n        DrawPlane({0, 0, 0}, {20, 20}, DARKGREEN);\n        for (int x = -2; x <= 2; x++) {\n            for (int z = -2; z <= 2; z++) {\n                float h = 1.0f + (float)((x * 7 + z * 13 + 20) % 5);\n                Color c = ColorFromHSV((float)((x + 2) * 40 + (z + 2) * 15), 0.6f, 0.9f);\n                DrawCube({x * 3.0f, h / 2, z * 3.0f}, 1.6f, h, 1.6f, c);\n                DrawCubeWires({x * 3.0f, h / 2, z * 3.0f}, 1.6f, h, 1.6f, DARKGRAY);\n            }\n        }\n        DrawGrid(20, 1.0f);\n        EndMode3D();\n        DrawText(\"Left / Right to orbit\", 10, 10, 22, DARKBLUE);\n        DrawFPS(GetScreenWidth() - 100, 10);\n        EndDrawing();\n    }\n    CloseWindow();\n    return 0;\n}\n",
+"raylib": true,
+"files": [
+{
+"name": "main.cpp",
+"text": "// raylib from C++: a 3D orbit camera around a little city of cubes\n#include \"raylib.h\"\n#include <cmath>\n\nint main() {\n    InitWindow(800, 450, \"Orbit Camera\");\n    SetTargetFPS(60);\n\n    Camera3D camera = {};\n    camera.position = {12.0f, 8.0f, 12.0f};\n    camera.target = {0.0f, 1.0f, 0.0f};\n    camera.up = {0.0f, 1.0f, 0.0f};\n    camera.fovy = 45.0f;\n    camera.projection = CAMERA_PERSPECTIVE;\n\n    float angle = 0.0f;\n    while (!WindowShouldClose()) {\n        if (IsKeyDown(KEY_LEFT)) angle -= 0.03f;\n        else if (IsKeyDown(KEY_RIGHT)) angle += 0.03f;\n        else angle += 0.01f;\n        camera.position.x = 17.0f * std::cos(angle);\n        camera.position.z = 17.0f * std::sin(angle);\n\n        BeginDrawing();\n        ClearBackground(SKYBLUE);\n        BeginMode3D(camera);\n        DrawPlane({0, 0, 0}, {20, 20}, DARKGREEN);\n        for (int x = -2; x <= 2; x++) {\n            for (int z = -2; z <= 2; z++) {\n                float h = 1.0f + (float)((x * 7 + z * 13 + 20) % 5);\n                Color c = ColorFromHSV((float)((x + 2) * 40 + (z + 2) * 15), 0.6f, 0.9f);\n                DrawCube({x * 3.0f, h / 2, z * 3.0f}, 1.6f, h, 1.6f, c);\n                DrawCubeWires({x * 3.0f, h / 2, z * 3.0f}, 1.6f, h, 1.6f, DARKGRAY);\n            }\n        }\n        DrawGrid(20, 1.0f);\n        EndMode3D();\n        DrawText(\"Left / Right to orbit\", 10, 10, 22, DARKBLUE);\n        DrawFPS(GetScreenWidth() - 100, 10);\n        EndDrawing();\n    }\n    CloseWindow();\n    return 0;\n}\n"
+}
+]
+},
+{
+"id": "cpp_06_game",
+"title": "raylib game: Star Catcher",
+"code": "// raylib from C++: Star Catcher \u2014 move the paddle with Left/Right (or A/D), catch the stars, miss three and it's over\n#include \"raylib.h\"\n#include <string>\n#include <vector>\n\nstruct Star {\n    Vector2 pos;\n    float speed;\n};\n\nint main() {\n    InitWindow(800, 450, \"Star Catcher\");\n    SetTargetFPS(60);\n\n    Rectangle paddle = {350, 410, 110, 18};\n    std::vector<Star> stars;\n    int score = 0, missed = 0, frame = 0;\n    bool over = false;\n\n    while (!WindowShouldClose()) {\n        if (!over) {\n            if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A)) paddle.x -= 8;\n            if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) paddle.x += 8;\n            if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) paddle.x = GetMouseX() - paddle.width / 2;\n            if (paddle.x < 0) paddle.x = 0;\n            if (paddle.x > 800 - paddle.width) paddle.x = 800 - paddle.width;\n\n            if (frame++ % 40 == 0) stars.push_back({{(float)GetRandomValue(20, 780), -10}, (float)GetRandomValue(3, 6)});\n            for (auto& s : stars) s.pos.y += s.speed;\n            for (size_t i = 0; i < stars.size();) {\n                if (CheckCollisionCircleRec(stars[i].pos, 10, paddle)) { score++; stars.erase(stars.begin() + i); }\n                else if (stars[i].pos.y > 460) { missed++; stars.erase(stars.begin() + i); }\n                else i++;\n            }\n            if (missed >= 3) over = true;\n        } else if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_R)) {\n            stars.clear(); score = 0; missed = 0; over = false;\n        }\n\n        BeginDrawing();\n        ClearBackground({12, 20, 48, 255});\n        for (auto& s : stars) DrawPoly(s.pos, 5, 12, frame * 3.0f, GOLD);\n        DrawRectangleRounded(paddle, 0.5f, 6, SKYBLUE);\n        DrawText((\"Score \" + std::to_string(score)).c_str(), 10, 10, 28, RAYWHITE);\n        DrawText((\"Missed \" + std::to_string(missed) + \"/3\").c_str(), 640, 10, 24, ORANGE);\n        if (over) {\n            DrawText(\"GAME OVER\", 250, 170, 60, RED);\n            DrawText(\"Press Enter or R to play again\", 230, 245, 24, RAYWHITE);\n        }\n        EndDrawing();\n    }\n    CloseWindow();\n    return 0;\n}\n",
+"raylib": true,
+"files": [
+{
+"name": "main.cpp",
+"text": "// raylib from C++: Star Catcher \u2014 move the paddle with Left/Right (or A/D), catch the stars, miss three and it's over\n#include \"raylib.h\"\n#include <string>\n#include <vector>\n\nstruct Star {\n    Vector2 pos;\n    float speed;\n};\n\nint main() {\n    InitWindow(800, 450, \"Star Catcher\");\n    SetTargetFPS(60);\n\n    Rectangle paddle = {350, 410, 110, 18};\n    std::vector<Star> stars;\n    int score = 0, missed = 0, frame = 0;\n    bool over = false;\n\n    while (!WindowShouldClose()) {\n        if (!over) {\n            if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A)) paddle.x -= 8;\n            if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) paddle.x += 8;\n            if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) paddle.x = GetMouseX() - paddle.width / 2;\n            if (paddle.x < 0) paddle.x = 0;\n            if (paddle.x > 800 - paddle.width) paddle.x = 800 - paddle.width;\n\n            if (frame++ % 40 == 0) stars.push_back({{(float)GetRandomValue(20, 780), -10}, (float)GetRandomValue(3, 6)});\n            for (auto& s : stars) s.pos.y += s.speed;\n            for (size_t i = 0; i < stars.size();) {\n                if (CheckCollisionCircleRec(stars[i].pos, 10, paddle)) { score++; stars.erase(stars.begin() + i); }\n                else if (stars[i].pos.y > 460) { missed++; stars.erase(stars.begin() + i); }\n                else i++;\n            }\n            if (missed >= 3) over = true;\n        } else if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_R)) {\n            stars.clear(); score = 0; missed = 0; over = false;\n        }\n\n        BeginDrawing();\n        ClearBackground({12, 20, 48, 255});\n        for (auto& s : stars) DrawPoly(s.pos, 5, 12, frame * 3.0f, GOLD);\n        DrawRectangleRounded(paddle, 0.5f, 6, SKYBLUE);\n        DrawText((\"Score \" + std::to_string(score)).c_str(), 10, 10, 28, RAYWHITE);\n        DrawText((\"Missed \" + std::to_string(missed) + \"/3\").c_str(), 640, 10, 24, ORANGE);\n        if (over) {\n            DrawText(\"GAME OVER\", 250, 170, 60, RED);\n            DrawText(\"Press Enter or R to play again\", 230, 245, 24, RAYWHITE);\n        }\n        EndDrawing();\n    }\n    CloseWindow();\n    return 0;\n}\n"
+}
+]
+}
+]
+}

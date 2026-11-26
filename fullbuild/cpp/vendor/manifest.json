@@ -1,0 +1,20 @@
+{
+ "raylib-cpp.pack": {
+  "bytes": 6674293,
+  "gz": 1317447,
+  "b64": 1756596,
+  "b64_chunks": 1,
+  "sha256": "0e60f9302a9a11f3"
+ },
+ "binaryen.js": {
+  "bytes": 14844140,
+  "gz": 2631044,
+  "b64": 3508060,
+  "b64_chunks": 1,
+  "sha256": "5f0579abe5dddb48"
+ },
+ "_about": {
+  "raylib": "raylib 5.5 (zlib) built for wasm32-wasip1 with cpp/raylib-wasi (platform rcore_wasi.c); libc++/libc++abi without exceptions from @yowasp/clang 22.0.0-git20695-13",
+  "binaryen.js": "binaryen 132.0.0 (Apache-2.0) npm package index.js, unmodified"
+ }
+}
